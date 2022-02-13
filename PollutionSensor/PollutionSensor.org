@@ -1,0 +1,13 @@
+-*- line-spacing: 0.1; -*-
+#+TITLE: Pollution Sensor
+#+STARTUP: latexpreview
+#+STARTUP: show2levels
+#+INCLUDE: "~/.doom.d/orgReportHeader.org"
+#+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:nil #\n:t
+
+:TOC3:
+
+* Hardware
+** Particle Sensor
+** Rotary Encoder
+**
