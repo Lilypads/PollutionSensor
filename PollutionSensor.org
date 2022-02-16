@@ -8,12 +8,16 @@
 * Table Of Contents :TOC_2:
 - [[#overview][Overview]]
   - [[#objectives][Objectives]]
+  - [[#useage][Useage]]
   - [[#capabilities][Capabilities]]
 -  [[#misc][Misc]]
   - [[#i2c-on-pi][I2C On Pi]]
+  - [[#links][Links]]
+  - [[#repo][Repo]]
 - [[#hardware][Hardware]]
   - [[#pi-hat][Pi Hat]]
   - [[#particle-sensor][Particle Sensor]]
+  - [[#gps-module][GPS Module]]
   - [[#rotary-encoder][Rotary Encoder]]
   - [[#i2c-display][I2C Display]]
   - [[#storage-device][Storage Device]]
@@ -41,13 +45,60 @@ sudo rasp-config
 #+begin_src bash
 i2cdetect -y 1
 #+end_src
+** Links
+** [[https://github.com/Lilypads/PollutionSensor][Repo]]
 * Hardware
 ** Pi Hat
+*** Overview
+- Centralises the hardware interfaces into one place
+- Plugs into Raspberry Pi's Pin Header
+- includes buttons/ or rotary encoder
+- Pin header (female) for display daughter board
+- 4 way JST-XH plugs for particle sensor + GPS Module
 *** Hardware Interfaces
-**** Particle Sensor
-**** Rotary Encoder
+**** TODO Particle Sensor
+- 6 way JST-XS header
 **** I2C Display
+- 4 way female Pin Header (2.54mm Pin Pitch)
+ [[file:Figures/FemalePinHeader.jpg]]
+  Pin Definition From the Front
+  | GND | Vcc (3.3V) | SCK | SDA |
+**** Push Buttons
+- three total according to the following menu actions:
+  + up
+  + down
+  + enter
+**** WAIT Rotary Encoder
 ** Particle Sensor
+*** Hardware Overview
+- ID :: SPS30
+- Vendor :: Sensirion
+- Interface :: I2C
+- Plug :: JST XS 6 way
+*** Hardware interface
+*** [[file:Hardware/Particle Sensor/seri_s_a0010891602_1-2291035.pdf][SPS30 Datasheet]]
+** GPS Module
+[[file:Figures/NEO-6M.png]]
+*** Overview
+- ID :: NEO-6M
+- Vendor :: u-blox
+- Interface :: UART
+- Plug :: 2.54mm pin header
+- Vcc Voltage :: 3.6V max
+*** Hardware Interface Details
+**** Breakout board
+- [[https://uk.pi-supply.com/products/ublox-neo-6m-gps-uart-module-breakout-with-antenna][GPS breakout board]]
+- 5 way Male Pin header
+ From Front Pins at bottom
+| Pin Name | Pin Description       |
+|----------+-----------------------|
+| Vcc 3.3V | Supply Voltage        |
+| GND      | Ground                |
+| TXD 3.3v | Transmit (Out of GPS) |
+| RXD 3.3v | Receive (Into GPS)    |
+| PPS      | Interrupt?            |
+*** [[file:Hardware/GPS Module/NEO-6_DataSheet_(GPS.G6-HW-09005).pdf][NEO-6M Datasheet]]
+*** TODO Libraries (Software Interface)
 ** Rotary Encoder
 ** I2C Display
 #+ATTR_ORG: :width 400
