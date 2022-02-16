@@ -8,6 +8,7 @@
 * Table Of Contents :TOC_2:
 - [[#overview][Overview]]
   - [[#objectives][Objectives]]
+  - [[#road-map-011][Road Map]]
   - [[#useage][Useage]]
   - [[#capabilities][Capabilities]]
 -  [[#misc][Misc]]
@@ -18,19 +19,49 @@
   - [[#pi-hat][Pi Hat]]
   - [[#particle-sensor][Particle Sensor]]
   - [[#gps-module][GPS Module]]
-  - [[#rotary-encoder][Rotary Encoder]]
   - [[#i2c-display][I2C Display]]
   - [[#storage-device][Storage Device]]
   - [[#battery][Battery]]
+  - [[#hold-rotary-encoder][HOLD Rotary Encoder]]
 - [[#software][Software]]
   - [[#usage-state-machine][Usage State Machine]]
   - [[#user-interface][User Interface]]
-  - [[#particle-sensor-kernel-module][Particle Sensor Kernel Module]]
-  - [[#gps-kernel-module][GPS Kernel Module]]
+  - [[#particle-sensor-library][Particle Sensor Library]]
+  - [[#gps-library][GPS Library]]
 
 * Overview
+[[file:Figures/PollutionSensor_HighLevelDiagram.png]]
 ** Objectives
 *** User Stories
+** Road Map [0/11]
+- [ ] Hardware setup
+- [ ] Finalise Libraries
+- [ ] WAN SSH Setup
+- [ ] Define Interface
+- [ ] UML Diagramming
+- [ ] Continuous delivery/Integration (testing)
+- [ ] Command-line Menu System
+- [ ] Display Based Menu System
+- [ ] Menu System
+- [ ] GPS Logging
+- [ ] Data Upload
+** Useage
+*** States
+- Off
+- Initialising
+- Acquiring
+#+begin_src plantuml :file Figures/PollotionUsecaseDiagram.png
+!theme cyborg-outline
+[*] --> Initialisation
+state Initialisation {
+        [*] --> AcquireGps
+        [*] --> test
+        }
+#+end_src
+
+#+RESULTS:
+[[file:Figures/PollotionUsecaseDiagram.png]]
+
 ** Capabilities
 *  Misc
 ** I2C On Pi
@@ -76,7 +107,7 @@ i2cdetect -y 1
 - Interface :: I2C
 - Plug :: JST XS 6 way
 *** Hardware interface
-*** [[file:Hardware/Particle Sensor/seri_s_a0010891602_1-2291035.pdf][SPS30 Datasheet]]
+*** *[[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
 ** GPS Module
 [[file:Figures/NEO-6M.png]]
 *** Overview
@@ -97,12 +128,10 @@ i2cdetect -y 1
 | TXD 3.3v | Transmit (Out of GPS) |
 | RXD 3.3v | Receive (Into GPS)    |
 | PPS      | Interrupt?            |
-*** [[file:Hardware/GPS Module/NEO-6_DataSheet_(GPS.G6-HW-09005).pdf][NEO-6M Datasheet]]
+*** [[file:Hardware/GPSModule/NEO-6_DataSheet.pdf][NEO6 Datasheet]]
 *** TODO Libraries (Software Interface)
-** Rotary Encoder
 ** I2C Display
-#+ATTR_ORG: :width 400
-[[file:Figures/Oled Display.png]]
+[[file:Figures/OledDisplay.png]]
 - 128\times64 Pixel Monochrome Oled
 - I2C
 *** I2C
@@ -123,15 +152,26 @@ i2cdetect -y 1
   + last commit 2016
 *** [[file:Resource/SSD1306.pdf][SSD1306 Datasheet]]
 
-** Storage Device
+** TODO Storage Device
 - Use onboard SD Card
 ** Battery
 - Currently Just a USB Power Brick
+** HOLD Rotary Encoder
 * Software
 ** Usage State Machine
 ** User Interface
 *** Menu System
+**** Menu State Machine
 *** Configurable Options
 *** Live Display
-** Particle Sensor Kernel Module
-** GPS Kernel Module
+** Particle Sensor Library
+** GPS Library
+- UART
+*** GPSD
+- https://gpsd.gitlab.io/gpsd/index.html
+- Service Daemon
+- Doesn't explicitly say that NEO6M is supported but I saw forum users say it was
+*** libgps
+- https://github.com/wdalmut/libgps
+*** ublox
+- https://github.com/GAVLab/ublox
