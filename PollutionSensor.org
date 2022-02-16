@@ -97,14 +97,16 @@ i2cdetect -y 1
 **** I2C Display
 - 4 way female Pin Header (2.54mm Pin Pitch)
  [[file:Figures/FemalePinHeader.jpg]]
-  Pin Definition From the Front
+
+Pin Definition From the Front
   | GND | Vcc (3.3V) | SCK | SDA |
 **** Push Buttons
 - three total according to the following menu actions:
   + up
   + down
   + enter
-**** WAIT Rotary Encoder
+**** Particle Sensor JST-XH 6 way I2C + Interrupt
+**** TODO GPS UART Pin Header
 ** Particle Sensor
 *** Hardware Overview
 - ID :: SPS30
