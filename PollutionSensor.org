@@ -25,7 +25,7 @@
   - [[#hold-rotary-encoder][HOLD Rotary Encoder]]
 - [[#software][Software]]
   - [[#usage-state-machine][Usage State Machine]]
-  - [[#oled-display][Oled Display]]
+  - [[#oled-display-libraries][Oled Display Libraries]]
   - [[#user-interface][User Interface]]
   - [[#particle-sensor-library][Particle Sensor Library]]
   - [[#gps-library][GPS Library]]
@@ -153,9 +153,8 @@ Pin Definition From the Front
 ** HOLD Rotary Encoder
 * Software
 ** Usage State Machine
-** Oled Display
-*** Libraries
-**** candidates
+** Oled Display Libraries
+*** candidates
 - https://github.com/bitbank2/ss_oled
   + good feature-set
   + 128 stars on github
