@@ -25,9 +25,14 @@
   - [[#hold-rotary-encoder][HOLD Rotary Encoder]]
 - [[#software][Software]]
   - [[#usage-state-machine][Usage State Machine]]
+  - [[#oled-display][Oled Display]]
   - [[#user-interface][User Interface]]
   - [[#particle-sensor-library][Particle Sensor Library]]
   - [[#gps-library][GPS Library]]
+  - [[#menu-system][Menu System]]
+  - [[#command-line-interface][Command Line Interface]]
+  - [[#display][Display]]
+  - [[#data-upload][Data Upload]]
 
 * Overview
 [[file:Figures/PollutionSensor_HighLevelDiagram.png]]
@@ -40,9 +45,9 @@
 - [ ] Define Interface
 - [ ] UML Diagramming
 - [ ] Continuous delivery/Integration (testing)
-- [ ] Command-line Menu System
-- [ ] Display Based Menu System
 - [ ] Menu System
+- [ ] Command-line Interface
+- [ ] Hardware UI
 - [ ] GPS Logging
 - [ ] Data Upload
 ** Useage
@@ -129,7 +134,6 @@ i2cdetect -y 1
 | RXD 3.3v | Receive (Into GPS)    |
 | PPS      | Interrupt?            |
 *** [[file:Hardware/GPSModule/NEO-6_DataSheet.pdf][NEO6 Datasheet]]
-*** TODO Libraries (Software Interface)
 ** I2C Display
 [[file:Figures/OledDisplay.png]]
 - 128\times64 Pixel Monochrome Oled
@@ -138,6 +142,16 @@ i2cdetect -y 1
 | Address      |    0x3C |
 | Interface IC | SSD1306 |
 
+*** [[file:Resource/SSD1306.pdf][SSD1306 Datasheet]]
+
+** TODO Storage Device
+- Use onboard SD Card
+** Battery
+- Currently Just a USB Power Brick
+** HOLD Rotary Encoder
+* Software
+** Usage State Machine
+** Oled Display
 *** Libraries
 **** candidates
 - https://github.com/bitbank2/ss_oled
@@ -150,22 +164,13 @@ i2cdetect -y 1
   + 33 stars
   + 22 forks - lots of forks for not very many stars
   + last commit 2016
-*** [[file:Resource/SSD1306.pdf][SSD1306 Datasheet]]
-
-** TODO Storage Device
-- Use onboard SD Card
-** Battery
-- Currently Just a USB Power Brick
-** HOLD Rotary Encoder
-* Software
-** Usage State Machine
 ** User Interface
 *** Menu System
 **** Menu State Machine
 *** Configurable Options
 *** Live Display
-** Particle Sensor Library
-** GPS Library
+** TODO Particle Sensor Library
+** TODO GPS Library
 - UART
 *** GPSD
 - https://gpsd.gitlab.io/gpsd/index.html
@@ -175,3 +180,7 @@ i2cdetect -y 1
 - https://github.com/wdalmut/libgps
 *** ublox
 - https://github.com/GAVLab/ublox
+** TODO Menu System
+** TODO Command Line Interface
+** TODO Display
+** TODO Data Upload
