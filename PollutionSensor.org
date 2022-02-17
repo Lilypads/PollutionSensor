@@ -171,6 +171,25 @@ Pin Definition From the Front
 *** Configurable Options
 *** Live Display
 ** TODO Particle Sensor Library
+*** embedded-sps
+- https://github.com/Sensirion/embedded-sps
+  + provided by sensirion themselves
+  + looks like it's a driver and not a library? plus, it's mainly in C
+  + This one is for i2c >> UART version also available at: https://github.com/Sensirion/embedded-uart-sps
+  + 35 stars
+  + last commit 14 months ago
+*** sps30lib
+- https://github.com/paulvha/sps30_on_raspberry
+- Found its review at: https://kandi.openweaver.com/c++/paulvha/sps30_on_raspberry
+  + 8 stars
+  + last commit 2 years ago
+  + in-line-with-code documentations available
+  + but, it has no issue reported -> might mean it is working consistently?
+*** sps30
+- https://os.mbed.com/users/ziqiyap/code/SPS30//file/f6b216228067/sps30.cpp/
+  + 40 imports, 1 follower
+  + last commit 3 years ago
+  + in-line-with-code documentation available, API auto generated documentation available at: https://os.mbed.com/users/ziqiyap/code/SPS30/docs/tip/
 ** TODO GPS Library
 - UART
 *** GPSD
