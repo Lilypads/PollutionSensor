@@ -181,15 +181,17 @@ Pin Definition From the Front
 *** sps30lib
 - https://github.com/paulvha/sps30_on_raspberry
 - Found its review at: https://kandi.openweaver.com/c++/paulvha/sps30_on_raspberry
+  + sps30 library for ESP32 and a couple of other boards of same author with 57 stars available at:https://github.com/paulvha/sps30
   + 8 stars
   + last commit 2 years ago
-  + in-line-with-code documentations available
   + but, it has no issue reported -> might mean it is working consistently?
+  + in-line-with-code documentations available
 *** sps30
 - https://os.mbed.com/users/ziqiyap/code/SPS30//file/f6b216228067/sps30.cpp/
   + 40 imports, 1 follower
   + last commit 3 years ago
   + in-line-with-code documentation available, API auto generated documentation available at: https://os.mbed.com/users/ziqiyap/code/SPS30/docs/tip/
+**** searching reference link: https://github.com/topics/sps30
 ** TODO GPS Library
 - UART
 *** GPSD
