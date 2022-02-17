@@ -200,8 +200,16 @@ Pin Definition From the Front
 - Doesn't explicitly say that NEO6M is supported but I saw forum users say it was
 *** libgps
 - https://github.com/wdalmut/libgps
+  + 70 stars
+  + C
+  + in latitudes and logtitudes
+  + last commit 8 years ago
+- tested with Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3
 *** ublox
 - https://github.com/GAVLab/ublox
+  + 41 stars
+  + last commit 6 years ago
+  + have GAVLab dependency
 ** TODO Menu System
 ** TODO Command Line Interface
 ** TODO Display
