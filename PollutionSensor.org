@@ -173,15 +173,15 @@ Pin Definition From the Front
 ** TODO Particle Sensor Library
 *** embedded-sps
 - https://github.com/Sensirion/embedded-sps
-  + provided by sensirion themselves
-  + looks like it's a driver and not a library? plus, it's mainly in C
-  + This one is for i2c >> UART version also available at: https://github.com/Sensirion/embedded-uart-sps
+- provided by sensirion themselves
+- looks like it's a driver and not a library? plus, it's mainly in C
+- This one is for i2c >> UART version also available at: https://github.com/Sensirion/embedded-uart-sps
   + 35 stars
   + last commit 14 months ago
 *** sps30lib
 - https://github.com/paulvha/sps30_on_raspberry
 - Found its review at: https://kandi.openweaver.com/c++/paulvha/sps30_on_raspberry
-  + sps30 library for ESP32 and a couple of other boards of same author with 57 stars available at:https://github.com/paulvha/sps30
+- sps30 library for ESP32 and a couple of other boards of same author with 57 stars available at:https://github.com/paulvha/sps30
   + 8 stars
   + last commit 2 years ago
   + but, it has no issue reported -> might mean it is working consistently?
