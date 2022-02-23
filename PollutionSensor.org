@@ -18,6 +18,7 @@
 - [[#hardware][Hardware]]
   - [[#hardware-overview][Hardware Overview]]
   - [[#pi-hat][Pi Hat]]
+  - [[#buttons][Buttons]]
   - [[#particle-sensor][Particle Sensor]]
   - [[#gps-module][GPS Module]]
   - [[#i2c-display][I2C Display]]
@@ -25,6 +26,7 @@
   - [[#battery][Battery]]
   - [[#hold-rotary-encoder][HOLD Rotary Encoder]]
 - [[#software][Software]]
+  - [[#softare-overview][Softare Overview]]
   - [[#usage-state-machine][Usage State Machine]]
   - [[#oled-display-libraries][Oled Display Libraries]]
   - [[#user-interface][User Interface]]
@@ -86,6 +88,8 @@ i2cdetect -y 1
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
 * Hardware
 ** Hardware Overview
+:code:
+#+Name: umlHardwareOverView
 #+begin_src plantuml :file Figures/hardwareOverview.png
 !theme plain
 skinparam linetype ortho
@@ -180,7 +184,8 @@ SDCard <-[#blue,bold]u-> sdcardSlot
 USBPowerBrick <-[#blue,bold]u-> USB3
 #+end_src
 
-#+RESULTS:
+:end:
+#+RESULTS: umlHardwareOverView
 [[file:Figures/hardwareOverview.png]]
 
 ** Pi Hat
@@ -206,13 +211,41 @@ Pin Definition From the Front
   + enter
 **** Particle Sensor JST-XH 6 way I2C + Interrupt
 **** TODO GPS UART Pin Header
+** Buttons
+
+*** Button Pins
+[[file:Figures/6mmPushbutton.drawio.png]]
+
+*** Low-pass RC Filter Design
+- use a low pass filter RC filter with a time constant of \approx =2ms= to allow for responsiveness while filtering out bounce etc
+- Aim for small capacitance values that I have on hand =1pF-100nF=
+- Probably want to make this as big as possible so that we can pick an adequate pull-down resistor
+#+NAME: eqLpFilter
+\begin{align}
+\tau = RC
+\end{align}
+- using 100nF we get an impedance of =20k\Omega=
+*** Pull down resistor
+
+*** Wiring
 ** Particle Sensor
 *** Hardware Overview
 - ID :: SPS30
 - Vendor :: Sensirion
 - Interface :: I2C
 - Plug :: JST XS 6 way
-*** Hardware interface
+*** Hardware interface (JST-XS 5Way)
+
+| Pin | Name | Description      | Comments            | Wire Color |
+|-----+------+------------------+---------------------+------------|
+|   1 | VDD  | Supply Voltage   | 5v \pm 10%          | Black      |
+|   2 | SDA  | I^2C Serial Data | 5V-3.3V compatible  | Red        |
+|   3 | SCL  | I^C Serial Clock | 5V-3.3V compatible  | White      |
+|   4 | SEL  | Interface Select | Pull to GND for I^C | Yellow     |
+|   5 | GND  | Ground           | Housing on GND      | Orange     |
+
+[[file:./images/screenshot-01.png]]
+
 *** *[[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
 ** GPS Module
 [[file:Figures/NEO-6M.png]]
@@ -251,6 +284,82 @@ Pin Definition From the Front
 - Currently Just a USB Power Brick
 ** HOLD Rotary Encoder
 * Software
+** Softare Overview
+#+begin_src plantuml :file Figures/softwareOverview.png
+!theme plain
+skinparam linetype ortho
+allow_mixing
+skinparam packageStyle frame
+package UserInterface {
+class Menu {
+        ..Public Methods..
+        +inputCode()
+        ..Public Properties..
+        +MenuIdx
+        +ptrMenuItems
+        +menuLength
+        ..Private Methods..
+        -menuIncrement()
+        -menuDecrement()
+        -menuEnter()
+}
+
+class inputHandler {
+        ..Public Methods..
+        ..Public Properties..
+        ..Private Methods..
+            }
+
+class gpioHandler {
+        ..Public Methods..
+        ..Public Properties..
+        ..Private Methods..
+            }
+
+class commandLineInterface {
+        ..Public Methods..
+        ..Public Properties..
+        ..Private Methods..
+            }
+}
+
+package SensorInterfaces {
+class particleSensor{}
+class gps {}
+            }
+package display {
+class oled {}
+            }
+package dataProccesing{
+class proccesData {
+        +figure out later
+        }
+}
+
+package DataStorage <<database>> {
+class settings {
+        ..Public Properties..
+}
+class bufferedData{}
+}
+package DataUpload {
+class dataUploadStateMachine {}
+}
+
+gps -- proccesData: read gps data >
+particleSensor -- proccesData: read particle data >
+proccesData -- bufferedData: store buffered data >
+inputHandler -> Menu :input code >
+gpioHandler -> inputHandler :user input >
+commandLineInterface -> inputHandler :user input >
+commandLineInterface -> Menu :get menu info
+Menu -- settings :save settings >
+Menu -- display :update display >
+#+end_src
+
+#+RESULTS:
+[[file:Figures/softwareOverview.png]]
+
 ** Usage State Machine
 ** Oled Display Libraries
 *** candidates
