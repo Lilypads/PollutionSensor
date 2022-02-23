@@ -1,4 +1,4 @@
--*- line-spacing: 0.1; -*-
+# -*- line-spacing: 0.1; -*-
 #+TITLE: Pollution Sensor
 #+STARTUP: latexpreview
 #+STARTUP: show2levels
@@ -16,6 +16,7 @@
   - [[#links][Links]]
   - [[#repo][Repo]]
 - [[#hardware][Hardware]]
+  - [[#hardware-overview][Hardware Overview]]
   - [[#pi-hat][Pi Hat]]
   - [[#particle-sensor][Particle Sensor]]
   - [[#gps-module][GPS Module]]
@@ -84,6 +85,104 @@ i2cdetect -y 1
 ** Links
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
 * Hardware
+** Hardware Overview
+#+begin_src plantuml :file Figures/hardwareOverview.png
+!theme plain
+skinparam linetype ortho
+allow_mixing
+node "Rasberry Pi" {
+        () [sdcardSlot]
+        () [USB3]
+
+    class MalePinHeader {
+        I2C
+        UART
+        GPIO
+        5v
+        3.3v
+        GND
+            }
+
+        sdcardSlot -[hidden]r- USB3
+        USB3 -[hidden]r- MalePinHeader
+            }
+
+node "Pi GPIO Breakout Hat" {
+    Class FemalePinHeader {
+                ..Pins..
+                I2C
+                UART
+                GPIO
+                5v
+                3.3v
+                GND
+                ..PlugType..
+                femalePinHeader(2.54mm)
+             }
+    Class GPSPlug{
+                ..Pins..
+                +UARTRx
+                +UARTTx
+                +3.3V
+                +GND
+                ..PlugType..
+                femalePinHeader(2.54mm)
+        }
+       Class Co2SensorPlug{
+                ..Pins..
+                +I2Csda
+                +I2Cscl
+                +5V
+                +GND
+                +Interrupt?
+                ..PlugType..
+                JST-XH (6Way)
+        }
+        Class OledPlug {
+                ..Pins..
+                +I2Csda
+                +I2Cscl
+                +3.3V
+                +GND
+                ..PlugType..
+                femalePinHeader(2.54mm)
+            }
+        Frame "Buttons" {
+                component ButtonUp
+                component ButtonDown
+                component ButtonEnter
+                ButtonUp -[hidden]r- ButtonDown
+                ButtonDown -[hidden]r- ButtonEnter
+        }
+        Buttons -d- FemalePinHeader : gpio
+        Buttons -d- FemalePinHeader : 3.3V
+        Buttons -d- FemalePinHeader : GND
+        Co2SensorPlug -[bold]l> FemalePinHeader
+        GPSPlug -[bold]l> FemalePinHeader
+        OledPlug -[bold]l> FemalePinHeader
+            }
+FemalePinHeader <-> MalePinHeader
+Frame "ExternalSensors" {
+component GPS
+component OLED
+component Co2Sensor
+        }
+
+GPS <-[#blue,bold]u-> GPSPlug
+OLED <-[#blue,bold]u-> OledPlug
+Co2Sensor <-[#blue,bold]u-> Co2SensorPlug
+
+Frame "OtherExternalHarware" {
+component USBPowerBrick
+component SDCard
+        }
+SDCard <-[#blue,bold]u-> sdcardSlot
+USBPowerBrick <-[#blue,bold]u-> USB3
+#+end_src
+
+#+RESULTS:
+[[file:Figures/hardwareOverview.png]]
+
 ** Pi Hat
 *** Overview
 - Centralises the hardware interfaces into one place
