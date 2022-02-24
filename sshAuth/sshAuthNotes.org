@@ -44,7 +44,7 @@ https://phoenixnap.com/kb/generate-ssh-key-windows-10
 [[https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent]]
 
 * Upload the *Public* ssh key to the repo
-- there should be a folder with your name, just pop the key in there as a text file, doesn't really massively matter about the format since  i will just coppy this across to the server manually
+- create a folder with your name under the /sshAuth/ repo, and just pop the key in there as a text file, doesn't really massively matter about the format since I will just copy this across to the server manually
 - just make sure that is is actually the public key (ssh-keygen and open ssh generate these as <keyname>.pub i think)
 
 * Connect to the Pi
