@@ -1,0 +1,56 @@
+# -*- line-spacing: 0.1; -*-
+#+TITLE: Ssh Auth Notes
+#+STARTUP: latexpreview
+#+STARTUP:  overview
+#+INCLUDE: "~/.doom.d/orgReportHeader.org"
+#+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:nil #\n:t
+
+* Contents :TOC_3:
+- [[#overview][Overview]]
+  - [[#pi-ip-adress][Pi IP adress]]
+  - [[#your-usernames][Your usernames]]
+- [[#generating-your-ssh-keypair][Generating your SSH keypair]]
+  - [[#option-1---putty-windows][Option 1 - Putty (windows)]]
+  - [[#option-2---open-ssh-windows][Option 2 - Open ssh (windows)]]
+  - [[#option-3---ssh-keygen-linux][Option 3 - =ssh-keygen= (linux)]]
+- [[#upload-the-public-ssh-key-to-the-repo][Upload the *Public* ssh key to the repo]]
+- [[#connect-to-the-pi][Connect to the Pi]]
+
+* Overview
+So in order to allow everyone access to my Raspberry Pi, I have given everyone an account with hopefully all of the permissions required, which you will be able to access once I set up ssh keys for everyone. The reason for using ssh keys is that it is much more secure than simply using password login, which is a concern since the pi will be exposed on the open network. It should be relatively strait forward to set up on your end and fairly painless to use on a day to day basis. but before anything works you will need to follow the steps laid out here.
+
+** Pi IP adress
+| 192.168.1.228 |
+
+** Your usernames
+| Name  |
+|-------|
+| lily  |
+| harsh |
+| chris |
+
+- note that these are case sensitive!
+
+* Generating your SSH keypair
+- use one of the following methods to create your ssh keypair...
+
+** Option 1 - Putty (windows)
+[[https://www.ssh.com/academy/ssh/putty/windows/puttygen]]
+
+** Option 2 - Open ssh (windows)
+https://phoenixnap.com/kb/generate-ssh-key-windows-10
+
+** Option 3 - =ssh-keygen= (linux)
+[[https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent]]
+
+* Upload the *Public* ssh key to the repo
+- there should be a folder with your name, just pop the key in there as a text file, doesn't really massively matter about the format since  i will just coppy this across to the server manually
+- just make sure that is is actually the public key (ssh-keygen and open ssh generate these as <keyname>.pub i think)
+
+* Connect to the Pi
+- open up your terminal and type the following
+#+begin_src shell
+ssh <yourusername>@192.168.1.228
+#+end_src
+- You will then be queried about not being able to verify the host identity, but disregard this
+- if you specified a password while creating your keypair, you will be prompted to enter it now
