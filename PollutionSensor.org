@@ -78,10 +78,14 @@ state Initialisation {
 
 | Device          | Address (Hex) |
 |-----------------+---------------|
-| Particle Sensor | 0x69          |
-| OLED screen     | 3c            |
+| Particle Sensor |          0x69 |
+| OLED screen     |          0x3c |
 
 *** GPIO Button Pins
+- when pushed the buttons effectively connect their corresponding pin to GND
+- thus a transition from high to low is considered a button push  (so trigger interrupts on a falling clock edge)
+- the pins need to be used with the internal 50k\Omega pull-up resistor enabled, otherwise the pin state will be undefined until the button is pushed
+- for more details, circuit diagrams and why this choice was taken, see the hardware->PiHat section
 
 | Button Name | GPIO Pin # |
 |-------------+------------|
