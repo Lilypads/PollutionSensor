@@ -9,13 +9,14 @@
 - [[#overview][Overview]]
   - [[#objectives][Objectives]]
   - [[#road-map-011][Road Map]]
-  - [[#useage][Useage]]
+  - [[#usage][Usage]]
   - [[#capabilities][Capabilities]]
+  - [[#hardware-reference][Hardware Reference]]
 -  [[#misc][Misc]]
   - [[#i2c-on-pi][I2C On Pi]]
   - [[#links][Links]]
   - [[#repo][Repo]]
-- [[#hardware][Hardware]]
+- [[#hardware-design][Hardware Design]]
   - [[#hardware-overview][Hardware Overview]]
   - [[#pi-hat][Pi Hat]]
   - [[#raspberry-pi-4-details][Raspberry pi 4 details]]
@@ -54,7 +55,7 @@
 - [ ] Hardware UI
 - [ ] GPS Logging
 - [ ] Data Upload
-** Useage
+** Usage
 *** States
 - Off
 - Initialising
@@ -72,6 +73,22 @@ state Initialisation {
 [[file:Figures/PollotionUsecaseDiagram.png]]
 
 ** Capabilities
+** Hardware Reference
+*** I2C addresses
+
+| Device          | Address (Hex) |
+|-----------------+---------------|
+| Particle Sensor | 0x69          |
+| OLED screen     | 3c            |
+
+*** GPIO Button Pins
+
+| Button Name | GPIO Pin # |
+|-------------+------------|
+| Up          |         19 |
+| Down        |         06 |
+| Enter       |         26 |
+
 *  Misc
 ** I2C On Pi
 *** enable raspberry Pi i2c Interface
@@ -87,7 +104,7 @@ i2cdetect -y 1
 #+end_src
 ** Links
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
-* Hardware
+* Hardware Design
 ** Hardware Overview
 :code:
 #+Name: umlHardwareOverView
@@ -238,7 +255,7 @@ Pin Definition From the Front
 
 *** Buttons
 
-**** Button Pins
+**** push button Equivilent Circuit
 [[file:Figures/6mmPushbutton.drawio.png]]
 
 **** Low-pass RC Filter Design
@@ -285,8 +302,11 @@ C = \tau/R
 
 [[file:./images/screenshot-01.png]]
 
-*** *[[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
+*** [[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
+*** I2C
+| Address | 0x69 |
 ** GPS Module
+*** picture
 [[file:Figures/NEO-6M.png]]
 *** Overview
 - ID :: NEO-6M
@@ -461,3 +481,5 @@ Menu -- display :update display >
 ** TODO Command Line Interface
 ** TODO Display
 ** TODO Data Upload
+** Buttons
+- pi gpio
