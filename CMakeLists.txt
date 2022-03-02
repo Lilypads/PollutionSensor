@@ -18,7 +18,7 @@ add_executable(example example.cpp sqr.h)
 
 # testing executable
 add_executable(test1 test1.cpp sqr.h)
-target_link_libraries(test1 ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
+target_link_libraries(test1 example ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
 
 #add_executable(test2 test2.cpp)
 #target_link_libraries(test2 ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
