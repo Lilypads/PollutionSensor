@@ -1,6 +1,6 @@
 #add_library(<name> <wheretofind>)
 find_package(Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
-include_directories(${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR})
+include_directories(${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src)
 #add_definitions (-DBOOST_TEST_DYN_LINK)
 
 # testing executable
