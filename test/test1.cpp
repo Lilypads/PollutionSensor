@@ -6,7 +6,7 @@
 //BOOST_CHECK(1>0); //fail but continue
 //BOOST_REQUIRE(1!=2); //fail and terminate
 
-#include <sqr.h>
+#include "sqr.h"
 BOOST_AUTO_TEST_CASE(PassTest)
 {
     BOOST_CHECK_EQUAL(4, sqr(2));
