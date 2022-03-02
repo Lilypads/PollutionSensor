@@ -27,4 +27,4 @@ enable_testing()
 
 # add tests
 add_test(NAME test1 COMMAND $<TARGET_FILE:test1>)
-add_test(NAME test2 COMMAND $<TARGET_FILE:test2>)
+#add_test(NAME test2 COMMAND $<TARGET_FILE:test2>)
