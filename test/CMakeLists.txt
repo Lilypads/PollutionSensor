@@ -7,8 +7,5 @@ include_directories(${Boost_INCLUDE_DIRS} ${EXAMPLE_SOURCE_DIR}/src)
 add_executable(test1 test1.cpp)         #${TEST_SOURCE_DIR}/src/sqr.cpp)
 target_link_libraries(test1 Sqr ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
 
-# enable testing
-enable_testing()
-
 # add tests
 add_test(NAME mytest1 COMMAND test1)
