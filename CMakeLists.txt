@@ -13,7 +13,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 # main code executable
 add_executable(example example.cpp sqr.h)
-#target_link_libraries(main <library1> <library2> <...>)
+#target_link_libraries(example <library1> <library2> <...>)
 
 # testing executable
 add_executable(test1 test1.cpp)
