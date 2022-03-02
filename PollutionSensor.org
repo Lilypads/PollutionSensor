@@ -9,16 +9,17 @@
 - [[#overview][Overview]]
   - [[#objectives][Objectives]]
   - [[#road-map-011][Road Map]]
-  - [[#useage][Useage]]
+  - [[#usage][Usage]]
   - [[#capabilities][Capabilities]]
+  - [[#hardware-reference][Hardware Reference]]
 -  [[#misc][Misc]]
   - [[#i2c-on-pi][I2C On Pi]]
   - [[#links][Links]]
   - [[#repo][Repo]]
-- [[#hardware][Hardware]]
+- [[#hardware-design][Hardware Design]]
   - [[#hardware-overview][Hardware Overview]]
   - [[#pi-hat][Pi Hat]]
-  - [[#buttons][Buttons]]
+  - [[#raspberry-pi-4-details][Raspberry pi 4 details]]
   - [[#particle-sensor][Particle Sensor]]
   - [[#gps-module][GPS Module]]
   - [[#i2c-display][I2C Display]]
@@ -36,6 +37,7 @@
   - [[#command-line-interface][Command Line Interface]]
   - [[#display][Display]]
   - [[#data-upload][Data Upload]]
+  - [[#buttons][Buttons]]
 
 * Overview
 [[file:Figures/PollutionSensor_HighLevelDiagram.png]]
@@ -53,7 +55,7 @@
 - [ ] Hardware UI
 - [ ] GPS Logging
 - [ ] Data Upload
-** Useage
+** Usage
 *** States
 - Off
 - Initialising
@@ -71,6 +73,26 @@ state Initialisation {
 [[file:Figures/PollotionUsecaseDiagram.png]]
 
 ** Capabilities
+** Hardware Reference
+*** I2C addresses
+
+| Device          | Address (Hex) |
+|-----------------+---------------|
+| Particle Sensor |          0x69 |
+| OLED screen     |          0x3c |
+
+*** GPIO Button Pins
+- when pushed the buttons effectively connect their corresponding pin to GND
+- thus a transition from high to low is considered a button push  (so trigger interrupts on a falling clock edge)
+- the pins need to be used with the internal 50k\Omega pull-up resistor enabled, otherwise the pin state will be undefined until the button is pushed
+- for more details, circuit diagrams and why this choice was taken, see the hardware->PiHat section
+
+| Button Name | GPIO Pin # |
+|-------------+------------|
+| Up          |         19 |
+| Down        |         06 |
+| Enter       |         26 |
+
 *  Misc
 ** I2C On Pi
 *** enable raspberry Pi i2c Interface
@@ -86,7 +108,7 @@ i2cdetect -y 1
 #+end_src
 ** Links
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
-* Hardware
+* Hardware Design
 ** Hardware Overview
 :code:
 #+Name: umlHardwareOverView
@@ -211,23 +233,61 @@ Pin Definition From the Front
   + enter
 **** Particle Sensor JST-XH 6 way I2C + Interrupt
 **** TODO GPS UART Pin Header
-** Buttons
+*** Wiring
+**** top view
+[[file:Hardware/PiHat/PiHatVeroRouting_Top.png]]
+**** bottom view
+[[file:Hardware/PiHat/PiHatVeroRouting_Bottom.png]]
+**** wire List
 
-*** Button Pins
+|   | wire# | len (holes) | len shield (mm) | len total (mm) | col schem    | col board | meaning    |
+|---+-------+-------------+-----------------+----------------+--------------+-----------+------------|
+| ! |       |   len_holes |          len_mm |     len_tot_mm |              |           |            |
+| # |     1 |           4 |              10 |             20 | grey         | black     | GND        |
+| # |     2 |           7 |              18 |             28 | grey         | black     | GND        |
+| # |     3 |          10 |              25 |             35 | grey         | black     | GND        |
+| # |     4 |           7 |              18 |             28 | grey         | black     | GND        |
+| # |     5 |           4 |              10 |             20 | orange       | yellow    | 3.3V       |
+| # |     6 |           6 |              15 |             25 | orange       | yellow    | 3.3V       |
+| # |     7 |          18 |              46 |             56 | light Purple | white     | I2C_sda    |
+| # |     8 |          16 |              41 |             51 | dark Purple  | red       | I2C_scl    |
+| # |     9 |           7 |              18 |             28 | light pink   | blue      | UART_Rx_Pi |
+| # |    10 |           7 |              18 |             28 | dark pink    | green     | UART_Tx_Pi |
+| # |    11 |          12 |              30 |             40 | light pink   | blue      | UART_Rx_Pi |
+| # |    12 |          12 |              30 |             40 | dark pink    | green     | UART_Tx_Pi |
+    #+TBLFM: $4=$len_holes*2.54;%0.0f::$5=$len_mm+10
+
+*** Buttons
+
+**** push button Equivilent Circuit
 [[file:Figures/6mmPushbutton.drawio.png]]
 
-*** Low-pass RC Filter Design
+**** Low-pass RC Filter Design
+[[file:Figures/switchWiring.png]]
 - use a low pass filter RC filter with a time constant of \approx =2ms= to allow for responsiveness while filtering out bounce etc
 - Aim for small capacitance values that I have on hand =1pF-100nF=
 - Probably want to make this as big as possible so that we can pick an adequate pull-down resistor
+- Internal pull-up is supposedly \approx =50k=
 #+NAME: eqLpFilter
 \begin{align}
-\tau = RC
+\tau = RC\\
+C = \tau/R
 \end{align}
-- using 100nF we get an impedance of =20k\Omega=
-*** Pull down resistor
+- using =50k= we get an capacitance of =40nF=
+- I only have =47nF=
+- so we get =2.35ms=
+**** Pull down resistor
 
-*** Wiring
+**** Wiring
+** Raspberry pi 4 details
+*** Processor
+**** Pull-up/down Resistors
+50K min – 65K max. Pull-down is 50K min – 60K max.
+*** IP
+| 192.168.1.228 |
+*** Pi Header
+[[file:Figures/Raspberry-Pi-GPIO-Header-with-Photo-702x336.png]]
+
 ** Particle Sensor
 *** Hardware Overview
 - ID :: SPS30
@@ -246,8 +306,11 @@ Pin Definition From the Front
 
 [[file:./images/screenshot-01.png]]
 
-*** *[[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
+*** [[file:Hardware/ParticleSensor/SENSIRION_datasheet.pdf][SPS30 Datasheet]]
+*** I2C
+| Address | 0x69 |
 ** GPS Module
+*** picture
 [[file:Figures/NEO-6M.png]]
 *** Overview
 - ID :: NEO-6M
@@ -422,3 +485,5 @@ Menu -- display :update display >
 ** TODO Command Line Interface
 ** TODO Display
 ** TODO Data Upload
+** Buttons
+- pi gpio
