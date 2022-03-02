@@ -20,14 +20,16 @@
 So in order to allow everyone access to my Raspberry Pi, I have given everyone an account with hopefully all of the permissions required, which you will be able to access once I set up ssh keys for everyone. The reason for using ssh keys is that it is much more secure than simply using password login, which is a concern since the pi will be exposed on the open network. It should be relatively strait forward to set up on your end and fairly painless to use on a day to day basis. but before anything works you will need to follow the steps laid out here.
 
 ** Pi IP adress
-| 192.168.1.228 |
+
+|  217.42.163.163 |
 
 ** Your usernames
-| Name  |
-|-------|
-| lily  |
-| harsh |
-| chris |
+
+| Name  | password |
+|-------+----------|
+| lily  | RTEP     |
+| harsh | RTEP     |
+| chris | RTEP     |
 
 - note that these are case sensitive!
 
@@ -50,7 +52,7 @@ https://phoenixnap.com/kb/generate-ssh-key-windows-10
 * Connect to the Pi
 - open up your terminal and type the following
 #+begin_src shell
-ssh <yourusername>@192.168.1.228
+ssh <yourusername>@217.42.163.163
 #+end_src
 - You will then be queried about not being able to verify the host identity, but disregard this
 - if you specified a password while creating your keypair, you will be prompted to enter it now
