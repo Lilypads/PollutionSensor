@@ -1,6 +1,6 @@
 # PollutionSensor
 
-For more details, please have a look at our wiki at https://github.com/Lilypads/PollutionSensor/blob/main/PollutionSensor.org
+For more details on sensors, wiring, UML diagram, other specifications, please have a look at our wiki here[https://github.com/Lilypads/PollutionSensor/blob/main/PollutionSensor.org]
 
 ## Pre-Requisite
 
@@ -8,7 +8,15 @@ For more details, please have a look at our wiki at https://github.com/Lilypads/
 ### <OTHER LIBRARIES!!!>
 ### Boost (optional: for unit tests)
 
-## How to use the program
+For Linux
+
+`sudo apt install libboost-all-dev`
+
+For MacOS using Homebrew
+
+`brew install boost`
+
+## How to get the program running
 
 1. Clone the repository
 
@@ -16,7 +24,7 @@ For more details, please have a look at our wiki at https://github.com/Lilypads/
 
 2. Get inside the directory
 
-`cd /path_to_directory/PollutionSensor`
+`cd PollutionSensor`
 
 3. Compile here
 
@@ -26,4 +34,4 @@ For more details, please have a look at our wiki at https://github.com/Lilypads/
 
 4. Run the program
 
-`./fileName`
+`./executableFileName`
