@@ -1,4 +1,5 @@
 #include "sqr.h"
+#include "sqr.cpp"
 #include "iostream"
 
 int main()
