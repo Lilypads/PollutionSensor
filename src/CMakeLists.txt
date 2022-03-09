@@ -3,5 +3,5 @@ add_library(Sqr sqr.cpp sqr.h)
 #include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c)
 
 # main code executable
-add_executable(example example.cpp ${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c/sps30.h)
+add_executable(example example.cpp /embedded-sps/sps30-i2c/sps30.h)
 target_link_libraries(example Sqr)
