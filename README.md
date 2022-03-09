@@ -20,7 +20,7 @@ For MacOS using Homebrew
 
 1. Clone the repository
 
-`git clone https://github.com/Lilypads/PollutionSensor`
+`git clone --recurse-submodules https://github.com/Lilypads/PollutionSensor`
 
 2. Get inside the directory
 
