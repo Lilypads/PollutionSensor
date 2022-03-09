@@ -1,7 +1,7 @@
 #include "sqr.h"
 #include "sqr.cpp"
 #include "iostream"
-#include "/sps30-i2c/sps30.h"
+#include "../embedded-sps/sps30-i2c/sps30.h"
 
 int main()
 {
