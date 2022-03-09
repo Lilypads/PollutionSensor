@@ -5,5 +5,5 @@ include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c)
 include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/embedded-common)
 
 # main code executable
-add_executable(example example.cpp sps30.h)
+add_executable(example example.cpp ${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c/sps30.h)
 target_link_libraries(example Sqr)
