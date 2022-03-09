@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 14)
 #add_library(<name> <wheretofind>)
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(embedded-sps)
 
 # enable testing
 enable_testing()
