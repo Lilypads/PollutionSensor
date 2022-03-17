@@ -29,6 +29,10 @@ cd bcm2835-1.71
 `
 
 `
+make
+`
+
+`
 sudo make check
 `
 
