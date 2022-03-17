@@ -25,15 +25,15 @@ jobs:
     - name: Install Boost
       run: sudo apt install libboost-all-dev
       
-    - name: Install BCM2835
-      run: |
-          wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
-          tar zxvf bcm2835-1.71.tar.gz
-          cd bcm2835-1.71
-          ./configure
-          make
-          sudo make check
-          sudo make install
+#    - name: Install BCM2835
+#      run: |
+#          wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
+#          tar zxvf bcm2835-1.71.tar.gz
+#          cd bcm2835-1.71
+#          ./configure
+#          sudo make
+#          sudo make check
+#          sudo make install
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
