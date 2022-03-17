@@ -1,10 +1,14 @@
 #add_library(<name> <wheretofind>)
 add_library(Sqr sqr.cpp sqr.h)
-#add_library(Sps30 sps30lib.cpp sps30lib.h)
 include_directories(${PROJECT_SOURCE_DIR}/embedded-sps)
 include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c)
 include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/embedded-common)
 
 # main code executable
-add_executable(example example.cpp ${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c/sps30.h)
-target_link_libraries(example Sqr)
+#add_executable(example example.cpp ${PROJECT_SOURCE_DIR}/embedded-sps/sps30-i2c/sps30.h)
+#target_link_libraries(example Sqr)
+
+# try sps30manager
+add_library(Sps30 sps30lib.cpp sps30lib.h)
+add_executable(sps30manager sps30manager.cpp)
+target_link_libraries(sps30manager Sps30)
