@@ -33,6 +33,7 @@ jobs:
           ./configure
           make
           sudo make check
+          nano src/test-suite.log
           sudo make install
 
     - name: Configure CMake
