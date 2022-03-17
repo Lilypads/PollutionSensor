@@ -15,6 +15,12 @@
 # include <stdarg.h>
 
 
+/* used as part of p_printf() */
+bool NoColor=false;
+
+/* global constructor */ 
+SPS30 MySensor;
+
 typedef struct sps_par
 {
     /* option SPS30 parameters */
@@ -38,6 +44,17 @@ typedef struct sps_par
     struct sps_values v;
         
 } sps_par;
+
+/*********************************************************************
+*  @brief close hardware and program correctly
+**********************************************************************/
+void closeout()
+{
+   /* reset pins in Raspberry Pi */
+   MySensor.close();
+
+   exit(EXIT_SUCCESS);
+}
 
 /*********************************************************************
 * @brief catch signals to close out correctly 
@@ -403,22 +420,8 @@ void main_loop(struct sps_par *sps)
 }       
 
 
-/*********************************************************************
-*  @brief close hardware and program correctly
-**********************************************************************/
-void closeout()
-{
-   /* reset pins in Raspberry Pi */
-   MySensor.close();
 
-   exit(EXIT_SUCCESS);
-}
 
-/* used as part of p_printf() */
-bool NoColor=false;
-
-/* global constructor */ 
-SPS30 MySensor;
 
 
 int main()
