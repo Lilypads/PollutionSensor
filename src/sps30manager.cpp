@@ -426,6 +426,7 @@ void main_loop(struct sps_par *sps)
 
 int main()
 {
+    bcm2835_init();
     struct sps_par sps;
 
     if (geteuid() != 0)  {
@@ -448,6 +449,7 @@ int main()
     main_loop(&sps);
 
     closeout();
+    bcm2835_close();
 
 
 return 0;
