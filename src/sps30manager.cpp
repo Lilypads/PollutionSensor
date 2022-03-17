@@ -5,7 +5,7 @@
 
 #include "iostream"
 #include "sps30lib.h"
-#include <bcm2835.h>
+#include "bcm2835.h"
 #include <signal.h>
 #include <time.h>
 # include <stdint.h>
@@ -427,7 +427,8 @@ void main_loop(struct sps_par *sps)
 
 int main()
 {
-    bcm2835_init();
+    if (!bcm2835_init())
+        return 1;
     struct sps_par sps;
 
     if (geteuid() != 0)  {
@@ -450,7 +451,8 @@ int main()
     main_loop(&sps);
 
     closeout();
-    bcm2835_close();
+    if (!bcm2835_close())
+        return 1;
 
 
 return 0;

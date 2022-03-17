@@ -9,7 +9,7 @@ include_directories(${PROJECT_SOURCE_DIR}/embedded-sps/embedded-common)
 #target_link_libraries(example Sqr)
 
 # try sps30manager
-find_library(bcm2835_LIB bcm2835)
+find_library(bcm2835_LIB bcm2835 REQUIRED)
 add_library(Sps30 sps30lib.cpp sps30lib.h)
 add_executable(sps30manager sps30manager.cpp)
 target_link_libraries(sps30manager Sps30 ${BCM2835_LIB})
