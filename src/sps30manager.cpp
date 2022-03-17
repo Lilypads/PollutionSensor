@@ -5,6 +5,7 @@
 
 #include "iostream"
 #include "sps30lib.h"
+#include <bcm2835.h>
 #include <signal.h>
 #include <time.h>
 # include <stdint.h>
