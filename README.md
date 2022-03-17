@@ -6,7 +6,7 @@ For more details on sensors, wiring, UML diagram, other specifications, please h
 
 ### CMAKE
 
-### BCM2835
+### BCM2835 (for Particle Sensor Library)
 
 Install latest version from BCM2835 from : http://www.airspayce.com/mikem/bcm2835/
 
