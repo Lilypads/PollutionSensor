@@ -1,0 +1,89 @@
+#include "sps30.h"
+#include "
+
+void sps30::start(sps30settings settings){
+         sps30settings=settings;
+         
+         if(settings.initPIGPIO){
+         int cfg = gpioCfgGetInternals();
+         cfg |= PI_CFG_NOSIGHANDLER;  // (1<<10)
+         gpioCfgSetInternals(cfg);
+         int status = gpioInitialise();
+         if(status<0){
+               char msg[] = "cannot init pigpio.";
+
+#ifdef DEBUG
+               fprintf(stderr, "%s\n" msg);
+#endif        
+               throw msg;
+            }
+    }
+# idef DEBUG 
+           fprint(stderr, "Init./n");
+#endif
+
+// PARAMETERS = DEVICE SETTINGS
+
+        gpioSetMode(unsigned gpio,PI_INPUT);
+        gpioSetISRFuncEx(unsigned gpio,unsigned edge,ISR_TIMEOUT,gpioISR,(void*)this);
+
+}
+void sps30::dataReady() {
+	//assign read measured value to data 
+       hassample(data)
+}
+
+
+void sps30::stop() {
+	gpioSetISRFuncEx(ads1115settings.drdy_gpio,RISING_EDGE,-1,NULL,(void*)this);
+        if (ads1115settings.initPIGPIO) {
+                gpioTerminate();
+        }
+} 
+
+datatype sps30::STOP_MEASUREMENT() 
+datatype sps30::READ DATA-READY FLAG() 
+datatype sps30::START_MEASUREMENT() 
+datatype sps30::READ_MEASUREMED VALUE()
+datatype sps30::SLEEP() 
+datatype sps30::WAKE_UP() 
+datatype sps30::START_FAN_CLEANING() 
+datatype sps30::AUTOCLEAN_INTERVAL() 
+datatype sps30::READ_PRODUCT_TYPE() 
+datatype sps30::SERIAL_NUMBER() 
+datatype sps30::READ VERSION() 
+datatype sps30::READ_DEVICE_STATUS_REG() 
+datatype sps30::RESET() 
+
+  
+//i2c read write protocol   
+void sps30::i2c_writeByte(){
+      
+      int fd= i2cOpen(unsigned i2cBus, unsigned i2cAddr, 0)
+      if(fd>0){
+#ifdef DEBUG
+		fprintf(stderr,"Could not write\n");
+#endif
+		throw could_not_open_i2c;
+	}
+	i2cWriteByteData(fd, unsigned i2c reg, data);
+	i2cClose(fd);
+}
+void sps30::i2c_readByte(){    // for 2 bytes
+       int fd = i2cOpen(unsigned i2cBus, unsigned i2cAddr, 0);
+	if (fd < 0) {
+#ifdef DEBUG
+		fprintf(stderr,"Could not read byte\n");
+		throw could_not_open_i2c;
+	}
+	int data; 
+	data = i2cReadByteData(fd, unisgned i2cReg);
+	if (data < 0) {
+#ifdef DEBUG
+		fprintf(stderr,"Could not read byte.\n");
+		throw "Could not read from i2c.";
+	}
+	i2cClose(fd);
+	return data;           
+}
+
