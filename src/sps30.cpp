@@ -46,7 +46,7 @@ datatype sps30::STOP_MEASUREMENT(param?){
 } 
 datatype sps30::READ DATA-READY_FLAG(param?) {
    //define param
-   i2c_read(READ DATA-READY FLAG)
+   i2c_write(READ DATA-READY FLAG)
    data= i2c_read(SPS_NBYTES_READ_DATA_READY_FLAG)
    //check crc
 }
