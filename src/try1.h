@@ -70,6 +70,7 @@ public:
 	/**
 	 * Stops the data acquistion
 	 **/
-	void stop(SPS30settings settings);
+	//void stop(SPS30settings settings);
+    void stop();
 
 };
