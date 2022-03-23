@@ -10,10 +10,10 @@ if(settings.initPIGPIO){
          if(status<0){
                char msg[] = "cannot init pigpio.";
 
-#ifdef DEBUG
-               fprintf(stderr, "%s\n" msg);
-#endif        
-               throw msg;
+//#ifdef DEBUG
+  //             fprintf(stderr, "%s\n" msg);
+//#endif        
+  //             throw msg;
             }
     }
 
