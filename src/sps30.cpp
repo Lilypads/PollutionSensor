@@ -40,9 +40,9 @@ datatype sps30::STOP_MEASUREMENT(param?){
    //define param
    i2c_write(SPS_STOP_MEASUREMENT)
 } 
-datatype sps30::READ DATA-READY_FLAG(param?) {
+datatype sps30::READ_DATA_READY_FLAG(param?) {
    //define param
-   i2c_read(READ DATA-READY FLAG)
+   i2c_write(READ DATA-READY FLAG)
    data= i2c_read(SPS_NBYTES_READ_DATA_READY_FLAG)
    //check crc
 }
@@ -50,7 +50,7 @@ datatype sps30::START_MEASUREMENT(param?) {
    //define param
    i2c_write(SPS_STOP_MEASUREMENT)  
 }
-datatype sps30::EADR_MEASUREMED VALUE(param?) {
+datatype sps30::READ_MEASUREMED_VALUE(param?) {
     //define param
     i2c_write(READ_MEASURED_VALUES)
     data = i2c_read(NBYTES_MEASURED_VALUES_FLOAT)
@@ -89,7 +89,7 @@ datatype sps30::SERIAL_NUMBER(param?) {
    //check crc
    //return result
 }
-datatype sps30::READ VERSION(param?){
+datatype sps30::READ_VERSION(param?){
    //define param
    i2c_write(SPS_READ VERSION)
    data= i2c_read(SPS_READ VERSION)
