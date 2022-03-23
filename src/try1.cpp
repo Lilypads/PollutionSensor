@@ -54,7 +54,7 @@ char pnt[2];  //pointer
 char tmp[3];  //buffer for read data
 
 int out = i2cWriteDevice(handle,pnt,2);
-int dataREAD = i2cREADDevice(handle,tmp,3);
+int dataREAD = i2cReadDevice(handle,tmp,3);
 
 //tryyyyyy
 fprintf(stderr,"%d.\n",dataREAD);
