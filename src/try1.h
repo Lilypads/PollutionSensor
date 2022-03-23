@@ -53,7 +53,7 @@ public:
 	 * stops on exit.
 	 **/
 	~SPS30() {
-		stop(SPS30settings settings);
+		stop(SPS30settings settings = SPS30settings());
 	}
 
 
@@ -63,14 +63,16 @@ public:
 	 * callback is called with new samples.
 	 * \param settings A struct with the settings.
 	 **/
-	void start(SPS30settings settings);
+   // SPS30settings customsettings;
+    // customsettings.address =5;
+	void start(SPS30settings settings = SPS30settings());
 
-    void readVersion(SPS30settings settings);
+    void readVersion(SPS30settings settings  = SPS30settings());
 
 	/**
 	 * Stops the data acquistion
 	 **/
-	void stop(SPS30settings settings);
+	void stop(SPS30settings settings = SPS30settings());
     //void stop();
 
 };
