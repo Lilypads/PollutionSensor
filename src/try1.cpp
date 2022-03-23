@@ -9,7 +9,6 @@ if(settings.initPIGPIO){
          int status = gpioInitialise();
          if(status<0){
                char msg[] = "cannot init pigpio.";
-
             }
     }
 
