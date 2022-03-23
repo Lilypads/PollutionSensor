@@ -42,7 +42,10 @@ struct SPS30settings {
 	 **/
 	uint8_t address = DEFAULT_SPS30_ADDRESS;
 
-
+  /**
+	 * If set to true the pigpio will be initialised
+	 **/
+	bool initPIGPIO = true;
 
 };
 

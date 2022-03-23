@@ -2,6 +2,21 @@
 
 void SPS30::start(SPS30settings settings){
 
+if(settings.initPIGPIO){
+         int cfg = gpioCfgGetInternals();
+         cfg |= PI_CFG_NOSIGHANDLER;  // (1<<10)
+         gpioCfgSetInternals(cfg);
+         int status = gpioInitialise();
+         if(status<0){
+               char msg[] = "cannot init pigpio.";
+
+#ifdef DEBUG
+               fprintf(stderr, "%s\n" msg);
+#endif        
+               throw msg;
+            }
+    }
+
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
