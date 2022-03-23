@@ -1,6 +1,8 @@
 #include "sps30.h"
 
-void sps30::start(sps30settings settings){
+//i2cblockwrite(array of bytes)
+
+void sps30::start(SPS30settings settings){
          sps30settings=settings;
          
          if(settings.initPIGPIO){
@@ -21,12 +23,6 @@ void sps30::start(sps30settings settings){
            fprint(stderr, "Init./n");
 #endif
 
-// PARAMETERS = DEVICE SETTINGS
-
-        gpioSetMode(unsigned gpio,PI_INPUT);
-        gpioSetISRFuncEx(unsigned gpio,unsigned edge,ISR_TIMEOUT,gpioISR,(void*)this);
-
-}
 void sps30::dataReady() {
 	//read measured value = data 
        hassample(data)
