@@ -17,7 +17,7 @@ char tmp[4];  //pointer & data to write
 
 int out = i2cWriteDevice(handle,tmp,4);
 
-i2cClose(handle)
+i2cClose(handle);
 }
 
 void SPS30::stop(SPS30settings settings){
@@ -34,7 +34,7 @@ char pnt[2];  //pointer
 	pnt[1] = (char)(STOP_MEASUREMENT_B2 & 0x00ff);
 
 int out = i2cWriteDevice(handle,pnt,2);
-i2cClose(handle)
+i2cClose(handle);
 
 }
 
@@ -59,6 +59,6 @@ int dataREAD = i2cREADDevice(handle,tmp,3);
 //tryyyyyy
 fprintf(stderr,"%d.\n",dataREAD);
 
-i2cClose(handle)
+i2cClose(handle);
 
 }
