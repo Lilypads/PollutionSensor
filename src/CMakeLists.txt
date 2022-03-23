@@ -15,8 +15,8 @@
 #target_link_libraries(sps30manager Sps30 ${BCM2835_LIB} ${BCM2835_INCLUDE_DIR})
 
 
-find_package(pigpio)
-include_directories(${pigpio_INCLUDE_DIRS})
+find_package(libpigpio)
+#include_directories(${pigpio_INCLUDE_DIRS})
 add_library(Try1 try1.cpp try1.h)
 # main code executable
 add_executable(example example.cpp)
