@@ -6,39 +6,11 @@ For more details on sensors, wiring, UML diagram, other specifications, please h
 
 ### CMAKE
 
-### BCM2835 (for Particle Sensor Library)
+### PIGPIO
 
-Install latest version from BCM2835 from : http://www.airspayce.com/mikem/bcm2835/
+For Linux
 
-Example script for Linux (1.71 was version number at the time of writing)
-
-`
-wget http://www.airspayce.com/mikem/bcm2835/bcm2835-1.71.tar.gz
-`
-
-`
-tar zxvf bcm2835-1.71.tar.gz 
-`
-
-`
-cd bcm2835-1.71
-`
-
-`
-./configure
-`
-
-`
-make
-`
-
-`
-sudo make check
-`
-
-`
-sudo make install
-`
+`sudo apt install libpigpio-dev`
 
 ### Boost (optional: for unit tests)
 
