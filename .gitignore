@@ -55,3 +55,6 @@ include/*
 lib/*
 bin/*
 test/test_runner
+src/example
+Testing/Temporary/CTestCostData.txt
+Testing/Temporary/LastTest.log
