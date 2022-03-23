@@ -53,7 +53,7 @@ public:
 	 * stops on exit.
 	 **/
 	~SPS30() {
-		stop();
+		stop(SPS30settings settings);
 	}
 
 
@@ -70,7 +70,7 @@ public:
 	/**
 	 * Stops the data acquistion
 	 **/
-	//void stop(SPS30settings settings);
-    void stop();
+	void stop(SPS30settings settings);
+    //void stop();
 
 };
