@@ -10,7 +10,7 @@
 #define DEBUG
 #endif
 
-//static const char could_not_open_i2c[] = "Could not open I2C.\n";
+static const char could_not_open_i2c[] = "Could not open I2C.\n";
 
 // default address if ADDR is pulled to GND
 #define DEFAULT_SPS30_ADDRESS 0x3c
