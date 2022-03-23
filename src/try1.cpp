@@ -5,7 +5,7 @@ void SPS30::start(SPS30settings settings){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
-                fprintf(stderr,"Could not open %02x.\n",ads1115settings.address);
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
 #endif
                 throw could_not_open_i2c;
         }
@@ -25,7 +25,7 @@ void SPS30::stop(SPS30settings settings){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
-                fprintf(stderr,"Could not open %02x.\n",ads1115settings.address);
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
 #endif
                 throw could_not_open_i2c;
 
@@ -43,7 +43,7 @@ void SPS30::readVersion(SPS30settings settings){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
-                fprintf(stderr,"Could not open %02x.\n",ads1115settings.address);
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
 #endif
                 throw could_not_open_i2c;
 
