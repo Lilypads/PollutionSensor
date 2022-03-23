@@ -44,3 +44,32 @@ struct SPS30settings {
 
 
 };
+
+class SPS30 {
+
+public:
+	/**
+	 * Destructor which makes sure the data acquisition
+	 * stops on exit.
+	 **/
+	~SPS30() {
+		stop();
+	}
+
+
+
+	/**
+	 * Starts the data acquisition in the background and the
+	 * callback is called with new samples.
+	 * \param settings A struct with the settings.
+	 **/
+	void start(SPS30settings settings);
+
+    void readVersion(SPS30settings settings);
+
+	/**
+	 * Stops the data acquistion
+	 **/
+	void stop(SPS30settings settings);
+
+};
