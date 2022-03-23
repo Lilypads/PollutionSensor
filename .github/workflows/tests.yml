@@ -22,6 +22,9 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Install PIGPIO
+      run: sudo apt install libpigpio-dev
+      
     - name: Install Boost
       run: sudo apt install libboost-all-dev
       
