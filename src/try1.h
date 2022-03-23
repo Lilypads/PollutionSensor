@@ -43,6 +43,7 @@ struct SPS30settings {
 	uint8_t address = DEFAULT_SPS30_ADDRESS;
 
 
+
 };
 
 class SPS30 {
@@ -53,10 +54,12 @@ public:
 	 * stops on exit.
 	 **/
 	~SPS30() {
-		stop(SPS30settings settings = SPS30settings());
+		stop();
 	}
 
-
+    SPS30settings getSPS30settings() const {
+		return settings;
+    }
 
 	/**
 	 * Starts the data acquisition in the background and the
@@ -67,12 +70,15 @@ public:
     // customsettings.address =5;
 	void start(SPS30settings settings = SPS30settings());
 
-    void readVersion(SPS30settings settings  = SPS30settings());
+    void readVersion();
 
 	/**
 	 * Stops the data acquistion
 	 **/
-	void stop(SPS30settings settings = SPS30settings());
+	void stop();
     //void stop();
+
+private:
+	SPS30settings settings;
 
 };

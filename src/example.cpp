@@ -27,10 +27,10 @@ fprintf(stderr,"Press any key to stop.\n");
 
 SPS30settings s;
 mySPS.start(s);
-mySPS.readVersion(s);
+mySPS.readVersion();
 
 getchar();
 
-mySPS.stop(s);
+mySPS.stop();
  return 0;
 }

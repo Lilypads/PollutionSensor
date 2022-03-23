@@ -20,7 +20,7 @@ int out = i2cWriteDevice(handle,tmp,4);
 i2cClose(handle);
 }
 
-void SPS30::stop(SPS30settings settings){
+void SPS30::stop(){
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -38,7 +38,7 @@ i2cClose(handle);
 
 }
 
-void SPS30::readVersion(SPS30settings settings){
+void SPS30::readVersion(){
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
