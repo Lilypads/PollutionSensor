@@ -13,7 +13,7 @@
 static const char could_not_open_i2c[] = "Could not open I2C.\n";
 
 // default address if ADDR is pulled to GND
-#define DEFAULT_SPS30_ADDRESS 0x3c
+#define DEFAULT_SPS30_ADDRESS 0x69
 
 #define DUMMY 0x00
 #define START_MEASUREMENT_B1 0x00
