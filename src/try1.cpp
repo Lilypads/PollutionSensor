@@ -28,7 +28,7 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
                 fprintf(stderr,"Could not open %02x.\n",settings.address);
 #endif
                 throw could_not_open_i2c;
-
+        }
 char pnt[2];  //pointer
 	pnt[0] = (char)(( STOP_MEASUREMENT_B1 & 0xff00) >> 8);
 	pnt[1] = (char)(STOP_MEASUREMENT_B2 & 0x00ff);
