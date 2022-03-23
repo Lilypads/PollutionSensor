@@ -16,7 +16,7 @@
 
 
 find_package(libpigpio)
-#include_directories(${pigpio_INCLUDE_DIRS})
+include_directories(${LIBPIGPIO_INCLUDE_DIRS})
 add_library(Try1 try1.cpp try1.h)
 # main code executable
 add_executable(example example.cpp)
