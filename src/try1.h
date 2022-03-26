@@ -17,15 +17,10 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define DEFAULT_SPS30_ADDRESS 0x69
 
 #define DUMMY 0x00
-#define START_MEASUREMENT_B1 0x00
-#define START_MEASUREMENT_B2 0x01
+#define START_MEASUREMENT 0x0001
 #define BIG_ENDIAN_IEEE754_FLOAT_TYPE 0x03
-
-#define STOP_MEASUREMENT_B1 0x01
-#define STOP_MEASUREMENT_B2 0x04
-
-#define READ_VERSION_B1 0xD1
-#define READ_VERSION_B2 0x00
+#define STOP_MEASUREMENT 0x0104
+#define READ_VERSION 0xD100
 
 
 /**
