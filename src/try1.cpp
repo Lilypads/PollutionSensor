@@ -24,10 +24,10 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
                 throw could_not_open_i2c;
         }
 char tmp[4];  //pointer & data to write
-	tmp[0] = (char)(( START_MEASUREMENT_B1 & 0xff00) >> 8);
-	tmp[1] = (char)(START_MEASUREMENT_B2 & 0x00ff);
-	tmp[2] = (char)(( BIG_ENDIAN_IEEE754_FLOAT_TYPE & 0xff00) >> 8);
-	tmp[3] = (char)(DUMMY & 0x00ff);
+	tmp[0] = (char)(( START_MEASUREMENT & 0xff00) >> 8);
+	tmp[1] = (char)(START_MEASUREMENT & 0x00ff);
+	tmp[2] = (char)(BIG_ENDIAN_IEEE754_FLOAT_TYPE);
+	tmp[3] = (char)(DUMMY);
 
 int out = i2cWriteDevice(handle,tmp,4);
 
@@ -44,8 +44,8 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
                 throw could_not_open_i2c;
         }
 char pnt[2];  //pointer
-	pnt[0] = (char)(( STOP_MEASUREMENT_B1 & 0xff00) >> 8);
-	pnt[1] = (char)(STOP_MEASUREMENT_B2 & 0x00ff);
+	pnt[0] = (char)(( STOP_MEASUREMENT & 0xff00) >> 8);
+	pnt[1] = (char)(STOP_MEASUREMENT & 0x00ff);
 
 int out = i2cWriteDevice(handle,pnt,2);
 i2cClose(handle);
@@ -62,8 +62,8 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
                 throw could_not_open_i2c;
         }
 char pnt[2];  //pointer
-	pnt[0] = (char)(( READ_VERSION_B1 & 0xff00) >> 8);
-	pnt[1] = (char)(READ_VERSION_B2 & 0x00ff);
+	pnt[0] = (char)(( READ_VERSION & 0xff00) >> 8);
+	pnt[1] = (char)(READ_VERSION & 0x00ff);
 
 char tmp[3];  //buffer for read data
 
