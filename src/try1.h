@@ -36,7 +36,7 @@ struct SPS30settings {
 	/**
 	 * I2C bus used (99% always set to one)
 	 **/
-	int i2c_bus = 1;
+	uint8_t i2c_bus = 1;
 
 	/**
 	 * I2C address of the sps30

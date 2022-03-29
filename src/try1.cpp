@@ -13,6 +13,10 @@ if(settings.initPIGPIO){
     }
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
+
+        fprintf(stderr,"%d\n",settings.i2c_bus);
+        fprintf(stderr,"%d\n",settings.address);
+        fprintf(stderr,"%d\n",handle);
         if (handle < 0) {
 #ifdef DEBUG
                 fprintf(stderr,"Could not open %02x.\n",settings.address);
