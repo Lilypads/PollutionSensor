@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 # generates commpile_commands.json for LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(CMAKE_BUILD_TYPE Debug)
 #add_library(<name> <wheretofind>)
 add_subdirectory(src)
 add_subdirectory(test)
