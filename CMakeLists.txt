@@ -6,6 +6,8 @@ project(PollutionSensor)
 
 # require C++14
 set(CMAKE_CXX_STANDARD 14)
+# generates commpile_commands.json for LSP
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 #add_library(<name> <wheretofind>)
 add_subdirectory(src)
