@@ -7,6 +7,8 @@
 
 
 add_library(Try1 try1.cpp try1.h)
+
+
 # main code executable
 add_executable(example example.cpp)
 target_link_libraries(example Try1 pigpio)
