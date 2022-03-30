@@ -18,6 +18,8 @@ return 0;
 #include <stdlib.h>
 #include "try1.h"
 
+#define DEBUG
+
 int main()
 {
 
