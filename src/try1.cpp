@@ -81,8 +81,11 @@ if (dataREAD < 0) {
 }
 
 //tryyyyyy
-fprintf(stderr,"Device Data: %.*u\n",(int)sizeof(tmp),(unsigned int*)tmp);
-
+fprintf(stderr,"Device Data: \n");
+for (uint i; i < sizeof(tmp)+1; i++) {
+    fprintf(stderr,"  %.*u \n",(int)sizeof(tmp[i]),tmp[i]);
+}
+fprintf(stderr,"");
 i2cClose(handle);
 
 }
