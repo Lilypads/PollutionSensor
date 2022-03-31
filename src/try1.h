@@ -10,6 +10,9 @@
 #define DEBUG
 #endif
 
+//include guards
+#ifndef TRY1
+#define TRY1
 
 static const char could_not_open_i2c[] = "Could not open I2C.\n";
 
@@ -81,3 +84,5 @@ private:
 	SPS30settings settings;
 
 };
+
+#endif

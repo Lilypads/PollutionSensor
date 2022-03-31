@@ -14,9 +14,10 @@ if(settings.initPIGPIO){
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
-        fprintf(stderr,"%d\n",settings.i2c_bus);
-        fprintf(stderr,"%d\n",settings.address);
-        fprintf(stderr,"%d\n",handle);
+        fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
+        fprintf(stderr,"I2C Address: %x\n",settings.address);
+        fprintf(stderr,"I2C Handle: %i\n",handle);
+
         if (handle < 0) {
 #ifdef DEBUG
                 fprintf(stderr,"Could not open %02x.\n",settings.address);
@@ -71,7 +72,7 @@ int out = i2cWriteDevice(handle,pnt,2);
 int dataREAD = i2cReadDevice(handle,tmp,3);
 
 //tryyyyyy
-fprintf(stderr,"%d.\n",dataREAD);
+fprintf(stderr,"%i\n",dataREAD);
 
 i2cClose(handle);
 
