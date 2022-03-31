@@ -25,13 +25,13 @@ int main()
 
 SPS30 mySPS;
 
-fprintf(stderr,"Press any key to stop.\n");
 
 SPS30settings s;
 
 mySPS.start(s);
 mySPS.readVersion();
 
+fprintf(stderr,"Press any key to stop.\n");
 getchar();
 
 mySPS.stop();

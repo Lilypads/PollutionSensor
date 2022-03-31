@@ -71,8 +71,17 @@ char tmp[3];  //buffer for read data
 int out = i2cWriteDevice(handle,pnt,2);
 int dataREAD = i2cReadDevice(handle,tmp,3);
 
+// i think "dataREAD" is just a flag that indicates the success of the read opperation
+if (dataREAD < 0) {
+#ifdef DEBUG
+                fprintf(stderr,"Could not read from %02x. i2cReadDevice() returned %i\n",settings.address,dataREAD);
+
+#endif
+                throw could_not_open_i2c;
+}
+
 //tryyyyyy
-fprintf(stderr,"%i\n",dataREAD);
+fprintf(stderr,"Device Data: %.*s\n",(int)sizeof(tmp),tmp);
 
 i2cClose(handle);
 
