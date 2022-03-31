@@ -85,6 +85,8 @@ public:
 
     void readVersion();
 
+    void readDRDYFlag();
+
 	/**
 	 * Stops the data acquistion
 	 **/
