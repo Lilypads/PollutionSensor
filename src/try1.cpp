@@ -82,7 +82,7 @@ if (dataREAD < 0) {
 
 //tryyyyyy
 fprintf(stderr,"Device Data: \n");
-for (uint i; i < sizeof(tmp)+1; i++) {
+for (uint i=0; i < sizeof(tmp)+1; i++) {
     fprintf(stderr,"  %.*u \n",(int)sizeof(tmp[i]),tmp[i]);
 }
 fprintf(stderr,"");
