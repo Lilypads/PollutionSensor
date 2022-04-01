@@ -19,6 +19,21 @@ return 0;
 
 #define DEBUG
 
+uint8_t CalcCrc_Local(uint8_t data[2]) {
+    uint8_t crc = 0xFF;
+
+    for(int i = 0; i < 2; i++) {
+        crc ^= data[i];
+        for(uint8_t bit = 8; bit > 0; --bit) {
+            if(crc & 0x80) {
+                crc = (crc << 1) ^ 0x31u;
+            } else {
+                crc = (crc << 1);
+            }
+        }
+    }
+    return crc;
+};
 int main()
 {
 
@@ -44,4 +59,9 @@ getchar();
 
 mySPS.stop();
  return 0;
+
+uint8_t checksum2test [2]= {4,6};
+fprintf(stderr, "Checksum[%u,%u]=%u",checksum2test[0],checksum2test[1],CalcCrc_Local(checksum2test));
+uint8_t checksum2test2 [2]= {6,4};
+fprintf(stderr, "Checksum[%u,%u]=%u",checksum2test2[0],checksum2test2[1],CalcCrc_Local(checksum2test2));
 }
