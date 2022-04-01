@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <pigpio.h>
 #include <assert.h>
+#include <cstring>
 
 // enable debug messages and error messages to stderr
 #ifndef NDEBUG
@@ -26,9 +27,10 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define READ_VERSION 0xD100
 
 #define READ_DRDY_FLAG 0x0202
+#define READ_MEASURED_VALUES 0x0300
 
 //not yet implemented on cpp
-#define READ_MEASURED_VALUES 0x0300
+
 #define START_FAN_CLEANING 0x5607
 #define READWRITE_AUTOCLEANING_INTERVAL 0x8004
 #define READ_DEVICE_STATUS_REGISTER 0xD206
@@ -59,6 +61,52 @@ struct SPS30settings {
 
 };
 
+float bytesToFloat(char b3, char b2, char b1, char b0){
+
+	float f;
+	char b[] = {b3, b2, b1, b0};
+	memcpy(&f, &b, sizeof(f));
+	return f;
+
+}
+
+
+enum SPS30dataOutputIdx{
+		//unit ug/m^3
+		idxMassConcPM1_0 = 0,  
+		idxMassConcPM2_5 = 6,
+		idxMassConcPM4_0 = 12,
+		idxMassConcPM10_0 = 18,
+		//unit #/cm^3
+		idxNumConcPM0_5 = 24,
+		idxNumConcPM1_0 = 30,
+		idxNumConcPM2_5 = 36,
+		idxNumConcPM4_0 = 42,
+		idxNumConcPM10_0 = 48,
+		//unit um
+		idxTypicalParcSize = 54
+};
+
+/**
+ * contain read measurement of the device.
+ **/
+struct SPS30measurement {
+
+	float MassConcPM1_0;
+	float MassConcPM2_5;
+	float MassConcPM4_0;
+	float MassConcPM10_0;
+	float NumConcPM0_5;
+	float NumConcPM1_0;
+	float NumConcPM2_5;
+	float NumConcPM4_0;
+	float NumConcPM10_0;
+	float TypicalParcSize;
+
+
+
+};
+
 class SPS30 {
 
 public:
@@ -86,6 +134,8 @@ public:
     void readVersion();
 
     void readDRDYFlag();
+
+	SPS30measurement readMeasurement();
 
 	/**
 	 * Stops the data acquistion

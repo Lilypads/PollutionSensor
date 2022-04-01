@@ -91,7 +91,7 @@ if (checkERR < 0) {
                 throw could_not_open_i2c;
 }
 
-fprintf(stderr,"Device Data: %u\n",(unsigned int*)tmp);
+fprintf(stderr,"Device Firmware Version: %u,%u\n",(unsigned int*)tmp[0],(unsigned int*)tmp[1]);
 
 i2cClose(handle);
 
@@ -123,12 +123,78 @@ if (checkERR < 0) {
                 throw could_not_open_i2c;
 }
 
-//tryyyyyy
-fprintf(stderr,"Device Data: \n");
-for (uint i=0; i < sizeof(tmp); i++) {
-    fprintf(stderr,"  %.*u \n",(int)sizeof(tmp[i]),tmp[i]);
-}
-fprintf(stderr,"");
+#ifdef DEBUG // comment this out after
+fprintf(stderr,"DRDY Flag: %u\n",(unsigned int*)tmp[1]);
+#endif
+
 i2cClose(handle);
+
+}
+
+
+
+
+SPS30measurement SPS30::readMeasurement(){
+
+        SPS30measurement measurements;
+
+int handle = i2cOpen(settings.i2c_bus, settings.address,0);
+        if (handle < 0) {
+#ifdef DEBUG
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
+#endif
+                throw could_not_open_i2c;
+        }
+char pnt[2];  //pointer
+	pnt[0] = (char)(( READ_MEASURED_VALUES & 0xff00) >> 8);
+	pnt[1] = (char)(READ_MEASURED_VALUES & 0x00ff);
+
+char tmp[60];  //buffer for read data
+
+int out = i2cWriteDevice(handle,pnt,2);
+int checkERR = i2cReadDevice(handle,tmp,3);
+
+if (checkERR < 0) {
+#ifdef DEBUG
+                fprintf(stderr,"Could not read from %02x. i2cReadDevice() returned %i\n",settings.address,checkERR);
+
+#endif
+                throw could_not_open_i2c;
+}
+
+i2cClose(handle);
+
+//get tmp into float >> put in struct
+//measurements = method(tmp)
+
+
+/*
+ we honestly are sorry.
+*/
+
+int i = SPS30dataOutputIdx::idxMassConcPM1_0;
+measurements.MassConcPM1_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxMassConcPM2_5;
+measurements.MassConcPM2_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxMassConcPM4_0;
+measurements.MassConcPM4_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxMassConcPM10_0;
+measurements.MassConcPM10_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+
+i = SPS30dataOutputIdx::idxNumConcPM0_5;
+measurements.NumConcPM0_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxNumConcPM1_0;
+measurements.NumConcPM1_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxNumConcPM2_5;
+measurements.NumConcPM2_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxNumConcPM4_0;
+measurements.NumConcPM4_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i = SPS30dataOutputIdx::idxNumConcPM10_0;
+measurements.NumConcPM10_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+
+i = SPS30dataOutputIdx::idxTypicalParcSize;
+measurements.TypicalParcSize = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+
+return measurements;
 
 }
