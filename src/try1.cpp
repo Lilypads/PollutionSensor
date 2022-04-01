@@ -91,7 +91,7 @@ if (checkERR < 0) {
                 throw could_not_open_i2c;
 }
 
-fprintf(stderr,"Device Data: %.*u\n",(int)sizeof(tmp),(unsigned int*)tmp);
+fprintf(stderr,"Device Data: %u\n",(unsigned int*)tmp);
 
 i2cClose(handle);
 
