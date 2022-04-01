@@ -1,5 +1,21 @@
 #include "try1.h"
 
+uint8_t CalcCrc(uint8_t data[2]) {
+    uint8_t crc = 0xFF;
+
+    for(int i = 0; i < 2; i++) {
+        crc ^= data[i];
+        for(uint8_t bit = 8; bit > 0; --bit) {
+            if(crc & 0x80) {
+                crc = (crc << 1) ^ 0x31u;
+            } else {
+                crc = (crc << 1);
+            }
+        }
+    }
+    return crc;
+};
+
 float bytesToFloat(char b0, char b1, char b2, char b3){
 	float f;
 	char b[] = {b3, b2, b1, b0};
@@ -31,11 +47,22 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 #endif
                 throw could_not_open_i2c;
         }
-char tmp[4];  //pointer & data to write
+
+
+char tmp[5];  //pointer & data to write
 	tmp[0] = (char)(( START_MEASUREMENT & 0xff00) >> 8);
 	tmp[1] = (char)(START_MEASUREMENT & 0x00ff);
 	tmp[2] = (char)(BIG_ENDIAN_IEEE754_FLOAT_TYPE);
 	tmp[3] = (char)(DUMMY);
+
+
+    uint8_t tempData[2];
+   tempData[0] = tmp[2];
+   tempData[1] = tmp[3];
+
+uint8_t checksum = CalcCrc(tempData);
+
+    tmp[4] = (char)(checksum);
 
 int checkERR = i2cWriteDevice(handle,tmp,4);
 
