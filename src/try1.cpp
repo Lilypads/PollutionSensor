@@ -1,5 +1,12 @@
 #include "try1.h"
 
+float bytesToFloat(char b3, char b2, char b1, char b0){
+	float f;
+	char b[] = {b3, b2, b1, b0};
+	memcpy(&f, &b, sizeof(f));
+	return f;
+};
+
 void SPS30::start(SPS30settings settings){
 
 if(settings.initPIGPIO){
@@ -91,7 +98,7 @@ if (checkERR < 0) {
                 throw could_not_open_i2c;
 }
 
-fprintf(stderr,"Device Firmware Version: %u,%u\n",(unsigned int*)tmp[0],(unsigned int*)tmp[1]);
+fprintf(stderr,"Device Firmware Version: %u,%u\n",(int)tmp[0],(int)tmp[1]);
 
 i2cClose(handle);
 
@@ -124,7 +131,7 @@ if (checkERR < 0) {
 }
 
 #ifdef DEBUG // comment this out after
-fprintf(stderr,"DRDY Flag: %u\n",(unsigned int*)tmp[1]);
+fprintf(stderr,"DRDY Flag: %u\n",(int)tmp[1]);
 #endif
 
 i2cClose(handle);

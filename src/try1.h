@@ -61,14 +61,6 @@ struct SPS30settings {
 
 };
 
-float bytesToFloat(char b3, char b2, char b1, char b0){
-
-	float f;
-	char b[] = {b3, b2, b1, b0};
-	memcpy(&f, &b, sizeof(f));
-	return f;
-
-}
 
 
 enum SPS30dataOutputIdx{
