@@ -125,7 +125,7 @@ public:
 
     void readVersion();
 
-    void readDRDYFlag();
+    int readDRDYFlag();
 
 	SPS30measurement readMeasurement();
 

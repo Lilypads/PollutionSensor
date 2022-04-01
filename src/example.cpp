@@ -11,7 +11,6 @@ return 0;
 }
     */
 
-
 #include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -30,6 +29,12 @@ SPS30settings s;
 
 mySPS.start(s);
 mySPS.readVersion();
+
+int dReadyFlag =  mySPS.readDRDYFlag();
+fprintf(stderr, "Data ready flag: %d", dReadyFlag);
+
+SPS30measurement measurmentOut = mySPS.readMeasurement();
+fprintf(stderr,"PM1.0:%f",measurmentOut.MassConcPM1_0);
 
 fprintf(stderr,"Press any key to stop.\n");
 getchar();

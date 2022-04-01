@@ -104,7 +104,7 @@ i2cClose(handle);
 
 }
 
-void SPS30::readDRDYFlag(){
+int SPS30::readDRDYFlag(){
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -135,6 +135,8 @@ fprintf(stderr,"DRDY Flag: %u\n",(int)tmp[1]);
 #endif
 
 i2cClose(handle);
+
+return tmp[1];
 
 }
 
