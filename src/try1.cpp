@@ -1,6 +1,6 @@
 #include "try1.h"
 
-float bytesToFloat(char b3, char b2, char b1, char b0){
+float bytesToFloat(char b0, char b1, char b2, char b3){
 	float f;
 	char b[] = {b3, b2, b1, b0};
 	memcpy(&f, &b, sizeof(f));
