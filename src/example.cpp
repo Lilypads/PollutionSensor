@@ -28,13 +28,16 @@ SPS30 mySPS;
 SPS30settings s;
 
 mySPS.start(s);
+sleep(2);
+
 mySPS.readVersion();
 
 int dReadyFlag =  mySPS.readDRDYFlag();
-fprintf(stderr, "Data ready flag: %d", dReadyFlag);
+fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
 
 SPS30measurement measurmentOut = mySPS.readMeasurement();
-fprintf(stderr,"PM1.0:%f",measurmentOut.MassConcPM1_0);
+fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
+fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
 
 fprintf(stderr,"Press any key to stop.\n");
 getchar();
