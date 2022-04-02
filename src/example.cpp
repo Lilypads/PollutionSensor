@@ -48,6 +48,10 @@ sleep(10);
 mySPS.readVersion();
 sleep(1);
 
+mySPS.readSerialNumber();
+fprintf(stderr, "Serial Number: %.*s\n",SN_LEN_WO_SRC,mySPS.serialNumber);
+sleep(1);
+
 int dReadyFlag =  mySPS.readDRDYFlag();
 fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
 sleep(1);

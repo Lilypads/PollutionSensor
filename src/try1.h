@@ -15,6 +15,9 @@
 #ifndef TRY1
 #define TRY1
 
+#define SN_LEN_W_SRC 48
+#define SN_LEN_WO_SRC SN_LEN_W_SRC*2/3 //this is because there is a checksum byte every 2 data bytes
+
 static const char could_not_open_i2c[] = "Could not open I2C.\n";
 
 // default address if ADDR is pulled to GND
@@ -29,6 +32,7 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define READ_DRDY_FLAG 0x0202
 #define READ_MEASURED_VALUES 0x0300
 
+#define READ_SERIAL_NUMBER 0xD033
 //not yet implemented on cpp
 
 #define START_FAN_CLEANING 0x5607
@@ -136,6 +140,8 @@ public:
 	 **/
 	void stop();
     //void stop();
+
+	char serialNumber[SN_LEN_W_SRC]="";
 
 private:
 	SPS30settings settings;

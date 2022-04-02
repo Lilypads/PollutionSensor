@@ -135,11 +135,51 @@ i2cClose(handle);
 
 }
 
-/*int SPS30::readSerialNumber(){
-uint8_t sendBuff[3];
-sendBuff[0];
+int SPS30::readSerialNumber(){
+
+int handle = i2cOpen(settings.i2c_bus, settings.address,0);
+        if (handle < 0) {
+#ifdef DEBUG
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
+#endif
+                throw could_not_open_i2c;
+        }
+
+char sendBuff[3];
+char retBuff[SN_LEN_W_SRC];
+sendBuff[0] = (char)((READ_SERIAL_NUMBER>>8) & 0xff);
+sendBuff[1] = (char)((READ_SERIAL_NUMBER) & 0xff);
+
+int out = i2cWriteDevice(handle,(char*)sendBuff,2);
+usleep(500000);
+int checkERR = i2cReadDevice(handle,retBuff,3);
+
+// i think "dataREAD" is just a flag that indicates the success of the read opperation >> it is! sorry my bad ;< (Lily)
+if (checkERR < 0) {
+#ifdef DEBUG
+                fprintf(stderr,"Could not read from %02x. i2cReadDevice() returned %i\n",settings.address,checkERR);
+
+#endif
+                throw could_not_open_i2c;
 }
-*/
+
+// loop through all of the returned data and pick out the serial number
+for (uint i = 0; i < SN_LEN_WO_SRC/2; i++) {
+int thisBuffIdx1= i*3;
+int thisBuffIdx2= i*3+1;
+
+int thisSNIdx1= i*2;
+int thisSNIdx2= i*2+1;
+
+serialNumber[thisSNIdx1] = retBuff[thisBuffIdx1];
+serialNumber[thisSNIdx2] = retBuff[thisBuffIdx2];
+}
+
+i2cClose(handle);
+return 1;
+
+}
+
 
 int SPS30::readDRDYFlag(){
 
