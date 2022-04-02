@@ -36,6 +36,7 @@ if(settings.initPIGPIO){
             }
     }
 
+usleep(50000); //sleep for 0.05 seconds
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
@@ -76,7 +77,7 @@ uint8_t checksum = CalcCrc(tempData);
     fprintf(stderr, "\n");
 #endif
 
-usleep(500000);
+usleep(50000);
 
 int checkERR = i2cWriteDevice(handle,tmp,4);
 
@@ -161,7 +162,7 @@ sendBuff[0] = (char)((READ_SERIAL_NUMBER>>8) & 0xff);
 sendBuff[1] = (char)((READ_SERIAL_NUMBER) & 0xff);
 
 int out = i2cWriteDevice(handle,(char*)sendBuff,2);
-usleep(500000);
+usleep(50000);
 int checkERR = i2cReadDevice(handle,retBuff,SN_LEN_W_SRC);
 
 // i think "dataREAD" is just a flag that indicates the success of the read opperation >> it is! sorry my bad ;< (Lily)
@@ -207,7 +208,7 @@ char sendBuff[2];  //pointer
 char retBuff[3];  //buffer for read data
 
 int out = i2cWriteDevice(handle,sendBuff,2);
-usleep(500000); //sleep for 1/2 seconds
+usleep(50000); //sleep for 1/2 seconds
 int checkERR = i2cReadDevice(handle,retBuff,3);
 
 if (checkERR < 0) {
@@ -262,7 +263,7 @@ char pnt[2];  //pointer
 char tmp[60];  //buffer for read data
 
 int out = i2cWriteDevice(handle,pnt,2);
-usleep(500000); //sleep for 1/2 seconds
+usleep(50000); //sleep for 1/2 seconds
 int checkERR = i2cReadDevice(handle,tmp,3);
 
 if (checkERR < 0) {
