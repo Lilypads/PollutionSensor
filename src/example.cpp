@@ -46,19 +46,17 @@ mySPS.start(s);
 sleep(4);
 
 mySPS.readVersion();
+sleep(1);
 
 int dReadyFlag =  mySPS.readDRDYFlag();
 fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
+sleep(1);
 
 SPS30measurement measurmentOut = mySPS.readMeasurement();
 fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
 fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
+sleep(1);
 
-uint8_t checksum2test [2]= {4,6};
-fprintf(stderr, "Checksum[%u,%u]=%u\n",checksum2test[0],checksum2test[1],CalcCrc_Local(checksum2test));
-uint8_t checksum2test2 [2]= {6,4};
-
-fprintf(stderr, "Checksum[%u,%u]=%u\n",checksum2test2[0],checksum2test2[1],CalcCrc_Local(checksum2test2));
 
 fprintf(stderr,"Press any key to stop.\n");
 getchar();
