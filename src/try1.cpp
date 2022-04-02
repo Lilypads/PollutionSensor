@@ -146,7 +146,7 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         }
 
 char sendBuff[3];
-char retBuff[SN_LEN_W_SRC];
+char retBuff[SN_LEN_W_SRC]="";
 sendBuff[0] = (char)((READ_SERIAL_NUMBER>>8) & 0xff);
 sendBuff[1] = (char)((READ_SERIAL_NUMBER) & 0xff);
 
