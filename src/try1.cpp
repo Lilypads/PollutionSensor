@@ -68,9 +68,17 @@ uint8_t checksum = CalcCrc(tempData);
     //checksum
     tmp[4] = (char)(checksum);
 
+#ifdef DEBUG
+   fprintf(stderr, "StartMesurement Command:\n");
+   for (int i = 0; i < sizeof(tmp); i++) {
+    fprintf(stderr, "%u",(uint)tmp[i]);
+   }
+    fprintf(stderr, "\n");
+#endif
+
 usleep(500000);
 
-int checkERR = i2cWriteDevice(handle,tmp,4);
+int checkERR = i2cWriteDevice(i2cHandle,tmp,4);
 
         if (checkERR != 0) {
 #ifdef DEBUG

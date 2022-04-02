@@ -5,39 +5,12 @@
 #+INCLUDE: "~/.doom.d/orgReportHeader.org"
 #+OPTIONS: H:3 d:nil tags:nil email:t toc:t broken-links:t ^:nil #\n:t
 
-* Table Of Contents :TOC_2:
+* Table Of Contents :TOC_1:
 - [[#overview][Overview]]
-  - [[#objectives][Objectives]]
-  - [[#road-map-011][Road Map]]
-  - [[#usage][Usage]]
-  - [[#capabilities][Capabilities]]
-  - [[#hardware-reference][Hardware Reference]]
 -  [[#misc][Misc]]
-  - [[#i2c-on-pi][I2C On Pi]]
-  - [[#links][Links]]
-  - [[#repo][Repo]]
 - [[#hardware-design][Hardware Design]]
-  - [[#hardware-overview][Hardware Overview]]
-  - [[#pi-hat][Pi Hat]]
-  - [[#raspberry-pi-4-details][Raspberry pi 4 details]]
-  - [[#particle-sensor][Particle Sensor]]
-  - [[#gps-module][GPS Module]]
-  - [[#i2c-display][I2C Display]]
-  - [[#storage-device][Storage Device]]
-  - [[#battery][Battery]]
-  - [[#hold-rotary-encoder][HOLD Rotary Encoder]]
 - [[#software][Software]]
-  - [[#softare-overview][Softare Overview]]
-  - [[#usage-state-machine][Usage State Machine]]
-  - [[#oled-display-libraries][Oled Display Libraries]]
-  - [[#user-interface][User Interface]]
-  - [[#particle-sensor-library][Particle Sensor Library]]
-  - [[#gps-library][GPS Library]]
-  - [[#menu-system][Menu System]]
-  - [[#command-line-interface][Command Line Interface]]
-  - [[#display][Display]]
-  - [[#data-upload][Data Upload]]
-  - [[#buttons][Buttons]]
+- [[#peripherals-libraries][Peripherals Libraries]]
 
 * Overview
 [[file:Figures/PollutionSensor_HighLevelDiagram.png]]
@@ -106,6 +79,15 @@ sudo rasp-config
 #+begin_src bash
 i2cdetect -y 1
 #+end_src
+*** Change PY i2C baud rate
+#+begin_src shell
+sudo vim /boot/config.txt
+# added the bit after the comma
+dtparam=i2c_arm=on,i2c_arm_baudrate=10000
+#+end_src
+
+- https://www.raspberrypi-spy.co.uk/2018/02/change-raspberry-pi-i2c-bus-speed/
+
 ** Links
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
 * Hardware Design
@@ -441,7 +423,52 @@ Menu -- display :update display >
 **** Menu State Machine
 *** Configurable Options
 *** Live Display
+
+** TODO Data Upload
+
+** TODO Command Line Interface
+
+** TODO Menu System
+
+* Peripherals Libraries
 ** TODO Particle Sensor Library
+*** Debug info/Expected output
+The following is the expected output as per the script in
+#+begin_example
+Firmware version: 2.3
+Product type: 00080000
+Serial number: 02C7EF1A4F65071C
+Status register: {'speed_status': 'ok', 'laser_status': 'ok', 'fan_status': 'ok'}
+Auto cleaning interval: 172800s
+Set auto cleaning interval: 172800s
+Command Start Mesurement: [0, 16, 3, 0, 172]
+
+ "sensor_data": {
+    "mass_density": {
+      "pm1.0": 2.007,
+      "pm2.5": 2.123,
+      "pm4.0": 2.123,
+      "pm10": 2.123
+    },
+    "particle_count": {
+      "pm0.5": 13.801,
+      "pm1.0": 15.972,
+      "pm2.5": 16.021,
+      "pm4.0": 16.026,
+      "pm10": 16.03
+    },
+    "particle_size": 0.431,
+    "mass_density_unit": "ug/m3",
+    "particle_count_unit": "#/cm3",
+    "particle_size_unit": "um"
+#+end_example
+
+*** Debug python lib
+#+begin_src shell
+git clone https://github.com/dvsu/sps30.git
+python example.py
+#+end_src
+
 *** embedded-sps
 - https://github.com/Sensirion/embedded-sps
 - provided by sensirion themselves
@@ -481,9 +508,6 @@ Menu -- display :update display >
   + 41 stars
   + last commit 6 years ago
   + have GAVLab dependency
-** TODO Menu System
-** TODO Command Line Interface
 ** TODO Display
-** TODO Data Upload
 ** Buttons
 - pi gpio
