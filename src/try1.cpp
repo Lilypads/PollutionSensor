@@ -16,6 +16,7 @@ uint8_t CalcCrc(uint8_t data[2]) {
     return crc;
 };
 
+
 float bytesToFloat(char b3, char b2, char b1, char b0){
 	float f;
 	char b[] = {b3, b2, b1, b0};
@@ -50,11 +51,13 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
 
 char tmp[5];  //pointer & data to write
+
+    // command byte
 	tmp[0] = (char)((START_MEASUREMENT & 0xff00) >> 8);
 	tmp[1] = (char)(START_MEASUREMENT & 0x00ff);
+    // payload
 	tmp[2] = (char)(BIG_ENDIAN_IEEE754_FLOAT_TYPE);
 	tmp[3] = (char)(DUMMY);
-
 
     uint8_t tempData[2];
    tempData[0] = tmp[2];
@@ -62,6 +65,7 @@ char tmp[5];  //pointer & data to write
 
 uint8_t checksum = CalcCrc(tempData);
 
+    //checksum
     tmp[4] = (char)(checksum);
 
 int checkERR = i2cWriteDevice(handle,tmp,4);
@@ -155,6 +159,18 @@ if (checkERR < 0) {
 
 #endif
                 throw could_not_open_i2c;
+}
+
+// check crc
+uint8_t data2CrcCheck[2];
+data2CrcCheck[0] = tmp[0];
+data2CrcCheck[1] = tmp[1];
+uint8_t calculatedCRC = CalcCrc(data2CrcCheck);
+bool passCRC = (uint8_t)tmp[3]==calculatedCRC ;
+if (!passCRC){
+fprintf(stderr,"readDRDTFlag()->Returned Data Failed CRC!\n");
+fprintf(stderr,"  ReturnedCheckSum: %u",uint8_t(tmp[3]));
+fprintf(stderr,"  CalculatedCheckSum: %u",calculatedCRC);
 }
 
 #ifdef DEBUG // comment this out after
