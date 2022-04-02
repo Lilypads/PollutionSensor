@@ -43,16 +43,15 @@ SPS30 mySPS;
 SPS30settings s;
 
 mySPS.start(s);
-sleep(4);
-
-mySPS.readVersion();
-sleep(1);
-
-mySPS.readSerialNumber();
-fprintf(stderr, "Serial Number: %.*s\n",SN_LEN_WO_SRC,mySPS.serialNumber);
 sleep(1);
 
 int dReadyFlag =  mySPS.readDRDYFlag();
+fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
+sleep(1);
+dReadyFlag =  mySPS.readDRDYFlag();
+fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
+sleep(1);
+dReadyFlag =  mySPS.readDRDYFlag();
 fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
 sleep(1);
 
@@ -62,11 +61,18 @@ fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
 sleep(1);
 
 
+mySPS.stop();
+
+mySPS.readVersion();
+sleep(1);
+
+mySPS.readSerialNumber();
+fprintf(stderr, "Serial Number: %.*s\n",SN_LEN_WO_SRC,mySPS.serialNumber);
+sleep(1);
+
 fprintf(stderr,"Press any key to stop.\n");
 getchar();
 
-
-mySPS.stop();
  return 0;
 
 }
