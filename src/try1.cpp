@@ -144,14 +144,14 @@ int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 #endif
                 throw could_not_open_i2c;
         }
-char pnt[2];  //pointer
-	pnt[0] = (char)(( READ_DRDY_FLAG & 0xff00) >> 8);
-	pnt[1] = (char)(READ_DRDY_FLAG & 0x00ff);
+char sendBuff[2];  //pointer
+	sendBuff[0] = (char)(( READ_DRDY_FLAG & 0xff00) >> 8);
+	sendBuff[1] = (char)(READ_DRDY_FLAG & 0x00ff);
 
-char tmp[3];  //buffer for read data
+char retBuff[3];  //buffer for read data
 
-int out = i2cWriteDevice(handle,pnt,2);
-int checkERR = i2cReadDevice(handle,tmp,3);
+int out = i2cWriteDevice(handle,sendBuff,2);
+int checkERR = i2cReadDevice(handle,retBuff,3);
 
 if (checkERR < 0) {
 #ifdef DEBUG
@@ -163,23 +163,24 @@ if (checkERR < 0) {
 
 // check crc
 uint8_t data2CrcCheck[2];
-data2CrcCheck[0] = tmp[0];
-data2CrcCheck[1] = tmp[1];
+data2CrcCheck[0] = retBuff[0];
+data2CrcCheck[1] = retBuff[1];
 uint8_t calculatedCRC = CalcCrc(data2CrcCheck);
-bool passCRC = (uint8_t)tmp[3]==calculatedCRC ;
+bool passCRC = (uint8_t)retBuff[2]==calculatedCRC ;
 if (!passCRC){
 fprintf(stderr,"readDRDTFlag()->Returned Data Failed CRC!\n");
-fprintf(stderr,"  ReturnedCheckSum: %u",uint8_t(tmp[3]));
-fprintf(stderr,"  CalculatedCheckSum: %u",calculatedCRC);
+fprintf(stderr,"  ReturnedCheckSum: %u\n",uint8_t(retBuff[3]));
+fprintf(stderr,"  CalculatedCheckSum: %u\n",calculatedCRC);
+fprintf(stderr,"\n");
 }
 
 #ifdef DEBUG // comment this out after
-fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)tmp[1]);
+fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)retBuff[1]);
 #endif
 
 i2cClose(handle);
 
-return tmp[1];
+return retBuff[1];
 
 }
 
