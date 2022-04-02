@@ -78,7 +78,7 @@ uint8_t checksum = CalcCrc(tempData);
 
 usleep(500000);
 
-int checkERR = i2cWriteDevice(i2cHandle,tmp,4);
+int checkERR = i2cWriteDevice(handle,tmp,4);
 
         if (checkERR != 0) {
 #ifdef DEBUG
