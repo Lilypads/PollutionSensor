@@ -135,6 +135,12 @@ i2cClose(handle);
 
 }
 
+/*int SPS30::readSerialNumber(){
+uint8_t sendBuff[3];
+sendBuff[0];
+}
+*/
+
 int SPS30::readDRDYFlag(){
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
@@ -151,6 +157,7 @@ char sendBuff[2];  //pointer
 char retBuff[3];  //buffer for read data
 
 int out = i2cWriteDevice(handle,sendBuff,2);
+usleep(500000); //sleep for 1/2 seconds
 int checkERR = i2cReadDevice(handle,retBuff,3);
 
 if (checkERR < 0) {
@@ -205,6 +212,7 @@ char pnt[2];  //pointer
 char tmp[60];  //buffer for read data
 
 int out = i2cWriteDevice(handle,pnt,2);
+usleep(500000); //sleep for 1/2 seconds
 int checkERR = i2cReadDevice(handle,tmp,3);
 
 if (checkERR < 0) {

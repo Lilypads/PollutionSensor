@@ -43,7 +43,7 @@ SPS30 mySPS;
 SPS30settings s;
 
 mySPS.start(s);
-sleep(4);
+sleep(10);
 
 mySPS.readVersion();
 sleep(1);

@@ -127,6 +127,8 @@ public:
 
     int readDRDYFlag();
 
+    int readSerialNumber();
+
 	SPS30measurement readMeasurement();
 
 	/**
