@@ -152,7 +152,7 @@ sendBuff[1] = (char)((READ_SERIAL_NUMBER) & 0xff);
 
 int out = i2cWriteDevice(handle,(char*)sendBuff,2);
 usleep(500000);
-int checkERR = i2cReadDevice(handle,retBuff,3);
+int checkERR = i2cReadDevice(handle,retBuff,SN_LEN_W_SRC);
 
 // i think "dataREAD" is just a flag that indicates the success of the read opperation >> it is! sorry my bad ;< (Lily)
 if (checkERR < 0) {
