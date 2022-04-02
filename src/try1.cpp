@@ -68,6 +68,8 @@ uint8_t checksum = CalcCrc(tempData);
     //checksum
     tmp[4] = (char)(checksum);
 
+usleep(500000);
+
 int checkERR = i2cWriteDevice(handle,tmp,4);
 
         if (checkERR != 0) {
