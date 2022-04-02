@@ -158,7 +158,7 @@ if (checkERR < 0) {
 }
 
 #ifdef DEBUG // comment this out after
-fprintf(stderr,"DRDY Flag: %u\n",(int)tmp[1]);
+fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)tmp[1]);
 #endif
 
 i2cClose(handle);
