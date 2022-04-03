@@ -40,35 +40,21 @@ SPS30measurement measurmentOut;
 class SPS30Printer: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         fprintf(stderr,"PM1.0: %f\n",thisMeasurement.MassConcPM1_0);
+	fprintf(stderr,"Typical Particle size: %f\n", thisMeasurement.TypicalParcSize);
     }
 };
 
 int main()
 {
 
-
 SPS30Printer mySPS;
-mySPS.readMeasurement();
-fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
-fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
 
 mySPS.startMeasurement();
-sleep(4);
-
-int dReadyFlag =  mySPS.readDRDYFlag();
-fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
-
-measurmentOut = mySPS.readMeasurement();
-fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
-fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
-
-sleep(1);
-
-mySPS.stop();
-
 
 fprintf(stderr,"Press any key to stop.\n");
 getchar();
+
+mySPS.stop();
 
  return 0;
 

@@ -42,7 +42,7 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define CLEAR_DEVICE_STATUS_REGISTER 0xD210
 #define RESET 0xD304
 
-#define DRD_POLLINGPERIOD_US 500000 //every 0.050s
+#define DRD_POLLINGPERIOD_US 50000 //every 0.050s
 
 /**
  * initial settings when starting the device.

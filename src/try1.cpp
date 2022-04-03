@@ -121,6 +121,8 @@ isPollingDRDY = true;
 void SPS30::stop(){
 // stop the polling thread
 isPollingDRDY = false;
+//we need to wait at least this long for the polling thread to die  
+usleep(DRD_POLLINGPERIOD_US*1.2);
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -265,7 +267,7 @@ fprintf(stderr,"\n");
 }
 
 #ifdef DEBUG // comment this out after
-fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)retBuff[1]);
+//fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)retBuff[1]);
 #endif
 
 i2cClose(handle);
