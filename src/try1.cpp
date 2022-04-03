@@ -121,9 +121,15 @@ isPollingDRDY = true;
 void SPS30::stop(){
 // stop the polling thread
 isPollingDRDY = false;
-//we need to wait at least this long for the polling thread to die  
-usleep(DRD_POLLINGPERIOD_US*1.2);
 
+
+//wait for polling thread to finish
+if (nullptr != daqThread) {
+    daqThread->join();
+    delete daqThread;
+    daqThread = nullptr;
+}
+// move device out of mesurement mode
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -143,8 +149,6 @@ int checkERR = i2cWriteDevice(handle,pnt,2);
         }
 
 i2cClose(handle);
-
-
 }
 
 void SPS30::readVersion(){
