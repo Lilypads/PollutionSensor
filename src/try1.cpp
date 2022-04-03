@@ -95,9 +95,32 @@ int checkERR = i2cWriteDevice(handle,tmp,5);
 #endif
         }
 i2cClose(handle);
+
+// start up daq thread
+
+if (nullptr != daqThread) {
+    // already running
+    return;
 }
 
+//start the polling thread
+daqThread = new std::thread(execPollingThread,this);
+
+};
+
+void SPS30::pollDRDYFlag(){
+isPollingDRDY = true;
+    while (isPollingDRDY) {
+        if(readDRDYFlag()){
+            hasMeasurmentCB(readMeasurement());
+        }
+        usleep(DRD_POLLINGPERIOD_US);
+    }
+};
+
 void SPS30::stop(){
+// stop the polling thread
+isPollingDRDY = false;
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -118,6 +141,7 @@ int checkERR = i2cWriteDevice(handle,pnt,2);
         }
 
 i2cClose(handle);
+
 
 }
 
@@ -255,7 +279,7 @@ return retBuff[1];
 
 SPS30measurement SPS30::readMeasurement(){
 
-        SPS30measurement measurements;
+SPS30measurement measurements;
 
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {

@@ -5,6 +5,7 @@
 #include <pigpio.h>
 #include <assert.h>
 #include <cstring>
+#include <thread>
 
 // enable debug messages and error messages to stderr
 #ifndef NDEBUG
@@ -41,7 +42,7 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define CLEAR_DEVICE_STATUS_REGISTER 0xD210
 #define RESET 0xD304
 
-
+#define DRD_POLLINGPERIOD_US 500000 //every 0.050s
 
 /**
  * initial settings when starting the device.
@@ -123,6 +124,10 @@ public:
     }
 
 	/**
+  	 * The user must implement this callback
+    	 * */
+	virtual void hasMeasurmentCB(SPS30measurement measurement) = 0;
+	/**
 	 * Starts the data acquisition in the background and the
 	 * callback is called with new samples.
 	 * \param settings A struct with the settings.
@@ -130,14 +135,15 @@ public:
    // SPS30settings customsettings;
     // customsettings.address =5;
 	void startMeasurement();
+	SPS30measurement measurement;
 
-    void readVersion();
+    void readVersion(); // TODO this doesnt return anything unlike other fucntions would be good to have only an optional print
 
     int readDRDYFlag();
 
-    int readSerialNumber();
+    int readSerialNumber(); // TODO this currently only reads the serial number to a class property!!
 
-	SPS30measurement readMeasurement();
+	SPS30measurement readMeasurement(); // this spits out the mesurement which i think is the rigt thing to do
 
 	/**
 	 * Stops the data acquistion
@@ -148,6 +154,13 @@ public:
 	char serialNumber[SN_LEN_W_SRC]="";
 
 private:
+	void pollDRDYFlag();
+	bool isPollingDRDY=0;
+
+	static void execPollingThread(SPS30* thisClassPtr){
+	thisClassPtr->pollDRDYFlag();
+	}
+	std::thread* daqThread = nullptr;
 	SPS30settings settings;
 
 };

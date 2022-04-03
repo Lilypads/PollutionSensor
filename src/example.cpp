@@ -34,38 +34,38 @@ uint8_t CalcCrc_Local(uint8_t data[2]) {
     }
     return crc;
 };
+
+SPS30measurement measurmentOut;
+
+class SPS30Printer: public SPS30 {
+    virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
+        fprintf(stderr,"PM1.0: %f\n",thisMeasurement.MassConcPM1_0);
+    }
+};
+
 int main()
 {
 
-SPS30 mySPS;
 
-mySPS.startMeasurement();
-sleep(1);
-
-int dReadyFlag =  mySPS.readDRDYFlag();
-fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
-
-SPS30measurement measurmentOut = mySPS.readMeasurement();
+SPS30Printer mySPS;
+mySPS.readMeasurement();
 fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
 fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
-sleep(1);
 
-dReadyFlag =  mySPS.readDRDYFlag();
+mySPS.startMeasurement();
+sleep(4);
+
+int dReadyFlag =  mySPS.readDRDYFlag();
 fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
 
 measurmentOut = mySPS.readMeasurement();
 fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
 fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
+
 sleep(1);
 
 mySPS.stop();
 
-mySPS.readVersion();
-sleep(1);
-
-mySPS.readSerialNumber();
-fprintf(stderr, "Serial Number: %.*s\n",SN_LEN_WO_SRC,mySPS.serialNumber);
-sleep(1);
 
 fprintf(stderr,"Press any key to stop.\n");
 getchar();
