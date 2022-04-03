@@ -229,7 +229,7 @@ class SPS30
      */
     bool probe();
     bool reset() {return(Instruct(I2C_RESET));}
-    bool start() {return(Instruct(I2C_START_MEASUREMENT));}
+    bool startMesurementAquisition() {return(Instruct(I2C_START_MEASUREMENT));}
     bool stop()  {return(Instruct(I2C_STOP_MEASUREMENT));}
     bool clean() {return(Instruct(I2C_START_FAN_CLEANING));}
 

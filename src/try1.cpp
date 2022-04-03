@@ -24,7 +24,9 @@ float bytesToFloat(char b3, char b2, char b1, char b0){
 	return f;
 };
 
-void SPS30::start(SPS30settings settings){
+// constructor
+SPS30::SPS30(SPS30settings userSettings){
+    settings = userSettings;
 
 if(settings.initPIGPIO){
          int cfg = gpioCfgGetInternals();
@@ -35,8 +37,14 @@ if(settings.initPIGPIO){
                char msg[] = "cannot init pigpio.";
             }
     }
+};
 
-usleep(50000); //sleep for 0.05 seconds
+//destructor
+SPS30::~SPS30(){
+    stop();
+};
+
+void SPS30::startMeasurement(){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
@@ -279,34 +287,32 @@ i2cClose(handle);
 //get tmp into float >> put in struct
 //measurements = method(tmp)
 
-
 /*
  we honestly are sorry.
 */
 
 int i = SPS30dataOutputIdx::idxMassConcPM1_0;
-measurements.MassConcPM1_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+measurements.MassConcPM1_0  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 i = SPS30dataOutputIdx::idxMassConcPM2_5;
-measurements.MassConcPM2_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+measurements.MassConcPM2_5  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 i = SPS30dataOutputIdx::idxMassConcPM4_0;
-measurements.MassConcPM4_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+measurements.MassConcPM4_0  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 i = SPS30dataOutputIdx::idxMassConcPM10_0;
 measurements.MassConcPM10_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 
-i = SPS30dataOutputIdx::idxNumConcPM0_5;
-measurements.NumConcPM0_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
-i = SPS30dataOutputIdx::idxNumConcPM1_0;
-measurements.NumConcPM1_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
-i = SPS30dataOutputIdx::idxNumConcPM2_5;
-measurements.NumConcPM2_5 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
-i = SPS30dataOutputIdx::idxNumConcPM4_0;
-measurements.NumConcPM4_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
-i = SPS30dataOutputIdx::idxNumConcPM10_0;
-measurements.NumConcPM10_0 = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i  = SPS30dataOutputIdx::idxNumConcPM0_5;
+measurements.NumConcPM0_5   = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i  = SPS30dataOutputIdx::idxNumConcPM1_0;
+measurements.NumConcPM1_0   = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i  = SPS30dataOutputIdx::idxNumConcPM2_5;
+measurements.NumConcPM2_5   = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i  = SPS30dataOutputIdx::idxNumConcPM4_0;
+measurements.NumConcPM4_0   = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+i  = SPS30dataOutputIdx::idxNumConcPM10_0;
+measurements.NumConcPM10_0  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 
 i = SPS30dataOutputIdx::idxTypicalParcSize;
 measurements.TypicalParcSize = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 
 return measurements;
-
 }

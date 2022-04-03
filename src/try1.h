@@ -107,12 +107,16 @@ class SPS30 {
 
 public:
 	/**
+	 * Constructor
+	 *
+	 **/
+	SPS30(SPS30settings settings = SPS30settings());
+
+	/**
 	 * Destructor which makes sure the data acquisition
 	 * stops on exit.
 	 **/
-	~SPS30() {
-		stop();
-	}
+	~SPS30();
 
     SPS30settings getSPS30settings() const {
 		return settings;
@@ -125,7 +129,7 @@ public:
 	 **/
    // SPS30settings customsettings;
     // customsettings.address =5;
-	void start(SPS30settings settings = SPS30settings());
+	void startMeasurement();
 
     void readVersion();
 

@@ -39,27 +39,24 @@ int main()
 
 SPS30 mySPS;
 
-
-SPS30settings s;
-
-mySPS.start(s);
+mySPS.startMeasurement();
 sleep(1);
 
 int dReadyFlag =  mySPS.readDRDYFlag();
 fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
-sleep(1);
-dReadyFlag =  mySPS.readDRDYFlag();
-fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
-sleep(1);
-dReadyFlag =  mySPS.readDRDYFlag();
-fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
-sleep(1);
 
 SPS30measurement measurmentOut = mySPS.readMeasurement();
 fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
 fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
 sleep(1);
 
+dReadyFlag =  mySPS.readDRDYFlag();
+fprintf(stderr, "Data ready flag: %d\n", dReadyFlag);
+
+measurmentOut = mySPS.readMeasurement();
+fprintf(stderr,"PM1.0: %f\n",measurmentOut.MassConcPM1_0);
+fprintf(stderr,"Typical Particle size: %f\n", measurmentOut.TypicalParcSize);
+sleep(1);
 
 mySPS.stop();
 
