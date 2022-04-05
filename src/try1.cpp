@@ -1,4 +1,12 @@
 #include "try1.h"
+/*
+* TODO move CalcCrc into a member function
+* TODO handle the CTRL+c signal (call close)
+* TODO general cleanup
+  * test without the sleeps throught the code
+  * would be nice to have a debug printer where you could just specify the debug level
+* TODO implement a nice printing method
+     * */
 
 uint8_t CalcCrc(uint8_t data[2]) {
     uint8_t crc = 0xFF;
