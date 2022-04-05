@@ -1,24 +1,14 @@
-/*#include "sqr.h"
-#include "sqr.cpp"
-#include "iostream"
-#include "sps30.h"
-//#include "sps30lib.h"
-
-int main()
-{
-std::cout << "Hello World!" << sqr(2) << std::endl;
-return 0;
-}
-    */
-
 #include <stdint.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "try1.h"
+#include "libsps30.h"
 
 #define DEBUG
 
+/**
+ * calculate checksum locally
+ **/
 uint8_t CalcCrc_Local(uint8_t data[2]) {
     uint8_t crc = 0xFF;
 
@@ -35,8 +25,6 @@ uint8_t CalcCrc_Local(uint8_t data[2]) {
     return crc;
 };
 
-SPS30measurement measurmentOut;
-
 class SPS30Printer: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         fprintf(stderr,"PM1.0: %f\n",thisMeasurement.MassConcPM1_0);
@@ -49,10 +37,16 @@ int main()
 
 SPS30Printer mySPS;
 
-mySPS.startMeasurement();
+SPS30settings s;
+s.autoStartThread = false;
 
+mySPS.startMeasurement(s);
+mySPS.readSerialNumber();
+mySPS.readVersion();
 fprintf(stderr,"Press any key to stop.\n");
+
 getchar();
+
 
 mySPS.stop();
 

@@ -6,9 +6,8 @@
 #target_link_libraries(example Sqr)
 
 
-add_library(Try1 try1.cpp try1.h)
-
+add_library(libsps30 libsps30.cpp libsps30.h)
 
 # main code executable
-add_executable(example example.cpp)
-target_link_libraries(example Try1 pigpio)
+add_executable(sps30demo sps30demo.cpp)
+target_link_libraries(sps30demo libsps30 pigpio)

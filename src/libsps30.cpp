@@ -1,5 +1,8 @@
-#include "try1.h"
+#include "libsps30.h"
 
+/**
+* function to calculate checksum for data communication.
+**/
 uint8_t CalcCrc(uint8_t data[2]) {
     uint8_t crc = 0xFF;
 
@@ -16,7 +19,9 @@ uint8_t CalcCrc(uint8_t data[2]) {
     return crc;
 };
 
-
+/**
+* function to change 4 bytes data into floating value.
+**/
 float bytesToFloat(char b0, char b1, char b2, char b3){
 	float f;
 	char b[] = {b3, b2, b1, b0};
@@ -44,7 +49,8 @@ SPS30::~SPS30(){
     stop();
 };
 
-void SPS30::startMeasurement(){
+void SPS30::startMeasurement(SPS30settings userSettings){
+    settings = userSettings;
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
@@ -106,6 +112,10 @@ if (nullptr != daqThread) {
 //start the polling thread
 daqThread = new std::thread(execPollingThread,this);
 
+if(!settings.autoStartThread){
+    isPollingDRDY = false;
+}
+
 };
 
 void SPS30::pollDRDYFlag(){
@@ -114,7 +124,7 @@ isPollingDRDY = true;
         if(readDRDYFlag()){
             hasMeasurmentCB(readMeasurement());
         }
-        usleep(DRD_POLLINGPERIOD_US);
+        usleep(DRDY_POLLINGPERIOD_US);
     }
 };
 
