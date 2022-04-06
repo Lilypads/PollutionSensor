@@ -34,12 +34,12 @@ close(fd);
 };
 
 void NEO6M::pollUartDev(){
-    char circBuff[NMEA_MAX_SENTENCE_SIZE*2]; //this way we can fit at least one full message in regardless of where we start
+    char rb[NMEA_MAX_SENTENCE_SIZE*2]; //this way we can fit at least one full message in regardless of where we start
     char data2Send[NMEA_MAX_SENTENCE_SIZE];
     // not that i think the raspberry pi is 64 bit but i dont think my lsp know this
     char* circBuffPtr;
     uint16_t rbHead=0; //this is the most recent data element
-    uint16_t rbIdxLast = sizeof(circBuff); //
+    uint16_t rbIdxLast = sizeof(rb); //
     uint16_t rbRemainingVerticalSpace;
     int rbLatestStartChar =-1; //int so we can invalidate it
 
@@ -61,12 +61,12 @@ void NEO6M::pollUartDev(){
 
         //decide how many more bytes we can cram into our buffer
         rbRemainingVerticalSpace = rbIdxLast-rbHead;
-        rbHead%=sizeof(circBuff);//wrap the data start pointer
         // read the byte into the buffer
         nbytes = read(fd,circBuffPtr+rbHead,rbRemainingVerticalSpace);
         if(nbytes<=0){
             fprintf(stderr, "failed to read from port, read() returned %d\n", nbytes);
         }
+        tcflush(fd,TCIFLUSH); //BF flush the buffered data, we care only for the here and now!
         //scan the HEAD through the new bytes to see if we recieved a termination character
         // or a sentance start character
         //note this will never wrap because we only ever ask for the remaining
@@ -74,7 +74,7 @@ void NEO6M::pollUartDev(){
         idxLastNewElement = rbHead+nbytes;
         while (rbHead<idxLastNewElement) {
            // first we track if we encounter any message starts
-           if (circBuff[rbHead]==NMEA_SENTENCE_START_DELIM){
+           if (rb[rbHead]==NMEA_SENTENCE_START_DELIM){
                // we only ever need to track one of these because there should only be one per sentence
                if (rbLatestStartChar>0){
                    fprintf(stderr, "Detected multiple sentace starts without a sentance Termiation, will Use Latest and disregard the rest\n");
@@ -83,7 +83,7 @@ void NEO6M::pollUartDev(){
 
            }
            // we detected the termination character
-           if (circBuff[rbHead]==NMEA_SENTENCE_END_DELIM){
+           if (rb[rbHead]==NMEA_SENTENCE_END_DELIM){
                // calculate length of scanned data
                scanDataLen = rbHead - rbLatestStartChar;
                buffDataLen = rbHead - rbLatestStartChar;
@@ -93,48 +93,77 @@ void NEO6M::pollUartDev(){
                }
                // here we need to decide
                if (scanDataLen<0){
-                   scanDataLen = rbHead + sizeof(circBuff)-rbLatestStartChar;
-                   lenFirstPart = sizeof(circBuff)- rbLatestStartChar;
+                   scanDataLen = rbHead + sizeof(rb)-rbLatestStartChar;
+                   lenFirstPart = sizeof(rb)- rbLatestStartChar;
                    lenSecondPart = rbHead; // compiler will optimise this one away
+                   //some nasty pointer stuff needed here to copy only the bit we want if theres a mistake... its likey here!
+                   std::copy(std::begin(*(&rb+rbLatestStartChar)),std::end(rb),nmeaSentence.begin());
+                   std::copy(std::begin(rb),std::end(*(&rb+lenFirstPart)),nmeaSentence.at(lenFirstPart));
 
-                   memcpy(data2Send, circBuff+rbLatestStartChar,lenFirstPart);
-                   memcpy(data2Send+lenFirstPart, circBuff, lenSecondPart);
+                   //im using std::array now because i thought it might be cleaner...
+                   //memcpy(data2Send, cb+rbLatestStartChar,lenFirstPart);
+                   //memcpy(data2Send+lenFirstPart, cb, lenSecondPart);
                 }
                else{
-                   memcpy(data2Send, circBuff+rbLatestStartChar, scanDataLen);
+                   //memcpy(data2Send, cb+rbLatestStartChar, scanDataLen);
+                   std::copy(std::begin(*(&rb+rbLatestStartChar)),std::end(rb),nmeaSentence.at(lenFirstPart));
                }
                if (scanDataLen>NMEA_MAX_SENTENCE_SIZE){
                    fprintf(stderr, "Warning: NMEA sentence length greater than Expected. message corruption may occur! (%d)",scanDataLen);
                }
                //now we have to reconstitute the ringbufferised sentence into the right order
-               hasNmeaSentance(data2Send, scanDataLen);
+               hasNmeaSentance(scanDataLen);
                //un set the latest sentance start flag
                rbLatestStartChar = -1;
            }
        }
+    // increment head
+    rbHead ++;
+    rbHead%=sizeof(rb);//wrap the data start pointer
     }
+};
+
+void NEO6M::hasNmeaSentance(int dataLen){
+    int datalen = parseNmeaStr(sentenceType,data,checksum); //
+
+};
+
+int parseNmeaStr(std::array<char,NMEA_SENTANCE_TYPE_lENGTH> &sentenceType, std::array<char,NMEA_MAX_DATA_FIELD_SIZE/2> &data, std::array<char,NMEA_CHECKSUM_LENGTH>  &checksum){
+// loop through the array
+for (int i; i < nmeaSentence; i++) {
+
+}
+
 };
 
 int NEO6M::configurePort(int fd, int baud){
 // adapted from:
 // https://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c
       struct termios tty;
-        if (tcgetattr (fd, &tty) != 0)
-        {
-                fprintf(stderr,"error %d from tcgetattr", errno);
-                return -1;
+      if (tcgetattr (fd, &tty) != 0){
+                perror("Failed to return Uart Port attributes");
+                exit(1);//
         }
 
-        cfsetospeed(&tty, baud);
-        cfsetispeed(&tty, baud);
+        if (cfsetospeed(&tty, baud) !=0){
+                perror("Failed to set Uart port Send BaudRate");
+                exit(2);//
+        };
 
+        if (cfsetispeed(&tty, baud) !=0){
+                perror("Failed to set Uart port Recieve BaudRate");
+                exit(3);//
+        };
+        /* control modes */
         tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
         // disable IGNBRK for mismatched speed tests; otherwise receive break
         // as \000 chars
         tty.c_iflag &= ~IGNBRK;         // disable break processing
-        tty.c_lflag = 0;                // no signaling chars, no echo,
+        // cannonical read flag return on a linebreak (set to zero for non canon)
+        // the echo is to do with terminals since you need to see the chars you type
+        tty.c_lflag |= ICANON;                // BF local modes - no signaling chars, no echo,
                                         // no canonical processing
-        tty.c_oflag = 0;                // no remapping, no delays
+        tty.c_oflag = 0;                // BF output modes - no remapping, no delays
         /*
         * Im setting vmin to 1 here which means we read out bytes 1 at a
         * time which is inefficient but there is no other way to make
@@ -146,9 +175,9 @@ int NEO6M::configurePort(int fd, int baud){
         * callback
             */
         tty.c_cc[VMIN]  = 1;            // set to blocking buffer at least 1 char
-        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
+        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout (deciseconds)
 
-        tty.c_iflag &= ~(IXON | IXOFF | IXANY); // shut off xon/xoff ctrl
+        tty.c_iflag &= ~(IXON | IXOFF | IXANY); //BF input modes - shut off xon/xoff ctrl
 
         tty.c_cflag |= (CLOCAL | CREAD);// ignore modem controls,
         // enable reading
@@ -157,12 +186,11 @@ int NEO6M::configurePort(int fd, int baud){
         tty.c_cflag &= ~CSTOPB;
         tty.c_cflag &= ~CRTSCTS;
 
-        if (tcsetattr (fd, TCSANOW, &tty) != 0)
-        {
-               fprintf(stderr, "Failed to configure port");
-                return -1;
+        if (tcsetattr (fd, TCSANOW, &tty) != 0){
+                perror("Failed to Set Uart Port attributes");
+                exit(4);//
         }
-        return 0;
+        return 0;//sucess
 };
 
 bool NEO6M::testChecksum(char* sentance){

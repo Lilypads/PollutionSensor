@@ -16,6 +16,8 @@
 #define NMEA_SENTENCE_START_DELIM '$'
 #define NMEA_SENTENCE_END_DELIM '\n'
 #define NMEA_SENTENCE_CHECKSUM_DELIM '*'
+#define NMEA_SENTANCE_TYPE_lENGTH 5
+#define NMEA_CHECKSUM_LENGTH 2
 #define NMEA_SENTENCE_DATA_DELIM ','
 #define NMEA_SENTENCE_MIN_SIZE 20 //this is just based on what ive seen
 #define NMEA_MAX_SENTANCES_IN_BUFF CIRC_BUFF_SIZE/NMEA_SENTENCE_MIN_SIZE
@@ -34,6 +36,21 @@ int hexChar2IntLUT[] =
 -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 64-79
 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 80-95
 -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 96-111
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 112-127
+};
+
+
+int decChar2IntLUT[] =
+    {
+// ASCII
+//0  1   2   3   4   5   6   7   7   8   10 11  12  13  14  15
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 0-15
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 16-31
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 32-47
+ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, -1, -1, -1, -1, -1, -1, // 48-63
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 64-79
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 80-95
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 96-111
 -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 112-127
 };
 
@@ -57,13 +74,13 @@ struct neo6mMeasurment{
     bool dropout;
 };
 
-class NEO6M{
+class NEO6M {
 //public properties
-    public:
+public:
     //constructor
     NEO6M(neo6mSettings theseSettings = neo6mSettings());
     //destructor
-    ~NEO6M();
+//    ~NEO6M();
 
     void startMeasurement();
     void stopMeasurement();
@@ -71,23 +88,29 @@ class NEO6M{
     neo6mMeasurment lastCompleteSample;
     uint timeLastSample;
     //user must implement this method!
-    virtual void hasMeasurementCB() = 0;
+    virtual void hasMeasurementCB(neo6mMeasurment thisMesurement) = 0;
 
 //private methods
-    private:
+private:
     int fd = -1; //file handle
-    void hasNmeaSentance(char* sentence, uint dataSize); // TODO //the polling method will call this once a full sentance has been recieved
+    void hasNmeaSentance(int length); // TODO //the polling method will call this once a full sentance has been recieved
     int configurePort(int fd, int baud); // DONE
     bool testChecksum(char* sentance); // DONE
     int hexChar2Int(char* checksumChar); // DONE
-    neo6mMeasurment parseNmeaStr(); // TODO
     void pollUartDev(); // TODO
+    int parseNmeaStr(std::array<char,NMEA_SENTANCE_TYPE_lENGTH> &sentenceType, std::array<char,NMEA_MAX_DATA_FIELD_SIZE/2> &data, std::array<char,NMEA_CHECKSUM_LENGTH>  &checksum); // TODO void pollUartDev(); // TODO
     static void execPollingThread(NEO6M* thisClassPtr){
         thisClassPtr->pollUartDev();
     }
     bool isPollingUart=0;
     std::thread* daqThread = nullptr;
     neo6mSettings settings;
+
+    std::array<char, NMEA_MAX_SENTENCE_SIZE> nmeaSentence;
+
+    std::array<char, NMEA_SENTANCE_TYPE_lENGTH> sentenceType;
+    std::array<char, NMEA_MAX_DATA_FIELD_SIZE/2> data;
+    std::array<char, NMEA_CHECKSUM_LENGTH> checksum;
 
 };
 
