@@ -109,12 +109,11 @@ if (nullptr != daqThread) {
     return;
 }
 
-//start the polling thread
-daqThread = new std::thread(execPollingThread,this);
-
-if(!settings.autoStartThread){
-    isPollingDRDY = false;
+if(settings.autoStartThread){  
+    //start the polling thread
+    daqThread = new std::thread(execPollingThread,this);
 }
+
 
 };
 
