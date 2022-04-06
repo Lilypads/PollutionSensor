@@ -38,19 +38,20 @@ void NEO6M::pollUartDev(){
     char data2Send[NMEA_MAX_SENTENCE_SIZE];
     // not that i think the raspberry pi is 64 bit but i dont think my lsp know this
     char* circBuffPtr;
-    uint16_t circBuffLatestElementPtr=0;
-    uint16_t circBuffDataStartPtr=0;
-    uint16_t circBuffIdxLast = circBuffLatestElementPtr + sizeof(circBuff);
-    uint16_t circBuffRemainingVerticalSpace;
-    int circBuffLatestStartChar =-1; //int so we can invalidate it
+    uint16_t rbHead=0; //this is the most recent data element
+    uint16_t rbIdxLast = sizeof(circBuff); //
+    uint16_t rbRemainingVerticalSpace;
+    int rbLatestStartChar =-1; //int so we can invalidate it
 
     fd = open(settings.serialDevice.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
     configurePort(fd, settings.baudrate);
     isPollingUart = true;
     int nbytes = 0;
-    int dataLen;
+    int scanDataLen;
+    uint buffDataLen; //how many bytes total are there in the buffer
     uint lenFirstPart;
     uint lenSecondPart;
+    uint idxLastNewElement;
 
     while(isPollingUart){
         // this is a sort of quasi ring buffer where we read as much data into
@@ -59,44 +60,56 @@ void NEO6M::pollUartDev(){
         // ask for however many verticle elements are left before wrapping
 
         //decide how many more bytes we can cram into our buffer
-        circBuffRemainingVerticalSpace = circBuffIdxLast-circBuffLatestElementPtr;
-        circBuffDataStartPtr%=sizeof(circBuff);//wrap the data start pointer
+        rbRemainingVerticalSpace = rbIdxLast-rbHead;
+        rbHead%=sizeof(circBuff);//wrap the data start pointer
         // read the byte into the buffer
-        nbytes = read(fd,circBuffPtr+circBuffLatestElementPtr,circBuffRemainingVerticalSpace);
+        nbytes = read(fd,circBuffPtr+rbHead,rbRemainingVerticalSpace);
         if(nbytes<=0){
             fprintf(stderr, "failed to read from port, read() returned %d\n", nbytes);
         }
-        //itterate through these to see if we recieved a termination character
+        //scan the HEAD through the new bytes to see if we recieved a termination character
+        // or a sentance start character
         //note this will never wrap because we only ever ask for the remaining
         //"vertical space" worth of bytes from read
-       for (;circBuffLatestElementPtr < circBuffLatestElementPtr+nbytes; circBuffLatestElementPtr++) {
+        idxLastNewElement = rbHead+nbytes;
+        while (rbHead<idxLastNewElement) {
            // first we track if we encounter any message starts
-           if (circBuff[circBuffLatestElementPtr]==NMEA_SENTENCE_START_DELIM){
+           if (circBuff[rbHead]==NMEA_SENTENCE_START_DELIM){
                // we only ever need to track one of these because there should only be one per sentence
-               circBuffLatestStartChar = circBuffLatestElementPtr;
-           }
-           if (circBuff[circBuffLatestElementPtr]==NMEA_SENTENCE_END_DELIM){
-               if(circBuffLatestStartChar<0){
-                   fprintf(stderr, ) // FIXME
+               if (rbLatestStartChar>0){
+                   fprintf(stderr, "Detected multiple sentace starts without a sentance Termiation, will Use Latest and disregard the rest\n");
                }
-               dataLen = circBuffLatestElementPtr - circBuffLatestStartChar;
-               if (dataLen<0){
-                   dataLen = circBuffLatestElementPtr + sizeof(circBuff)-circBuffDataStartPtr;
-                   lenFirstPart = circBuffDataStartPtr-sizeof(circBuff)-1;
-                   lenSecondPart = circBuffIdxLast; // compiler will optimise this one away
-                   memcpy(data2Send, circBuff+circBuffDataStartPtr,lenFirstPart);
+               rbLatestStartChar = rbHead;
+
+           }
+           // we detected the termination character
+           if (circBuff[rbHead]==NMEA_SENTENCE_END_DELIM){
+               // calculate length of scanned data
+               scanDataLen = rbHead - rbLatestStartChar;
+               buffDataLen = rbHead - rbLatestStartChar;
+               if(rbLatestStartChar<0){
+                   fprintf(stderr, "Error in neo6m::pollUartDev(): Inclomplete NMEA message Detected, disregarding...\n");
+
+               }
+               // here we need to decide
+               if (scanDataLen<0){
+                   scanDataLen = rbHead + sizeof(circBuff)-rbLatestStartChar;
+                   lenFirstPart = sizeof(circBuff)- rbLatestStartChar;
+                   lenSecondPart = rbHead; // compiler will optimise this one away
+
+                   memcpy(data2Send, circBuff+rbLatestStartChar,lenFirstPart);
                    memcpy(data2Send+lenFirstPart, circBuff, lenSecondPart);
                 }
                else{
-                   memcpy(data2Send, circBuff+circBuffDataStartPtr, dataLen);
+                   memcpy(data2Send, circBuff+rbLatestStartChar, scanDataLen);
                }
-               if (dataLen>NMEA_MAX_SENTENCE_SIZE){
-                   fprintf(stderr, "Error: NMEA sentence length greater than Expected this will cause memory problems! (%d)",dataLen);
+               if (scanDataLen>NMEA_MAX_SENTENCE_SIZE){
+                   fprintf(stderr, "Warning: NMEA sentence length greater than Expected. message corruption may occur! (%d)",scanDataLen);
                }
                //now we have to reconstitute the ringbufferised sentence into the right order
-               hasNmeaSentance(data2Send, dataLen);
-               // increment the data start pointer by the data length
-               circBuffDataStartPtr +=dataLen;
+               hasNmeaSentance(data2Send, scanDataLen);
+               //un set the latest sentance start flag
+               rbLatestStartChar = -1;
            }
        }
     }
