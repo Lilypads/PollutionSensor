@@ -42,6 +42,7 @@ s.autoStartThread = false;
 
 mySPS.startMeasurement(s);
 mySPS.readSerialNumber();
+fprintf(stderr,"Serial Number: %s\n",mySPS.serialNumber);
 mySPS.readVersion();
 fprintf(stderr,"Press any key to stop.\n");
 

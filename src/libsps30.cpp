@@ -212,7 +212,6 @@ int out = i2cWriteDevice(handle,(char*)sendBuff,2);
 usleep(50000);
 int checkERR = i2cReadDevice(handle,retBuff,SN_LEN_W_SRC);
 
-// i think "dataREAD" is just a flag that indicates the success of the read opperation >> it is! sorry my bad ;< (Lily)
 if (checkERR < 0) {
 #ifdef DEBUG
                 fprintf(stderr,"Could not read from %02x. i2cReadDevice() returned %i\n",settings.address,checkERR);
@@ -232,6 +231,7 @@ int thisSNIdx2= i*2+1;
 serialNumber[thisSNIdx1] = retBuff[thisBuffIdx1];
 serialNumber[thisSNIdx2] = retBuff[thisBuffIdx2];
 }
+
 
 i2cClose(handle);
 return 1;
