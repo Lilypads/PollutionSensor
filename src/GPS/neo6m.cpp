@@ -1,5 +1,32 @@
 #include "neo6m.h"
 
+int hexChar2IntLUT[] = {
+    // ASCII
+    // 0  1   2   3   4   5   6   7   7   8   10 11  12  13  14  15
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 0-15
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 16-31
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 32-47
+    0,  1,  2,  3,  4,  5,  6,  7,  8,  9,  -1, -1, -1, -1, -1, -1, // 48-63
+    -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 64-79
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 80-95
+    -1, 10, 11, 12, 13, 14, 15, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 96-111
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 112-127
+};
+
+int decChar2IntLUT[] =
+    {
+// ASCII
+//0  1   2   3   4   5   6   7   7   8   10 11  12  13  14  15
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 0-15
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 16-31
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 32-47
+ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, -1, -1, -1, -1, -1, -1, // 48-63
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 64-79
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 80-95
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 96-111
+-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, // 112-127
+};
+
 NEO6M::NEO6M(neo6mSettings theseSettings){
 settings = theseSettings;
 }
@@ -37,8 +64,7 @@ void NEO6M::pollUartDev() {
   isPollingUart = true;
 
   uint buffsize = NMEA_MAX_SENTENCE_SIZE * 2;
-  char buff[NMEA_MAX_SENTENCE_SIZE *
-            2]; // this way we can fit at least one full message in regardless
+  char buff[NMEA_MAX_SENTENCE_SIZE *2]; // this way we can fit at least one full message in regardless
                 // of where we start
   char data2Send[NMEA_MAX_SENTENCE_SIZE];
   int nbytes;
@@ -101,10 +127,10 @@ int NEO6M::parseNmeaStr(char* sentence, int  size, parsedNmeaSent& outputSent) /
 };
 
 void NEO6M::hasNmeaSentance(parsedNmeaSent& parsedSent){
-// gpgsaFields
+gpgsaFields thisMeasurment;
     if(strcmp(parsedSent[0],"GPGGA")){
         //lattitude
-       lastCompleteSample.latt_deg = parsedSent[gpgsaFields::lat];
+       lastCompleteSample.latt_deg = decChar2Float(parsedSent[thisMeasurment.lat.idx]);
 
     }
     else {
