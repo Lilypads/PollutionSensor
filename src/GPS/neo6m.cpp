@@ -33,112 +33,90 @@ if (daqThread != nullptr){
 close(fd);
 };
 
-void NEO6M::pollUartDev(){
-    char rb[NMEA_MAX_SENTENCE_SIZE*2]; //this way we can fit at least one full message in regardless of where we start
-    char data2Send[NMEA_MAX_SENTENCE_SIZE];
-    // not that i think the raspberry pi is 64 bit but i dont think my lsp know this
-    char* circBuffPtr;
-    uint16_t rbHead=0; //this is the most recent data element
-    uint16_t rbIdxLast = sizeof(rb); //
-    uint16_t rbRemainingVerticalSpace;
-    int rbLatestStartChar =-1; //int so we can invalidate it
+void NEO6M::pollUartDev() {
+  isPollingUart = true;
 
-    fd = open(settings.serialDevice.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
-    configurePort(fd, settings.baudrate);
-    isPollingUart = true;
-    int nbytes = 0;
-    int scanDataLen;
-    uint buffDataLen; //how many bytes total are there in the buffer
-    uint lenFirstPart;
-    uint lenSecondPart;
-    uint idxLastNewElement;
+  uint buffsize = NMEA_MAX_SENTENCE_SIZE * 2;
+  char buff[NMEA_MAX_SENTENCE_SIZE *
+            2]; // this way we can fit at least one full message in regardless
+                // of where we start
+  char data2Send[NMEA_MAX_SENTENCE_SIZE];
+  int nbytes;
+  parsedNmeaSent parsedSent;
 
-    while(isPollingUart){
-        // this is a sort of quasi ring buffer where we read as much data into
-        // the buffer beffore it wraps since read() can't write direcly into a
-        // ring buffer we just point it to the current next free element and
-        // ask for however many verticle elements are left before wrapping
+  fd = open(settings.serialDevice.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
+  configurePort(fd, settings.baudrate);
+  tcflush(fd, TCIFLUSH); // BF flush the buffered data, we care only for the
 
-        //decide how many more bytes we can cram into our buffer
-        rbRemainingVerticalSpace = rbIdxLast-rbHead;
-        // read the byte into the buffer
-        nbytes = read(fd,circBuffPtr+rbHead,rbRemainingVerticalSpace);
-        if(nbytes<=0){
-            fprintf(stderr, "failed to read from port, read() returned %d\n", nbytes);
-        }
-        tcflush(fd,TCIFLUSH); //BF flush the buffered data, we care only for the here and now!
-        //scan the HEAD through the new bytes to see if we recieved a termination character
-        // or a sentance start character
-        //note this will never wrap because we only ever ask for the remaining
-        //"vertical space" worth of bytes from read
-        idxLastNewElement = rbHead+nbytes;
-        while (rbHead<idxLastNewElement) {
-           // first we track if we encounter any message starts
-           if (rb[rbHead]==NMEA_SENTENCE_START_DELIM){
-               // we only ever need to track one of these because there should only be one per sentence
-               if (rbLatestStartChar>0){
-                   fprintf(stderr, "Detected multiple sentace starts without a sentance Termiation, will Use Latest and disregard the rest\n");
-               }
-               rbLatestStartChar = rbHead;
-
-           }
-           // we detected the termination character
-           if (rb[rbHead]==NMEA_SENTENCE_END_DELIM){
-               // calculate length of scanned data
-               scanDataLen = rbHead - rbLatestStartChar;
-               buffDataLen = rbHead - rbLatestStartChar;
-               if(rbLatestStartChar<0){
-                   fprintf(stderr, "Error in neo6m::pollUartDev(): Inclomplete NMEA message Detected, disregarding...\n");
-
-               }
-               // here we need to decide
-               if (scanDataLen<0){
-                   scanDataLen = rbHead + sizeof(rb)-rbLatestStartChar;
-                   lenFirstPart = sizeof(rb)- rbLatestStartChar;
-                   lenSecondPart = rbHead; // compiler will optimise this one away
-                   //some nasty pointer stuff needed here to copy only the bit we want if theres a mistake... its likey here!
-                   std::copy(std::begin(*(&rb+rbLatestStartChar)),std::end(rb),nmeaSentence.begin());
-                   std::copy(std::begin(rb),std::end(*(&rb+lenFirstPart)),nmeaSentence.at(lenFirstPart));
-
-                   //im using std::array now because i thought it might be cleaner...
-                   //memcpy(data2Send, cb+rbLatestStartChar,lenFirstPart);
-                   //memcpy(data2Send+lenFirstPart, cb, lenSecondPart);
-                }
-               else{
-                   //memcpy(data2Send, cb+rbLatestStartChar, scanDataLen);
-                   std::copy(std::begin(*(&rb+rbLatestStartChar)),std::end(rb),nmeaSentence.at(lenFirstPart));
-               }
-               if (scanDataLen>NMEA_MAX_SENTENCE_SIZE){
-                   fprintf(stderr, "Warning: NMEA sentence length greater than Expected. message corruption may occur! (%d)",scanDataLen);
-               }
-               //now we have to reconstitute the ringbufferised sentence into the right order
-               hasNmeaSentance(scanDataLen);
-               //un set the latest sentance start flag
-               rbLatestStartChar = -1;
-           }
-       }
-    // increment head
-    rbHead ++;
-    rbHead%=sizeof(rb);//wrap the data start pointer
+  while (isPollingUart) {
+    nbytes = read(fd, &buff, buffsize);
+    if (nbytes <= 0) {
+      perror("Failed to read from port, read() returned");
+      // exit(1);
     }
-};
 
-void NEO6M::hasNmeaSentance(int dataLen){
-    int datalen = parseNmeaStr(sentenceType,data,checksum); //
+    if (parseNmeaStr(buff, nbytes, parsedSent) < 0) {
+      fprintf(stderr,"Failed to parse NMEA Buffer: %.*s\n",nbytes,buff);
+    }
+    else {//if the parse operation was successfull, we can expect the nmeaSentance Properties to be
+    // do nothing
+    }
 
-};
-
-int parseNmeaStr(std::array<char,NMEA_SENTANCE_TYPE_lENGTH> &sentenceType, std::array<char,NMEA_MAX_DATA_FIELD_SIZE/2> &data, std::array<char,NMEA_CHECKSUM_LENGTH>  &checksum){
-// loop through the array
-for (int i; i < nmeaSentence; i++) {
-
+  } //end of polling
 }
 
+int NEO6M::parseNmeaStr(char* sentence, int  size, parsedNmeaSent& outputSent) // TODO void pollUartDev(); // TODO
+{
+//check if the first char is indeed a start char if not then this is an incomplete message and we will return
+    if (*sentence != NMEA_SENTENCE_START_DELIM){
+        fprintf(stderr,"Sentance Incomplete: %.*s\n",size,sentence);
+        exit(-1);
+    }
+
+    //the first 6 chars are always start char and message type
+    //the last
+    int idxChecksumStart = size-1-NMEA_END_OF_SENT_lENGTH;
+    if (*(sentence+idxChecksumStart) != NMEA_SENTENCE_CHECKSUM_DELIM){
+        fprintf(stderr,"NMEA Checksum Delim Missing: %.*s\n",size,sentence);
+        exit(-2);
+    }
+    // trimCheckSum
+    *(sentence + idxChecksumStart) = '\n';
+
+    //test checksum
+    testChecksum(sentence);
+
+    // loop through the array and track what part of the message we are in
+    int i;
+    char* thisStr;
+    while((i < NMEA_MAX_DATA_ARRAY_SIZE) && thisStr!=NULL){
+        outputSent[i] = thisStr++; //this works because the sentance starts with '$' and fields start with ','
+        //return the next comma
+        thisStr = strchr(thisStr, NMEA_SENTENCE_DATA_DELIM);
+        *thisStr = '\n'; //terminate the string
+        i++;
+    };
+
+   return(i--);//return the number of bytes written
 };
+
+void NEO6M::hasNmeaSentance(parsedNmeaSent& parsedSent){
+// gpgsaFields
+    if(strcmp(parsedSent[0],"GPGGA")){
+        //lattitude
+       lastCompleteSample.latt_deg = parsedSent[gpgsaFields::lat];
+
+    }
+    else {
+
+        }
+};
+
 
 int NEO6M::configurePort(int fd, int baud){
 // adapted from:
 // https://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c
+// largely boilerplate
       struct termios tty;
       if (tcgetattr (fd, &tty) != 0){
                 perror("Failed to return Uart Port attributes");
@@ -156,14 +134,21 @@ int NEO6M::configurePort(int fd, int baud){
         };
         /* control modes */
         tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
+        tty.c_cflag &= ~PARENB; // Clear the parity bit
+        tty.c_lflag &= ~ISIG; // Disable interpretation of INTR, QUIT and SUSP
+        // tty.c_cflag &= ~CSTOPB; // Clear stop field, only one stop bit used in communication (most common)
+        // tty.c_cflag |= CSTOPB;  // Set stop field, two stop bits used in communication
+
+        //Input Modes
         // disable IGNBRK for mismatched speed tests; otherwise receive break
         // as \000 chars
-        tty.c_iflag &= ~IGNBRK;         // disable break processing
+        // Special handling of characters such as carriage return etc
+        tty.c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|ICRNL);//IGNCR ommited // disable break processing
         // cannonical read flag return on a linebreak (set to zero for non canon)
         // the echo is to do with terminals since you need to see the chars you type
         tty.c_lflag |= ICANON;                // BF local modes - no signaling chars, no echo,
-                                        // no canonical processing
-        tty.c_oflag = 0;                // BF output modes - no remapping, no delays
+        // Output modes
+        tty.c_oflag = 0;                // BF no remapping, no delays
         /*
         * Im setting vmin to 1 here which means we read out bytes 1 at a
         * time which is inefficient but there is no other way to make
@@ -175,7 +160,7 @@ int NEO6M::configurePort(int fd, int baud){
         * callback
             */
         tty.c_cc[VMIN]  = 1;            // set to blocking buffer at least 1 char
-        tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout (deciseconds)
+        tty.c_cc[VTIME] = 0.5*10;            // 0.5 seconds read timeout (deciseconds)
 
         tty.c_iflag &= ~(IXON | IXOFF | IXANY); //BF input modes - shut off xon/xoff ctrl
 
@@ -193,7 +178,7 @@ int NEO6M::configurePort(int fd, int baud){
         return 0;//sucess
 };
 
-bool NEO6M::testChecksum(char* sentance){
+int NEO6M::testChecksum(char* sentance){
 // largely adapted from:
   // https://github.com/craigpeacock/NMEA-GPS/blob/23f15158f124cc2b65c0468d5c690be23a449a77/gps.c#L109
 	char *checksum_str;
@@ -212,24 +197,67 @@ bool NEO6M::testChecksum(char* sentance){
 		}
 
         //returned checksum is apparently in hex characters
-		returned_checksum = NEO6M::hexChar2Int((char *)checksum_str+1);
+		returned_checksum = hexChar2Int((char *)checksum_str+1);
 		if (returned_checksum == calculated_checksum) {
-			//printf("Checksum OK");
-			return 1;
+			//Checksum is fine
+			return 0;
 		}
 	} else {
 #ifdef DEBUG
 		fprintf(stderr,"Error: Checksum missing or NULL NMEA message\r\n");
 #endif
-		return false;
+		exit(1);
 	}
-	return 0;
+	return 1;
 };
 
 int NEO6M::hexChar2Int(char* checksumChar){
     // TODO write a test for this method should be fairly easy!!
-    int checksum;
     // convert the msb and lsb into ints and then scale msb by a factor of 16
-    checksum = hexChar2IntLUT[(uint)(*checksumChar)]*16+hexChar2IntLUT[(uint)(*(checksumChar+1))];
+    int msb = hexChar2IntLUT[(uint)(*checksumChar)];
+    int lsb = hexChar2IntLUT[(uint)(*checksumChar+1)];
+    if (msb<0){
+        fprintf(stderr,"Checksum MSB char %c is not a valid hex char",msb);
+        exit(-1);
+    };
+    if (msb<0){
+        fprintf(stderr,"Checksum LSB char %c is not a valid hex char",lsb);
+        exit(-2);
+    };
+    int checksum = msb*16+lsb;
     return checksum;
+};
+
+float NEO6M::decChar2Float(char* thisCharFloat){
+    float out;
+    int decimalIdx= -1;
+    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE);
+    int i;
+    while (*(thisCharFloat+i)!='\0'){
+        if (*thisCharFloat=='.'){
+            decimalIdx = i;
+        }
+        order/=10;//decrease the order by a factor of 10
+        out += order*decChar2IntLUT[*thisCharFloat];
+        i++;
+    }
+
+    if(decimalIdx>0){ // compensate for the fact that we have a floating point
+        out /= i-decimalIdx;
+    }
+    return out;
+};
+
+int NEO6M::decChar2Int(char* thisCharFloat){
+    int out;
+    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE);
+    int i;
+    while (*(thisCharFloat+i)!='\0'){
+        if (*thisCharFloat=='.'){
+        }
+        order/=10;//decrease the order by a factor of 10
+        out += order*decChar2IntLUT[*thisCharFloat];
+        i++;
+    }
+    return out;
 };
