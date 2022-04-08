@@ -15,4 +15,4 @@ target_link_libraries(test_sps30Lib libsps30 ${Boost_LIBRARIES} ${BOOST_FILESYST
 enable_testing()
 
 # add tests
-add_test(NAME sps30test COMMAND test_sps30Lib)
+#add_test(NAME sps30test COMMAND test_sps30Lib)
