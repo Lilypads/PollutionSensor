@@ -23,7 +23,7 @@ jobs:
         submodules: recursive
 
     - name: Install PIGPIO
-      run: sudo apt install libpigpio-dev
+      run: sudo apt-get install pigpio python-pigpio python3-pigpio
       
     - name: Install Boost
       run: sudo apt install libboost-all-dev
