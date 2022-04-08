@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(TestClassMethods)
     testsettings.initPIGPIO = false;
     testsettings.autoStartThread = false;
 
-    testsps30.startMeasurement(testsettings);
+    testsps30.startMeasurement();
     testsps30.readVersion();
     BOOST_CHECK_EQUAL(1,testsps30.readSerialNumber());
 

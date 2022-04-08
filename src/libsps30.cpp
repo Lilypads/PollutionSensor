@@ -102,7 +102,6 @@ int checkERR = i2cWriteDevice(handle,tmp,5);
         }
 i2cClose(handle);
 
-#endif
 
 // start up daq thread
 
