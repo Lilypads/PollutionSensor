@@ -6,8 +6,9 @@
 #target_link_libraries(example Sqr)
 
 
-add_library(Try1 try1.cpp try1.h)
 add_subdirectory(GPS)
+add_library(Try1 try1.cpp try1.h)
+#add_subdirectory(GPS)
 
 # main code executable
 add_executable(example example.cpp)
