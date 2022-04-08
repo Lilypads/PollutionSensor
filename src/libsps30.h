@@ -158,9 +158,14 @@ public:
 	 * Starts the data acquisition in the background thread and the
 	 * callback is called with new samples.
 	 **/
-	void startMeasurement(SPS30settings settings = SPS30settings());
+	void startMeasurement();
 
 	/**
+  	 * reads out firmware version.
+     **/
+    void setSettings(SPS30settings settings); // TODO this doesnt return anything unlike other fucntions would be good to have only an optional print
+	/**
+
   	 * reads out firmware version.
      **/
     void readVersion(); // TODO this doesnt return anything unlike other fucntions would be good to have only an optional print
