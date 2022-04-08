@@ -40,9 +40,7 @@ BOOST_AUTO_TEST_CASE(PassTest)
 //BOOST_REQUIRE(true);
 //instantiate neo6m
 neo6mTester testNeo6m;
-
-char testSent[sizeof(GPGSA)];
-// memcpy(testSent,gpgsa,sizeof(dummyNmeaSent.gpgsa));
+// test checksum hex to char conversion
 char testHexChar[] = "FF";
 BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar),255);
 char testHexChar_0[] = "00";
