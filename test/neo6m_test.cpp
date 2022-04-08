@@ -37,14 +37,18 @@ public:
 
 BOOST_AUTO_TEST_CASE(PassTest)
 {
-BOOST_REQUIRE(true);
+//BOOST_REQUIRE(true);
+//instantiate neo6m
 neo6mTester testNeo6m;
 
 char testSent[sizeof(GPGSA)];
 // memcpy(testSent,gpgsa,sizeof(dummyNmeaSent.gpgsa));
-
-BOOST_CHECK(testNeo6m.test_hexChar2Int(GPGSA));
-//instantiate neo6m
+char testHexChar[] = "FF";
+BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar),255);
+char testHexChar_0[] = "00";
+BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar_0),0);
+char testHexChar_211[] = "d3";
+BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar_211),211);
 
 // test
 }
