@@ -18,8 +18,4 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(ExampleCMakeLib)
 
-# enable testing
-enable_testing()
-
-add_test(NAME mytest1 COMMAND test1)
 
