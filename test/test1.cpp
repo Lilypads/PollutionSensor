@@ -6,6 +6,8 @@
 //BOOST_CHECK(1>0); //fail but continue
 //BOOST_REQUIRE(1!=2); //fail and terminate
 
+#define NO_HARDWARE
+
 BOOST_AUTO_TEST_CASE(TestDefaultSettings)
 {
     SPS30 testsps30;
@@ -13,8 +15,8 @@ BOOST_AUTO_TEST_CASE(TestDefaultSettings)
     testsettings = testsps30.getsps30settings();
     BOOST_CHECK_EQUAL(DEFAULT_SPS30_ADDRESS, testsettings.address);
     BOOST_CHECK_EQUAL(1, testsettings.bus);
-    BOOST_CHECK_EQUAL(true, testsettings.initPIGPIO);
-    BOOST_CHECK_EQUAL(true, testsettings.autoStartThread);
+    BOOST_CHECK_EQUAL(false, testsettings.initPIGPIO);
+    BOOST_CHECK_EQUAL(false, testsettings.autoStartThread);
 }
 
 BOOST_AUTO_TEST_CASE(TestFunctions)
@@ -25,15 +27,28 @@ BOOST_AUTO_TEST_CASE(TestFunctions)
     BOOST_CHECK_EQUAL(0x00, CalcCrc(data));
 
     char bdata[4];
-    bdata[0] = 0xf0;  
-    bdata[0] = 0xf0;  
-    bdata[0] = 0xf0;  
-    bdata[0] = 0xf0;   
-    float fdata = ;
-    BOOST_CHECK_EQUAL(fdata, bytesToFloat(bdata));
+    bdata[0] = 0x3f;  
+    bdata[1] = 0x80;  
+    bdata[2] = 0x00;  
+    bdata[3] = 0x00;   
+    float fdata = 1;
+    BOOST_CHECK_EQUAL(fdata, bytesToFloat(bdata[0],bdata[1],bdata[2],bdata[3]));
 }
 
-BOOST_AUTO_TEST_CASE(Testname)
+BOOST_AUTO_TEST_CASE(TestClassMethods)
 {
-    BOOST_CHECK_EQUAL(4, sqr(2));
+    class SPS30Tester: public SPS30 {
+    virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
+        BOOST_CHECK_EQUAL(2.345,thisMeasurement.MassConcPM1_0);
+	    BOOST_CHECK_EQUAL(8.91,thisMeasurement.TypicalParcSize);
+    }
+
+    SPS30Tester testerSPS30
+    testerSPS30.startMeasurement();
+    testerSPS30.readVersion();
+    BOOST_CHECK_EQUAL(1,testerSPS30.readSerialNumber());
+
+    testersps30.pollDRDYFlag();
+    testersps30.stop();
+};
 }

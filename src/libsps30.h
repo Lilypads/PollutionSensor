@@ -12,6 +12,11 @@
 #define DEBUG
 #endif
 
+// enable no hardware mode
+#ifndef N_NO_HARDWARE
+#define NO_HARDWARE
+#endif
+
 //include guards
 #ifndef TRY1
 #define TRY1
@@ -61,6 +66,7 @@ struct SPS30settings {
 	 **/
 	uint8_t address = DEFAULT_SPS30_ADDRESS;
 
+
  	/**
 	 * If set to true the pigpio will be initialised
 	 **/
@@ -70,6 +76,11 @@ struct SPS30settings {
 	 * auto start thread flag
 	 **/
 	bool autoStartThread = true;
+
+#ifdef NO_HARDWARE
+	initPIGPIO = false;
+	autoStartThread = false;
+#endif
 
 };
 
