@@ -23,10 +23,7 @@ jobs:
         submodules: recursive
 
     - name: Install PIGPIO
-      run: sudo apt-get install pigpio python-pigpio python3-pigpio
-      
-    - name: Install Boost
-      #run: sudo apt install libboost-all-dev
+      #run: sudo apt-get install pigpio python-pigpio python3-pigpio
       #based on instructions at: https://abyz.me.uk/rpi/pigpio/download.html
       run: |
         sudo apt install python-setuptools python3-setuptools
@@ -35,6 +32,10 @@ jobs:
         cd pigpio-master
         make
         sudo make install
+        
+    - name: Install Boost
+      run: sudo apt install libboost-all-dev
+
       
 #    - name: Install BCM2835
 #      run: |
