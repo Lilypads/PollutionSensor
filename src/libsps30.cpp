@@ -44,13 +44,16 @@ if(settings.initPIGPIO){
     }
 };
 
+void SPS30::setSettings(SPS30settings newSettings){
+settings = newSettings;
+};
+
 //destructor
 SPS30::~SPS30(){
     stop();
 };
 
-void SPS30::startMeasurement(SPS30settings userSettings){
-    settings = userSettings;
+void SPS30::startMeasurement(){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);

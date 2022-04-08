@@ -40,11 +40,14 @@ SPS30Printer mySPS;
 SPS30settings s;
 s.autoStartThread = false;
 
-mySPS.startMeasurement(s);
+mySPS.setSettings(s);
 mySPS.readSerialNumber();
 fprintf(stderr,"Serial Number: %s\n",mySPS.serialNumber);
 mySPS.readVersion();
+
 fprintf(stderr,"Press any key to stop.\n");
+mySPS.startMeasurement();
+
 
 getchar();
 
