@@ -8,7 +8,10 @@
 
 #define NO_HARDWARE
 
-//instantiate class globally
+
+
+BOOST_AUTO_TEST_CASE(TestDefaultSettings)
+{
     class SPS30Tester: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         BOOST_CHECK_EQUAL(2.345,thisMeasurement.MassConcPM1_0);
@@ -16,16 +19,13 @@
         }
     };
 
-    SPS30Tester testsps30;
     SPS30settings testsettings;
-
-BOOST_AUTO_TEST_CASE(TestDefaultSettings)
-{
+    SPS30Tester testsps30;
     testsettings = testsps30.getSPS30settings();
     BOOST_CHECK_EQUAL(DEFAULT_SPS30_ADDRESS, testsettings.address);
     BOOST_CHECK_EQUAL(1, testsettings.i2c_bus);
-    BOOST_CHECK_EQUAL(false, testsettings.initPIGPIO);
-    BOOST_CHECK_EQUAL(false, testsettings.autoStartThread);
+    BOOST_CHECK_EQUAL(true, testsettings.initPIGPIO);
+    BOOST_CHECK_EQUAL(true, testsettings.autoStartThread);
 }
 
 BOOST_AUTO_TEST_CASE(TestFunctions)
@@ -44,8 +44,21 @@ BOOST_AUTO_TEST_CASE(TestFunctions)
     BOOST_CHECK_EQUAL(fdata, bytesToFloat(bdata[0],bdata[1],bdata[2],bdata[3]));
 }
 
+
 BOOST_AUTO_TEST_CASE(TestClassMethods)
 {
+    class SPS30Tester: public SPS30 {
+    virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
+        BOOST_CHECK_EQUAL(2.345,thisMeasurement.MassConcPM1_0);
+	    BOOST_CHECK_EQUAL(8.91,thisMeasurement.TypicalParcSize);
+        }
+    };
+
+    SPS30Tester testsps30;
+    SPS30settings testsettings;
+    testsettings.initPIGPIO = false;
+    testsettings.autoStartThread = false;
+
     testsps30.startMeasurement(testsettings);
     testsps30.readVersion();
     BOOST_CHECK_EQUAL(1,testsps30.readSerialNumber());
@@ -53,3 +66,5 @@ BOOST_AUTO_TEST_CASE(TestClassMethods)
     testsps30.pollDRDYFlag();
     testsps30.stop();
 }
+
+
