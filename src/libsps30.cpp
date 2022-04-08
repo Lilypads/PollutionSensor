@@ -27,6 +27,7 @@ float bytesToFloat(char b0, char b1, char b2, char b3){
 SPS30::SPS30(SPS30settings userSettings){
     settings = userSettings;
 
+#ifndef NO_HARDWARE
 if(settings.initPIGPIO){
          int cfg = gpioCfgGetInternals();
          cfg |= PI_CFG_NOSIGHANDLER;  // (1<<10)
@@ -36,6 +37,8 @@ if(settings.initPIGPIO){
                char msg[] = "cannot init pigpio.";
             }
     }
+#endif
+
 };
 
 //destructor
