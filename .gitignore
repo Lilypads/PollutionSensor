@@ -62,3 +62,6 @@ Testing/Temporary/LastTest.log
 /Testing/
 /test/test1
 /examples/neo6mExample
+src/sps30demo
+/src/SPS30/sps30demo
+/test/test_sps30Lib

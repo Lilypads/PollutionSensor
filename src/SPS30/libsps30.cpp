@@ -1,12 +1,4 @@
-#include "try1.h"
-/*
-* TODO move CalcCrc into a member function
-* TODO handle the CTRL+c signal (call close)
-* TODO general cleanup
-  * test without the sleeps throught the code
-  * would be nice to have a debug printer where you could just specify the debug level
-* TODO implement a nice printing method
-     * */
+#include "libsps30.h"
 
 uint8_t CalcCrc(uint8_t data[2]) {
     uint8_t crc = 0xFF;
@@ -24,7 +16,6 @@ uint8_t CalcCrc(uint8_t data[2]) {
     return crc;
 };
 
-
 float bytesToFloat(char b0, char b1, char b2, char b3){
 	float f;
 	char b[] = {b3, b2, b1, b0};
@@ -36,6 +27,7 @@ float bytesToFloat(char b0, char b1, char b2, char b3){
 SPS30::SPS30(SPS30settings userSettings){
     settings = userSettings;
 
+#ifndef NO_HARDWARE
 if(settings.initPIGPIO){
          int cfg = gpioCfgGetInternals();
          cfg |= PI_CFG_NOSIGHANDLER;  // (1<<10)
@@ -45,6 +37,12 @@ if(settings.initPIGPIO){
                char msg[] = "cannot init pigpio.";
             }
     }
+#endif
+
+};
+
+void SPS30::setSettings(SPS30settings newSettings){
+settings = newSettings;
 };
 
 //destructor
@@ -104,6 +102,7 @@ int checkERR = i2cWriteDevice(handle,tmp,5);
         }
 i2cClose(handle);
 
+
 // start up daq thread
 
 if (nullptr != daqThread) {
@@ -111,8 +110,11 @@ if (nullptr != daqThread) {
     return;
 }
 
-//start the polling thread
-daqThread = new std::thread(execPollingThread,this);
+if(settings.autoStartThread){  
+    //start the polling thread
+    daqThread = new std::thread(execPollingThread,this);
+}
+
 
 };
 
@@ -122,7 +124,7 @@ isPollingDRDY = true;
         if(readDRDYFlag()){
             hasMeasurmentCB(readMeasurement());
         }
-        usleep(DRD_POLLINGPERIOD_US);
+        usleep(DRDY_POLLINGPERIOD_US);
     }
 };
 
@@ -137,6 +139,8 @@ if (nullptr != daqThread) {
     delete daqThread;
     daqThread = nullptr;
 }
+
+#ifndef NO_HARDWARE
 // move device out of mesurement mode
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -157,10 +161,13 @@ int checkERR = i2cWriteDevice(handle,pnt,2);
         }
 
 i2cClose(handle);
+#endif
+
 }
 
 void SPS30::readVersion(){
 
+#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -189,11 +196,13 @@ if (checkERR < 0) {
 fprintf(stderr,"Device Firmware Version: %u,%u\n",(int)tmp[0],(int)tmp[1]);
 
 i2cClose(handle);
+#endif
 
 }
 
 int SPS30::readSerialNumber(){
 
+#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -211,7 +220,6 @@ int out = i2cWriteDevice(handle,(char*)sendBuff,2);
 usleep(50000);
 int checkERR = i2cReadDevice(handle,retBuff,SN_LEN_W_SRC);
 
-// i think "dataREAD" is just a flag that indicates the success of the read opperation >> it is! sorry my bad ;< (Lily)
 if (checkERR < 0) {
 #ifdef DEBUG
                 fprintf(stderr,"Could not read from %02x. i2cReadDevice() returned %i\n",settings.address,checkERR);
@@ -232,7 +240,10 @@ serialNumber[thisSNIdx1] = retBuff[thisBuffIdx1];
 serialNumber[thisSNIdx2] = retBuff[thisBuffIdx2];
 }
 
+
 i2cClose(handle);
+#endif
+
 return 1;
 
 }
@@ -240,6 +251,7 @@ return 1;
 
 int SPS30::readDRDYFlag(){
 
+#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -283,6 +295,12 @@ fprintf(stderr,"\n");
 #endif
 
 i2cClose(handle);
+#endif
+
+#ifdef NO_HARDWARE
+char retBuff[3];
+retBuff[1] = 1;
+#endif
 
 return retBuff[1];
 
@@ -295,6 +313,11 @@ SPS30measurement SPS30::readMeasurement(){
 
 SPS30measurement measurements;
 
+//for testings
+measurements.MassConcPM1_0 = 2.345;
+measurements.TypicalParcSize = 8.91;
+
+#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -351,6 +374,8 @@ measurements.NumConcPM10_0  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 
 i = SPS30dataOutputIdx::idxTypicalParcSize;
 measurements.TypicalParcSize = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
+
+#endif
 
 return measurements;
 }
