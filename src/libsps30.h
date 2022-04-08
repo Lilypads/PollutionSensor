@@ -111,6 +111,16 @@ struct SPS30measurement {
 
 };
 
+/**
+* function to calculate checksum for data communication.
+**/
+uint8_t CalcCrc(uint8_t data[2]);
+
+/**
+* function to change 4 bytes data into floating value.
+**/
+float bytesToFloat(char b0, char b1, char b2, char b3);
+
 class SPS30 {
 
 public:

@@ -1,8 +1,5 @@
 #include "libsps30.h"
 
-/**
-* function to calculate checksum for data communication.
-**/
 uint8_t CalcCrc(uint8_t data[2]) {
     uint8_t crc = 0xFF;
 
@@ -19,9 +16,6 @@ uint8_t CalcCrc(uint8_t data[2]) {
     return crc;
 };
 
-/**
-* function to change 4 bytes data into floating value.
-**/
 float bytesToFloat(char b0, char b1, char b2, char b3){
 	float f;
 	char b[] = {b3, b2, b1, b0};
