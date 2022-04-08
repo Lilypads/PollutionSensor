@@ -240,8 +240,8 @@ int NEO6M::testChecksum(char* sentance){
 int NEO6M::hexChar2Int(char* checksumChar){
     // TODO write a test for this method should be fairly easy!!
     // convert the msb and lsb into ints and then scale msb by a factor of 16
-    int msb = hexChar2IntLUT[(uint)(*checksumChar)];
-    int lsb = hexChar2IntLUT[(uint)(*checksumChar+1)];
+    int msb = hexChar2IntLUT[(*checksumChar)];
+    int lsb = hexChar2IntLUT[*(checksumChar+1)];
     if (msb<0){
         fprintf(stderr,"Checksum MSB char %c is not a valid hex char",msb);
         exit(-1);
