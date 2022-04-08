@@ -46,6 +46,11 @@ SPS30::~SPS30(){
 void SPS30::startMeasurement(SPS30settings userSettings){
     settings = userSettings;
 
+#ifdef NO_HARDWARE
+userSettings.initPIGPIO = false;
+userSettings.autoStartThread = false;
+#endif
+
 #ifndef NO_HARDWARE    
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
@@ -295,6 +300,7 @@ i2cClose(handle);
 #endif
 
 #ifdef NO_HARDWARE
+char retBuff[3];
 retBuff[1] = 1;
 #endif
 
