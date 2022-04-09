@@ -1,7 +1,6 @@
-
 add_library(libsps30 libsps30.cpp libsps30.h)
-target_link_libraries(libsps30 pigpio)
-target_include_directories(libsps30 PUBLIC ./)
+target_link_libraries(libsps30 ${pigpio_LIBRARY} ${pigpiod_if_LIBRARY} ${pigpiod_if2_LIBRARY})
+target_include_directories(libsps30 PUBLIC ./ ${pigpio_INCLUDE_DIR})
 
 
 # main code executable
