@@ -114,3 +114,11 @@ BOOST_AUTO_TEST_CASE(TestChar2Float_typicalGps) {
 }
 
 BOOST_AUTO_TEST_SUITE_END()
+
+BOOST_AUTO_TEST_SUITE(testChecksumCalc)
+
+BOOST_AUTO_TEST_CASE(TestChar2Int_8) {
+  BOOST_CHECK_EQUAL(testNeo6m.testChecksum(GPVTG ), 123);
+}
+
+BOOST_AUTO_TEST_SUITE_END()
