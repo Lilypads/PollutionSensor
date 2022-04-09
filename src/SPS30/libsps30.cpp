@@ -51,6 +51,7 @@ SPS30::~SPS30(){
 };
 
 void SPS30::startMeasurement(){
+#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
@@ -102,6 +103,7 @@ int checkERR = i2cWriteDevice(handle,tmp,5);
         }
 i2cClose(handle);
 
+#endif
 
 // start up daq thread
 

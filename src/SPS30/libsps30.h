@@ -195,10 +195,7 @@ public:
 	 **/
 	char serialNumber[SN_LEN_W_SRC]="";
 
-		/**
-	 * run method of the thread.
-	 **/
-	void pollDRDYFlag();
+	
 
 private:
 
@@ -206,6 +203,11 @@ private:
 	 * initiate default setting.
 	 **/
 	SPS30settings settings;
+
+	/**
+	 * run method of the thread.
+	 **/
+	void pollDRDYFlag();
 
 	/**
 	 * running flag.

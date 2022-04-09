@@ -57,13 +57,13 @@ BOOST_AUTO_TEST_CASE(TestClassMethods)
     SPS30Tester testsps30;
     SPS30settings testsettings;
     testsettings.initPIGPIO = false;
-    testsettings.autoStartThread = false;
+    testsettings.autoStartThread = true;
+    testsps30.setSettings(testsettings);
 
     testsps30.startMeasurement();
     testsps30.readVersion();
     BOOST_CHECK_EQUAL(1,testsps30.readSerialNumber());
 
-    testsps30.pollDRDYFlag();
     testsps30.stop();
 }
 
