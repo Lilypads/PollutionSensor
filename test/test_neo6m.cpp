@@ -31,6 +31,8 @@ public:
 };
 
 
+//instantiate neo6m
+neo6mTester testNeo6m;
 //BOOST_WARN(1==1); //warn and continue
 //BOOST_CHECK(1>0); //fail but continue
 //BOOST_REQUIRE(1!=2); //fail and terminate
@@ -38,8 +40,6 @@ public:
 BOOST_AUTO_TEST_CASE(PassTest)
 {
 //BOOST_REQUIRE(true);
-//instantiate neo6m
-neo6mTester testNeo6m;
 // test checksum hex to char conversion
 char testHexChar[] = "FF";
 BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar),255);
@@ -49,9 +49,15 @@ char testHexChar_211[] = "d3";
 BOOST_CHECK_EQUAL(testNeo6m.test_hexChar2Int(testHexChar_211),211);
 
 // test
-}
+};
 
-//BOOST_AUTO_TEST_CASE(FailTest)
-//{
-//    BOOST_CHECK_EQUAL(4, sqr(3));
-//}
+BOOST_AUTO_TEST_CASE(TestChar2Int){
+char testDecChar[] = "8";
+BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar), 8);
+char testDecChar_7970[] = "7970";
+BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_7970), 7970);
+char testDecChar_plus[] = "+";
+BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_plus), -1);
+char testDecChar_amper[] = "&";
+BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_amper), -1);
+};

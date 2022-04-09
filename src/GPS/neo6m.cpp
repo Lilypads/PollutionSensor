@@ -255,35 +255,43 @@ int NEO6M::hexChar2Int(char* checksumChar){
 };
 
 float NEO6M::decChar2Float(char* thisCharFloat){
-    float out;
+    int intOut=0;
+    float out =0;
     int decimalIdx= -1;
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE);
-    int i;
+    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
+    int i=0;
     while (*(thisCharFloat+i)!='\0'){
         if (*thisCharFloat=='.'){
             decimalIdx = i;
         }
         order/=10;//decrease the order by a factor of 10
-        out += order*decChar2IntLUT[*thisCharFloat];
+        intOut += order*decChar2IntLUT[*thisCharFloat];
         i++;
     }
 
     if(decimalIdx>0){ // compensate for the fact that we have a floating point
-        out /= i-decimalIdx;
+        out =(float)intOut / pow(10,i-decimalIdx);
+    }
+    else {
+        out =(float)intOut /(float)order;
     }
     return out;
 };
 
-int NEO6M::decChar2Int(char* thisCharFloat){
-    int out;
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE);
-    int i;
-    while (*(thisCharFloat+i)!='\0'){
-        if (*thisCharFloat=='.'){
+int NEO6M::decChar2Int(char* charInt){
+    long long int out=0; //make sure we get no overflows!
+    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
+    int thisInt = 0;
+    while (*charInt!='\0'){
+        thisInt = decChar2IntLUT[*charInt];
+        if (thisInt==-1){
+            fprintf(stderr,"Invalid Character Detected, this:\"%c\" Can't be an int!\n",*charInt);
+            exit(-1);
         }
         order/=10;//decrease the order by a factor of 10
-        out += order*decChar2IntLUT[*thisCharFloat];
-        i++;
+        out += order*thisInt;
+        charInt++;
     }
+    out/=order;
     return out;
 };
