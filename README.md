@@ -6,12 +6,6 @@ For more details on sensors, wiring, UML diagram, other specifications, please h
 
 ### CMAKE
 
-### PIGPIO
-
-For Linux
-
-`sudo apt install libpigpio-dev`
-
 ### Boost (optional: for unit tests)
 
 For Linux
