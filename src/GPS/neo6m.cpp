@@ -96,7 +96,7 @@ int NEO6M::parseNmeaStr(char* sentence, int  size, parsedNmeaSent& outputSent) /
 //check if the first char is indeed a start char if not then this is an incomplete message and we will return
     if (*sentence != NMEA_SENTENCE_START_DELIM){
         fprintf(stderr,"Sentance Incomplete: %.*s\n",size,sentence);
-        exit(-1);
+        return(-1);
     }
 
     //the first 6 chars are always start char and message type
@@ -104,7 +104,7 @@ int NEO6M::parseNmeaStr(char* sentence, int  size, parsedNmeaSent& outputSent) /
     int idxChecksumStart = size-1-NMEA_END_OF_SENT_lENGTH;
     if (*(sentence+idxChecksumStart) != NMEA_SENTENCE_CHECKSUM_DELIM){
         fprintf(stderr,"NMEA Checksum Delim Missing: %.*s\n",size,sentence);
-        exit(-2);
+        (-2);
     }
     // trimCheckSum
     *(sentence + idxChecksumStart) = '\n';
@@ -226,15 +226,15 @@ int NEO6M::testChecksum(char* sentance){
 		returned_checksum = hexChar2Int((char *)checksum_str+1);
 		if (returned_checksum == calculated_checksum) {
 			//Checksum is fine
-			return 0;
+			return(0);
 		}
 	} else {
 #ifdef DEBUG
 		fprintf(stderr,"Error: Checksum missing or NULL NMEA message\r\n");
 #endif
-		exit(1);
+		return(1);
 	}
-	return 1;
+	return(1);
 };
 
 int NEO6M::hexChar2Int(char* checksumChar){
@@ -244,36 +244,46 @@ int NEO6M::hexChar2Int(char* checksumChar){
     int lsb = hexChar2IntLUT[*(checksumChar+1)];
     if (msb<0){
         fprintf(stderr,"Checksum MSB char %c is not a valid hex char",msb);
-        exit(-1);
+        return(-1);
     };
     if (msb<0){
         fprintf(stderr,"Checksum LSB char %c is not a valid hex char",lsb);
-        exit(-2);
+        return(-2);
     };
     int checksum = msb*16+lsb;
     return checksum;
 };
 
-float NEO6M::decChar2Float(char* thisCharFloat){
-    int intOut=0;
-    float out =0;
+double NEO6M::decChar2Float(char* thisCharFloat){
+    unsigned long int intOut=0;
+    double out =0;
     int decimalIdx= -1;
+    int thisInt;
     unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
     int i=0;
     while (*(thisCharFloat+i)!='\0'){
-        if (*thisCharFloat=='.'){
+        thisInt = decChar2IntLUT[*(thisCharFloat + i)];
+        if (thisInt<0){
+            if (*(thisCharFloat+i)=='.'){
             decimalIdx = i;
+            i++;
+            }
+            else {
+                fprintf(stderr,"Non numeric character detected: \"%c\"\n", *(thisCharFloat+i));
+            }
         }
-        order/=10;//decrease the order by a factor of 10
-        intOut += order*decChar2IntLUT[*thisCharFloat];
-        i++;
+        else {
+          order /= 10; // decrease the order by a factor of 10
+          intOut += order * decChar2IntLUT[*(thisCharFloat + i)];
+          i++;
+        }
     }
 
     if(decimalIdx>0){ // compensate for the fact that we have a floating point
-        out =(float)intOut / pow(10,i-decimalIdx);
+        out =(double)intOut / pow(10,NMEA_MAX_DATA_FIELD_SIZE-1-decimalIdx);
     }
     else {
-        out =(float)intOut /(float)order;
+        out =(double)intOut /(double)order;
     }
     return out;
 };
@@ -286,7 +296,7 @@ int NEO6M::decChar2Int(char* charInt){
         thisInt = decChar2IntLUT[*charInt];
         if (thisInt==-1){
             fprintf(stderr,"Invalid Character Detected, this:\"%c\" Can't be an int!\n",*charInt);
-            exit(-1);
+            return(-1);
         }
         order/=10;//decrease the order by a factor of 10
         out += order*thisInt;

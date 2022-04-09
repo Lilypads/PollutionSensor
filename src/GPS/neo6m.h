@@ -105,7 +105,7 @@ public:
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
     int decChar2Int(char* thisCharFloat);
-    float decChar2Float(char* thisCharFloat);
+    double decChar2Float(char* thisCharFloat);
     void pollUartDev(); // TODO
     int parseNmeaStr(char* sentence, int size, parsedNmeaSent& outputSentance); // TODO void pollUartDev(); // TODO
     static void execPollingThread(NEO6M* thisClassPtr){
