@@ -9,6 +9,7 @@
 - [[#overview][Overview]]
 -  [[#misc][Misc]]
 - [[#linux-notes][Linux Notes]]
+- [[#git-notes][git Notes]]
 - [[#hardware-design][Hardware Design]]
 - [[#software][Software]]
 - [[#peripherals-libraries][Peripherals Libraries]]
@@ -113,6 +114,13 @@ sudo systemctl restart sshd
 #+begin_src shell
 sudo systemctl stop gpsd
 sudo systemctl stop gpsd.socket
+#+end_src
+* git Notes
+** Sub-modules
+*** Restore a sub-module from deleted
+#+begin_src shell
+git submodule deinit -f
+git submodule update --init
 #+end_src
 
 * Hardware Design
