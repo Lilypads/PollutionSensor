@@ -1,3 +1,7 @@
+#include <stdint.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "storageHandler.h"
 
 int main(){

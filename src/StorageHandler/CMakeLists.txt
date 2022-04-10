@@ -1,5 +1,7 @@
+add_library(libStorageHandler storageHandler.cpp storageHandler.h)
+target_link_libraries(libStorageHandler libsps30 neo6m)
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/SPS30 ${PROJECT_SOURCE_DIR}/src/GPS)
 
-add_executable(storageHandler storageHandler.cpp storageHandler.h)
-target_link_libraries(storageHandler libsps30 neo6m)
+add_executable(storageHandlerDemo storageHandler.cpp storageHandler.h)
+target_link_libraries(storageHandlerDemo libStorageHandler)
 
