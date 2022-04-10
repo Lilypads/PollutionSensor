@@ -28,7 +28,7 @@ fprintf(stderr,"Serial Number: %s\n",mySPS.serialNumber);
 mySPS.readVersion();
 
 fprintf(stderr,"Press any key to stop.\n");
-//mySPS.startMeasurement();
+mySPS.startMeasurement();
 
 
 getchar();

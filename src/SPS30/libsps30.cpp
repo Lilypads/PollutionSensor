@@ -347,6 +347,13 @@ if (checkERR < 0) {
 
 i2cClose(handle);
 
+//print raw data
+#ifdef DEBUG
+int n;
+for(n=0;n<60;n++)
+fprintf(stderr,"%02X\n",tmp[n]);
+#endif
+
 //get tmp into float >> put in struct
 //measurements = method(tmp)
 
