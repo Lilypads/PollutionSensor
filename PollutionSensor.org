@@ -8,6 +8,8 @@
 * Table Of Contents :TOC_1:
 - [[#overview][Overview]]
 -  [[#misc][Misc]]
+- [[#linux-notes][Linux Notes]]
+- [[#git-notes][git Notes]]
 - [[#hardware-design][Hardware Design]]
 - [[#software][Software]]
 - [[#peripherals-libraries][Peripherals Libraries]]
@@ -90,6 +92,37 @@ dtparam=i2c_arm=on,i2c_arm_baudrate=10000
 
 ** Links
 ** [[https://github.com/Lilypads/PollutionSensor][Repo]]
+* Linux Notes
+** Serial Ports
+*** Reset a serial Port
+This should get rid of any weird configuration left on a serial port
+#+begin_src shell
+stty -F /dev/<yourDevice> sane
+#+end_src
+
+*** Set a serial port baudrate
+#+begin_src shell
+stty -F /dev/<yourDevice> 9600
+#+end_src
+
+*** restart sshd daemon
+#+begin_src shell
+sudo systemctl restart sshd
+#+end_src
+
+*** Stopping gpsd daemon
+#+begin_src shell
+sudo systemctl stop gpsd
+sudo systemctl stop gpsd.socket
+#+end_src
+* git Notes
+** Sub-modules
+*** Restore a sub-module from deleted
+#+begin_src shell
+git submodule deinit -f
+git submodule update --init
+#+end_src
+
 * Hardware Design
 ** Hardware Overview
 :code:
@@ -300,6 +333,7 @@ C = \tau/R
 - Interface :: UART
 - Plug :: 2.54mm pin header
 - Vcc Voltage :: 3.6V max
+- Baud Rate :: 9600
 *** Hardware Interface Details
 **** Breakout board
 - [[https://uk.pi-supply.com/products/ublox-neo-6m-gps-uart-module-breakout-with-antenna][GPS breakout board]]

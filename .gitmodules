@@ -1,3 +1,4 @@
-[submodule "embedded-sps"]
-	path = embedded-sps
-	url = https://github.com/Sensirion/embedded-sps
+[submodule "pigpio"]
+	path = pigpio
+	url = https://github.com/joan2937/pigpio.git
+	ignore = dirty
