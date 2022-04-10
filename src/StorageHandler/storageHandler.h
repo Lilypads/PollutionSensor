@@ -1,7 +1,10 @@
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <stdio.h>
 #include "neo6m.h"
 #include "libsps30.h"
+
 
 class storageHandler {
     public:
@@ -21,21 +24,27 @@ class storageHandler {
     void closeFiles();
 
     /**
-	 * create files
+	 * create files headers
 	 **/
-    void createFiles(int identificationNumber);
+    void saveDefinitiveHeader();
 
     /**
 	 * write to files
 	 **/
-    void writeToFile(SPS30measurement currentMeasurement);
+    void addMeasurement(SPS30measurement currentMeasurement);
 
     /**
 	 * GPS buffer
 	 **/
     neo6mMeasurment bufferMeasurement;
 
+    /**
+	 * identification number that goes into the saved file name
+	 **/
+    std::string identificationNumber;
+    
     private:
+
             /*
             * syntax documentation
             */
@@ -44,9 +53,9 @@ class storageHandler {
             //read and write
             //ifstream signal_file;
 
-        fstream logdata_file;
+    static std::fstream logdata_file;
 
-}
+};
 
 
     

@@ -14,9 +14,9 @@ void storageHandler::closeFiles(){
     logdata_file.close();
 };
 
-void storageHandler::createFiles(int identificationNumber){
+void storageHandler::saveDefinitiveHeader(){
 
-    logdata_file.open("./tripLog_" + identificationNumber + ".tsv", fstream::out);
+    logdata_file.open("./tripLog_" + identificationNumber + ".tsv", std::fstream::out);
 
 //write header
 logdata_file    <<"SPS_MassConcentrationPM1.0" 
@@ -37,14 +37,19 @@ logdata_file    <<"SPS_MassConcentrationPM1.0"
                 <<"GPS_TimeLastUpdate"
                 <<"GPS_FixQuality"
                 <<"\n"
-                << endl;
+                << std::endl;
+
+    logdata_file.close();
 
 };
 
-void storageHandler::writeToFile(SPS30measurement currentMeasurement){
+void storageHandler::addMeasurement(SPS30measurement currentMeasurement){
+
+    logdata_file.open("./tripLog_" + identificationNumber + ".tsv", std::fstream::out);
+
 logdata_file    << currentMeasurement.MassConcPM1_0
                 << currentMeasurement.MassConcPM2_5
-                << currentMeasurement.MassConcPM3_0
+                << currentMeasurement.MassConcPM4_0
                 << currentMeasurement.MassConcPM10_0
                 << currentMeasurement.NumConcPM0_5
                 << currentMeasurement.NumConcPM1_0
@@ -60,8 +65,12 @@ logdata_file    << currentMeasurement.MassConcPM1_0
                 << bufferMeasurement.tLastUpdate
                 << bufferMeasurement.fixQuality
                 <<"\n"
-                << endl;
+                << std::endl;
+
+    logdata_file.close();
 };
+
+
 
 
 
