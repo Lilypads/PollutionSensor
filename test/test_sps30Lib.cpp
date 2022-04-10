@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_CASE(TestFunctions)
     uint8_t data[2];
     data[0] = 0xf0;
     data[1] = 0x0f;
-    BOOST_CHECK_EQUAL(0x00, CalcCrc(data));
+    BOOST_CHECK_EQUAL(0xb7, CalcCrc(data));
 
     char bdata[4];
     bdata[0] = 0x3f;  
