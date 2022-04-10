@@ -12,11 +12,6 @@
 #define DEBUG
 #endif
 
-// enable no hardware mode
-#ifndef N_NO_HARDWARE
-//#define NO_HARDWARE
-#endif
-
 //include guards
 #ifndef TRY1
 #define TRY1

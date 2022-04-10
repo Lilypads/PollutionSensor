@@ -27,7 +27,6 @@ float bytesToFloat(char b0, char b1, char b2, char b3){
 SPS30::SPS30(SPS30settings userSettings){
     settings = userSettings;
 
-#ifndef NO_HARDWARE
 if(settings.initPIGPIO){
          int cfg = gpioCfgGetInternals();
          cfg |= PI_CFG_NOSIGHANDLER;  // (1<<10)
@@ -37,7 +36,6 @@ if(settings.initPIGPIO){
                char msg[] = "cannot init pigpio.";
             }
     }
-#endif
 
 };
 
@@ -51,7 +49,6 @@ SPS30::~SPS30(){
 };
 
 void SPS30::startMeasurement(){
-#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
@@ -103,7 +100,6 @@ int checkERR = i2cWriteDevice(handle,tmp,5);
         }
 i2cClose(handle);
 
-#endif
 
 // start up daq thread
 
@@ -142,7 +138,6 @@ if (nullptr != daqThread) {
     daqThread = nullptr;
 }
 
-#ifndef NO_HARDWARE
 // move device out of mesurement mode
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
@@ -163,13 +158,11 @@ int checkERR = i2cWriteDevice(handle,pnt,2);
         }
 
 i2cClose(handle);
-#endif
 
 }
 
 void SPS30::readVersion(){
 
-#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -198,13 +191,11 @@ if (checkERR < 0) {
 fprintf(stderr,"Device Firmware Version: %u,%u\n",(int)tmp[0],(int)tmp[1]);
 
 i2cClose(handle);
-#endif
 
 }
 
 int SPS30::readSerialNumber(){
 
-#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -244,7 +235,6 @@ serialNumber[thisSNIdx2] = retBuff[thisBuffIdx2];
 
 
 i2cClose(handle);
-#endif
 
 return 1;
 
@@ -253,7 +243,6 @@ return 1;
 
 int SPS30::readDRDYFlag(){
 
-#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -297,12 +286,7 @@ fprintf(stderr,"\n");
 //#endif
 
 i2cClose(handle);
-#endif
 
-#ifdef NO_HARDWARE
-char retBuff[3];
-retBuff[1] = 1;
-#endif
 
 return retBuff[1];
 
@@ -315,11 +299,6 @@ SPS30measurement SPS30::readMeasurement(){
 
 SPS30measurement measurements;
 
-//for testings
-measurements.MassConcPM1_0 = 2.345;
-measurements.TypicalParcSize = 8.91;
-
-#ifndef NO_HARDWARE
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
         if (handle < 0) {
 #ifdef DEBUG
@@ -384,7 +363,6 @@ measurements.NumConcPM10_0  = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 i = SPS30dataOutputIdx::idxTypicalParcSize;
 measurements.TypicalParcSize = bytesToFloat(tmp[i],tmp[i+1],tmp[i+3],tmp[i+4]);
 
-#endif
 
 return measurements;
 }
