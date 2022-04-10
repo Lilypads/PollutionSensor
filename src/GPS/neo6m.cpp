@@ -231,7 +231,8 @@ int NEO6M::testChecksum(char* sentance){
 		// *checksum_str = '\0';
 
 		// loop through remaining sentance to Calculate checksum, starting after $ (i = 1)
-		for (int i = 1; i < strlen(sentance); i++) {
+  		int lenSent = checksum_str-sentance;
+		for (int i = 1; i < lenSent ; i++) {
 			calculated_checksum = calculated_checksum ^ sentance[i];
 		}
 
