@@ -292,9 +292,9 @@ fprintf(stderr,"  CalculatedCheckSum: %u\n",calculatedCRC);
 fprintf(stderr,"\n");
 }
 
-#ifdef DEBUG // comment this out after
+//#ifdef DEBUG // comment this out after
 //fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)retBuff[1]);
-#endif
+//#endif
 
 i2cClose(handle);
 #endif
