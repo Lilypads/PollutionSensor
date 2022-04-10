@@ -27,6 +27,7 @@
 #define NMEA_END_OF_SENT_lENGTH 5
 #define NMEA_DATA_START_IDX 6
 #define NMEA_MAX_DATA_ARRAY_SIZE 20
+#define NMEA_MAX_DATA_ELEMENT_SIZE 12
 
 // message types
 #define NMEA_GPVTG_MSG "GPVTG"//
@@ -35,6 +36,7 @@
 #define NMEA_GPGSV_MSG "GPGSV"//GPS Satellites in view
 #define NMEA_GPGLL_MSG "GPGLL"//Geographic Position, Latitude / Longitude and time.
 #define NMEA_GPRMC_MSG "GPRMC"//
+
 
 struct gpggaFieldInfo{int idx, size;};
 
@@ -79,6 +81,8 @@ struct neo6mMeasurment{
     bool dropout;
 };
 
+//array of char arrays
+typedef std::array<std::array<char,NMEA_MAX_DATA_ELEMENT_SIZE+1>, NMEA_MAX_DATA_ARRAY_SIZE> parsedNmeaSent;
 
 class NEO6M {
 //public properties
@@ -95,10 +99,13 @@ public:
     uint timeLastSample;
     //user must implement this method!
     virtual void hasMeasurementCB(neo6mMeasurment thisMesurement) = 0;
-    typedef std::array<char*, NMEA_MAX_DATA_ARRAY_SIZE> parsedNmeaSent;
 
 //private methods
+#ifdef NEO6M_PUB_METHODS
 public:
+#else
+private:
+#endif
     int fd = -1; //file handle
     void hasNmeaSentance(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
     int configurePort(int fd, int baud); // DONE
