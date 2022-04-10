@@ -40,22 +40,6 @@
 
 struct gpggaFieldInfo{int idx, size;};
 
-struct gpgsaFields {
-  gpggaFieldInfo id = {0, 5};
-  gpggaFieldInfo t = {1,9};
-  gpggaFieldInfo lat = {2,10};
-  gpggaFieldInfo latB = {3,1};
-  gpggaFieldInfo lon = {4,10};
-  gpggaFieldInfo lonB = {5,1};
-  gpggaFieldInfo qual = {6,1};
-  gpggaFieldInfo nSat = {7,2};
-  gpggaFieldInfo hdop = {8,4};
-  gpggaFieldInfo alt = {9,4};
-  gpggaFieldInfo altUnit = {9,1};
-  gpggaFieldInfo hAboveEllipsoid = {10,4};
-  gpggaFieldInfo tLastUpdate = {11,1};
-  gpggaFieldInfo statId = {12,0};
-};
 
 extern int hexChar2IntLUT[128];
 extern int decChar2IntLUT[128];
@@ -69,16 +53,42 @@ struct neo6mSettings {
     int baudrate = 9600;
 };
 
+enum fixQuality {
+invalid = 0,
+gpsFix = 1,
+dgpsFix = 2,
+};
+
 struct neo6mMeasurment{
     float latt_deg;
     float long_deg;
+    float hdop;
     float alt_m;
-    float heading_deg;
-    float speed_mps;
-    float error2d_m;
-    float error3d_m;
-    float errorSpd_m;
-    bool dropout;
+    float utc;
+    int tLastUpdate;
+    int fixQuality;
+    // float heading_deg;
+    // float speed_mps;
+    // float error2d_m;
+    // float error3d_m;
+    // float errorSpd_m;
+};
+
+struct gpgsaFields {
+  gpggaFieldInfo id = {0, 5};
+  gpggaFieldInfo t = {1,9};
+  gpggaFieldInfo lat = {2,10};
+  gpggaFieldInfo latB = {3,1};
+  gpggaFieldInfo lon = {4,10};
+  gpggaFieldInfo lonB = {5,1};
+  gpggaFieldInfo qual = {6,1};
+  gpggaFieldInfo nSat = {7,2};
+  gpggaFieldInfo hdop = {8,4};
+  gpggaFieldInfo alt = {9,4};//
+  gpggaFieldInfo altUnit = {9,1};
+  gpggaFieldInfo hAboveEllipsoid = {10,4};
+  gpggaFieldInfo tLastUpdate = {11,1};
+  gpggaFieldInfo statId = {12,0};
 };
 
 //array of char arrays
