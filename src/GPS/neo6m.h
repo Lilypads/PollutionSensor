@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <math.h>
-
+#include <time.h>
 
 #define NMEA_MAX_SENTENCE_SIZE 79+1 //+1 for null terminator
 #define NMEA_MAX_DATA_FIELD_SIZE 12//+1 for null terminator
@@ -64,7 +64,8 @@ struct neo6mMeasurment{
     float long_deg;
     float hdop;
     float alt_m;
-    float utc;
+    char utc[10];
+    float epoch;
     int tLastUpdate;
     int fixQuality;
     // float heading_deg;
@@ -117,7 +118,7 @@ public:
 private:
 #endif
     int fd = -1; //file handle
-    void hasNmeaSentance(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
+    void popMeasStruct(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
     int configurePort(int fd, int baud); // DONE
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
@@ -131,7 +132,7 @@ private:
     bool isPollingUart=0;
     std::thread* daqThread = nullptr;
     neo6mSettings settings;
-
+    float calcBearingInDegrees(char* thisCharBearing,char* thisCharDirection);
     };
 
 #endif // NEO6M_H_

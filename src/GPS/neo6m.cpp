@@ -139,18 +139,38 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
    return(i--);//return the number of bytes written
 };
 
-void NEO6M::hasNmeaSentance(parsedNmeaSent& parsedSent){
-gpgsaFields thisMeasurment;
+void NEO6M::popMeasStruct(parsedNmeaSent& parsedSent){
+gpgsaFields m;
     if(strcmp(parsedSent[0].data(),"GPGGA")){
         //lattitude
-       lastCompleteSample.latt_deg = decChar2Float(parsedSent[thisMeasurment.lat.idx].data());
-
+          //dd + mm.mmmm/60 for latitude
+        // ddd + mm.mmmm/60 for longitude
+//char GPGGA[] = "$GPGGA,140138.00,5551.65584,N,00413.16212,W,1,06,2.19,51.1,M,50.8,M,,*7B/r/n";
+//lat/long
+       lastCompleteSample.latt_deg = calcBearingInDegrees(parsedSent[m.lat.idx].data(), parsedSent[m.latB.idx].data());
+       lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lon.idx].data());
+// fix qulity
+       lastCompleteSample.fixQuality=decChar2IntLUT[parsedSent[m.lon.idx][0]];
+//utc
+       memcpy(&lastCompleteSample.utc,parsedSent[m.t.idx].data(),strlen(parsedSent[m.t.idx].data()));
+//alt
+       if (strcmp("M",parsedSent[m.altUnit.idx].data())){
+           lastCompleteSample.alt_m = decChar2Float(parsedSent[m.alt.idx].data());
+       }
     }
     else {
 
         }
 };
 
+float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection){
+    float latDeg = decChar2IntLUT[*thisCharBearing]*10 + decChar2IntLUT[*(thisCharBearing+1)];
+    latDeg += (decChar2Float(thisCharDirection+2));
+    if ((*thisCharDirection == 'W') || (*thisCharDirection == 'S')){
+        latDeg = 0.0-latDeg;
+    }
+    return latDeg;
+};
 
 int NEO6M::configurePort(int fd, int baud){
 // adapted from:
