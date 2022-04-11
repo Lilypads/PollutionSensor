@@ -86,10 +86,11 @@ struct gpgsaFields {
   gpggaFieldInfo nSat = {7,2};
   gpggaFieldInfo hdop = {8,4};
   gpggaFieldInfo alt = {9,4};//
-  gpggaFieldInfo altUnit = {9,1};
-  gpggaFieldInfo hAboveEllipsoid = {10,4};
-  gpggaFieldInfo tLastUpdate = {11,1};
-  gpggaFieldInfo statId = {12,0};
+  gpggaFieldInfo altUnit = {10,1};
+  gpggaFieldInfo hAboveEllipsoid = {11,4};
+  gpggaFieldInfo hAboveEllipsoidUnit = {12,1};
+  gpggaFieldInfo tLastUpdate = {13,1};
+  gpggaFieldInfo statId = {14,0};
 };
 
 //array of char arrays
@@ -102,7 +103,7 @@ public:
     NEO6M(neo6mSettings theseSettings = neo6mSettings());
     //destructor
 //    ~NEO6M();
-
+    int printCurrentSample();
     void startMeasurement();
     void stopMeasurement();
 
@@ -122,7 +123,7 @@ private:
     int configurePort(int fd, int baud); // DONE
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
-    int decChar2Int(char* thisCharFloat);
+    int decChar2Int(char* thisCharFloat, int len = 0);
     double decChar2Float(char* thisCharFloat);
     void pollUartDev(); // TODO
     int parseNmeaStr(char* sentence, int size, parsedNmeaSent& outputSentance); // TODO void pollUartDev(); // TODO

@@ -3,7 +3,7 @@
 #define NEO6M_PUB_METHODS //'publisize' neo6m
 #include <boost/test/unit_test.hpp>
 #include <neo6m.h>
-
+//city center glasgow 55.86116822031725, -4.250153462209106
 char GPVTG[] = "$GPVTG,,T,,M,0.275,N,0.509,K,A*2F/r/n";
 char GPGGA[] = "$GPGGA,140138.00,5551.65584,N,00413.16212,W,1,06,2.19,51.1,M,50.8,M,,*7B/r/n";
 char GPGSA[] = "$GPGSA,A,3,27,16,09,04,26,31,,,,,,,2.83,2.19,1.79*07/r/n";
@@ -147,6 +147,18 @@ while((sentOut[i][0] != '\0')&(i<=NMEA_MAX_DATA_ARRAY_SIZE)){
   i++;
 }
 testNeo6m.popMeasStruct(sentOut);
+fprintf(stderr,"Lat(D)-> %.5f\n",testNeo6m.lastCompleteSample.latt_deg);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.latt_deg-55.86093)<0.0001);
+fprintf(stderr,"Lon(D)-> %.5f\n",testNeo6m.lastCompleteSample.long_deg);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.long_deg+4.21937)<0.0001);
 fprintf(stderr,"Alt -> %.3f\n",testNeo6m.lastCompleteSample.alt_m);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.alt_m-51.1)<0.001);
+fprintf(stderr,"UTC-> %.*s\n",(int)strlen(testNeo6m.lastCompleteSample.utc),testNeo6m.lastCompleteSample.utc);
+fprintf(stderr,"Quality-> %d\n",testNeo6m.lastCompleteSample.fixQuality);
+BOOST_CHECK_EQUAL(testNeo6m.lastCompleteSample.fixQuality,1);
+fprintf(stderr,"tLastUpdate-> %d\n",testNeo6m.lastCompleteSample.tLastUpdate);
+BOOST_CHECK_EQUAL(testNeo6m.lastCompleteSample.tLastUpdate,0);
+fprintf(stderr,"hdop-> %.2f\n",testNeo6m.lastCompleteSample.hdop);
 }
+
 BOOST_AUTO_TEST_SUITE_END()

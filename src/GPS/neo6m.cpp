@@ -141,36 +141,52 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
 
 void NEO6M::popMeasStruct(parsedNmeaSent& parsedSent){
 gpgsaFields m;
-    if(strcmp(parsedSent[0].data(),"GPGGA")){
+    if(0==strcmp(parsedSent[0].data(),"GPGGA")){
         //lattitude
-          //dd + mm.mmmm/60 for latitude
-        // ddd + mm.mmmm/60 for longitude
 //char GPGGA[] = "$GPGGA,140138.00,5551.65584,N,00413.16212,W,1,06,2.19,51.1,M,50.8,M,,*7B/r/n";
 //lat/long
        lastCompleteSample.latt_deg = calcBearingInDegrees(parsedSent[m.lat.idx].data(), parsedSent[m.latB.idx].data());
-       lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lon.idx].data());
+       lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lonB.idx].data());
 // fix qulity
-       lastCompleteSample.fixQuality=decChar2IntLUT[parsedSent[m.lon.idx][0]];
+       lastCompleteSample.fixQuality=decChar2IntLUT[parsedSent[m.qual.idx][0]];
+       lastCompleteSample.hdop=decChar2Float(&parsedSent[m.hdop.idx][0]);
+       lastCompleteSample.tLastUpdate=decChar2Int(&parsedSent[m.tLastUpdate.idx][0]);
 //utc
        memcpy(&lastCompleteSample.utc,parsedSent[m.t.idx].data(),strlen(parsedSent[m.t.idx].data()));
 //alt
-       if (strcmp("M",parsedSent[m.altUnit.idx].data())){
+       if (0==strcmp("M",parsedSent[m.altUnit.idx].data())){
            lastCompleteSample.alt_m = decChar2Float(parsedSent[m.alt.idx].data());
        }
     }
     else {
-
+        fprintf(stderr,"No matching sentance type found for: %.*s\n",(int)strlen(parsedSent[0].data()),parsedSent[0].data());
         }
 };
 
 float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection){
-    float latDeg = decChar2IntLUT[*thisCharBearing]*10 + decChar2IntLUT[*(thisCharBearing+1)];
-    latDeg += (decChar2Float(thisCharDirection+2));
+    // the format for nmea strings is:
+        //dd + mm.mmmm/60 for latitude
+        // ddd + mm.mmmm/60 for longitude
+    // so the bit that is consistent is the minuits so we need to figure out where that starts
+    int digitCount= (thisCharBearing[4]=='.' ? 2 : 3); // two of 3 intiger bits which are in degrees
+    float deg = (float)decChar2Int(thisCharBearing,digitCount);
+    deg += (decChar2Float(thisCharBearing+digitCount))/60;
     if ((*thisCharDirection == 'W') || (*thisCharDirection == 'S')){
-        latDeg = 0.0-latDeg;
+        deg =-deg;
     }
-    return latDeg;
+    return deg;
 };
+
+int NEO6M::printCurrentSample(){
+fprintf(stderr,"Lat(D)-> %.5f\n",lastCompleteSample.latt_deg);
+fprintf(stderr,"Lon(D)-> %.5f\n",lastCompleteSample.long_deg);
+fprintf(stderr,"Alt -> %.3f\n",lastCompleteSample.alt_m);
+fprintf(stderr,"UTC-> %.*s\n",(int)strlen(lastCompleteSample.utc),lastCompleteSample.utc);
+fprintf(stderr,"Quality-> %d\n",lastCompleteSample.fixQuality);
+fprintf(stderr,"tLastUpdate-> %d\n",lastCompleteSample.tLastUpdate);
+fprintf(stderr,"hdop-> %.2f\n",lastCompleteSample.hdop);
+return(0);
+}
 
 int NEO6M::configurePort(int fd, int baud){
 // adapted from:
@@ -322,11 +338,14 @@ double NEO6M::decChar2Float(char* thisCharFloat){
     return out;
 };
 
-int NEO6M::decChar2Int(char* charInt){
+int NEO6M::decChar2Int(char* charInt, int len){
+    if (len<1){
+        len = strlen(charInt);
+    }
     long long int out=0; //make sure we get no overflows!
     unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
     int thisInt = 0;
-    while (*charInt!='\0'){
+    for(int i=0; i<len; i++){
         thisInt = decChar2IntLUT[*charInt];
         if (thisInt==-1){
             fprintf(stderr,"Invalid Character Detected, this:\"%c\" Can't be an int!\n",*charInt);
