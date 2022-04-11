@@ -120,11 +120,9 @@ BOOST_AUTO_TEST_CASE(checksum_wrong) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(testChecksumCalc)
+BOOST_AUTO_TEST_SUITE(testNMEASentanceParsing)
 
 BOOST_AUTO_TEST_CASE(parseSentance) {
-fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGLL),GPGLL);
-testNeo6m.testChecksum(GPGLL);
 fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGLL),GPGLL);
 fprintf(stderr,"\n");
 parsedNmeaSent sentOut;
@@ -137,5 +135,18 @@ while((sentOut[i][0] != '\0')&(i<=NMEA_MAX_DATA_ARRAY_SIZE)){
 }
 }
 
-
+BOOST_AUTO_TEST_CASE(populateMeasurmentStruct) {
+fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGGA),GPGGA);
+fprintf(stderr,"\n");
+parsedNmeaSent sentOut;
+memset(&sentOut,0,sizeof(parsedNmeaSent));
+BOOST_CHECK(testNeo6m.parseNmeaStr(GPGGA, sizeof(GPGGA), sentOut)>=0);
+int i = 0;
+while((sentOut[i][0] != '\0')&(i<=NMEA_MAX_DATA_ARRAY_SIZE)){
+  fprintf(stderr," [%i] -> %.*s\n",i,(int)sentOut[i].size(), sentOut[i].data());
+  i++;
+}
+testNeo6m.popMeasStruct(sentOut);
+fprintf(stderr,"Alt -> %.3f\n",testNeo6m.lastCompleteSample.alt_m);
+}
 BOOST_AUTO_TEST_SUITE_END()
