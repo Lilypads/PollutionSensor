@@ -149,8 +149,6 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
 void NEO6M::popMeasStruct(parsedNmeaSent& parsedSent){
 gpgsaFields m;
     if(0==strcmp(parsedSent[0].data(),"GPGGA")){
-        //lattitude
-//char GPGGA[] = "$GPGGA,140138.00,5551.65584,N,00413.16212,W,1,06,2.19,51.1,M,50.8,M,,*7B/r/n";
 //lat/long
        lastCompleteSample.latt_deg = calcBearingInDegrees(parsedSent[m.lat.idx].data(), parsedSent[m.latB.idx].data());
        lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lonB.idx].data());
@@ -166,9 +164,11 @@ gpgsaFields m;
        }
        hasMeasurementCB(lastCompleteSample);
     }
+    #ifdef DEBUG
     else {
         fprintf(stderr,"No matching sentance type found for: %.*s\n",(int)strlen(parsedSent[0].data()),parsedSent[0].data());
         }
+    #endif
 };
 
 float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection){
@@ -188,12 +188,12 @@ float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection
 };
 
 int NEO6M::printSample(neo6mMeasurment m){
-fprintf(stderr,"Lat(D)-> %.5f\n",m.latt_deg);
-fprintf(stderr,"Lon(D)-> %.5f\n",m.long_deg);
-fprintf(stderr,"Alt -> %.3f\n",m.alt_m);
-fprintf(stderr,"UTC-> %.*s\n",(int)strlen(m.utc),lastCompleteSample.utc);
+fprintf(stderr,"Lat(D)-> %.8f\n",m.latt_deg);
+fprintf(stderr,"Lon(D)-> %.8f\n",m.long_deg);
+fprintf(stderr,"Alt(M) -> %.3f\n",m.alt_m);
+fprintf(stderr,"UTC(HHMMss.ss)-> %.*s\n",(int)sizeof(m.utc),lastCompleteSample.utc);
 fprintf(stderr,"Quality-> %d\n",m.fixQuality);
-fprintf(stderr,"tLastUpdate-> %d\n",m.tLastUpdate);
+fprintf(stderr,"tLastUpdate(s)-> %d\n",m.tLastUpdate);
 fprintf(stderr,"hdop-> %.2f\n",m.hdop);
 return(0);
 }

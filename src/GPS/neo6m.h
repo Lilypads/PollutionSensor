@@ -60,14 +60,14 @@ dgpsFix = 2,
 };
 
 struct neo6mMeasurment{
-    float latt_deg;
-    float long_deg;
-    float hdop;
-    float alt_m;
-    char utc[10];
-    float epoch;
-    int tLastUpdate;
-    int fixQuality;
+    float latt_deg = 0;
+    float long_deg = 0;
+    float hdop = -1;
+    float alt_m = -1;
+    char utc[10]= {};
+    float epoch= -1;
+    int tLastUpdate = -1;
+    int fixQuality = -1;
     // float heading_deg;
     // float speed_mps;
     // float error2d_m;
