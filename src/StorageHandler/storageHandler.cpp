@@ -16,7 +16,7 @@ void storageHandler::closeFiles(){
 
 void storageHandler::createFiles(){
 
-    logdata_file.open("./tripLog_" + identificationNumber + ".tsv", std::fstream::out);
+    logdata_file.open("./tripLog_" + identificationNumber + ".csv", std::fstream::out);
 
 //write header
 logdata_file    <<"SPS_MassConcentrationPM1.0" << ","
