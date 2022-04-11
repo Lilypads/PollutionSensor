@@ -9,7 +9,7 @@ int main(){
     storageHandler myStorageHandler;
     //set identification number that will go into file name later
     myStorageHandler.identificationNumber = "80";
-    myStorageHandler.saveDefinitiveHeader();
+    myStorageHandler.createFiles();
 
     //sample GPS data
     neo6mMeasurment sampleGPSdata;
@@ -39,6 +39,8 @@ int main(){
 
     // save SPS30 measurement along with last GPS measurement to file
     myStorageHandler.addMeasurement(sampleSPSdata);
+    myStorageHandler.addMeasurement(sampleSPSdata);
+    myStorageHandler.closeFiles();
 
 
 return 0;

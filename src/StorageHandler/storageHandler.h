@@ -24,9 +24,9 @@ class storageHandler {
     void closeFiles();
 
     /**
-	 * create files headers
+	 * create files headers _PLEASE RUN ONLY ONCE OTHERWISE IT OVERWRITES_
 	 **/
-    void saveDefinitiveHeader();
+    void createFiles();
 
     /**
 	 * write to files
@@ -41,7 +41,7 @@ class storageHandler {
     /**
 	 * identification number that goes into the saved file name
 	 **/
-    std::string identificationNumber;
+    std::string identificationNumber = "0";
     
     private:
 
@@ -53,7 +53,7 @@ class storageHandler {
             //read and write
             //ifstream signal_file;
 
-    static std::fstream logdata_file;
+    std::fstream logdata_file;
 
 };
 

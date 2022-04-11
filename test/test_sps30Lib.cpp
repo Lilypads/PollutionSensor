@@ -1,4 +1,5 @@
 #define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE testSPS30
 #include <boost/test/unit_test.hpp>
 #include "libsps30.h"
 //BOOST_WARN(1==1); //warn and continue
