@@ -19,7 +19,7 @@ add_executable(test_sps30Lib test_sps30Lib.cpp)
 target_link_libraries(test_sps30Lib libsps30 ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
 
 
-# enable testing
+# enable testing (needs to be done before every "add test")
 enable_testing()
 
 # add tests
