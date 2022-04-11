@@ -102,7 +102,7 @@ public:
     //constructor
     NEO6M(neo6mSettings theseSettings = neo6mSettings());
     //destructor
-//    ~NEO6M();
+    ~NEO6M();
     int printSample(neo6mMeasurment m);
     void startMeasurement();
     void stopMeasurement();
@@ -123,8 +123,6 @@ private:
     int configurePort(int fd); // DONE
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
-    // int atoi(char* thisCharFloat, int len = 0);
-    // double decChar2Float(char* thisCharFloat);
     void pollUartDev(); // TODO
     int parseNmeaStr(char* sentence, int size, parsedNmeaSent& outputSentance); // TODO void pollUartDev(); // TODO
     static void execPollingThread(NEO6M* thisClassPtr){

@@ -31,6 +31,9 @@ NEO6M::NEO6M(neo6mSettings theseSettings){
 settings = theseSettings;
 }
 
+NEO6M::~NEO6M(){
+stopMeasurement();
+}
 void NEO6M::startMeasurement(){
 #ifdef DEBUG
     fprintf(stderr,"starting GPS acquisition...\n")
