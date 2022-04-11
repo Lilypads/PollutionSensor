@@ -89,6 +89,7 @@ void NEO6M::pollUartDev() {
     }
     else {//if the parse operation was successfull, we can expect the nmeaSentance Properties to be
     // do nothing
+    popMeasStruct(parsedSent);
     }
 
   } //end of polling
@@ -160,6 +161,7 @@ gpgsaFields m;
        if (0==strcmp("M",parsedSent[m.altUnit.idx].data())){
            lastCompleteSample.alt_m = atof(parsedSent[m.alt.idx].data());
        }
+       hasMeasurementCB(lastCompleteSample);
     }
     else {
         fprintf(stderr,"No matching sentance type found for: %.*s\n",(int)strlen(parsedSent[0].data()),parsedSent[0].data());
