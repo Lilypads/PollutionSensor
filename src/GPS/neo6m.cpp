@@ -106,9 +106,11 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
 
     //the first 6 chars are always start char and message type
     //the last
-    int idxChecksumStart = size-1-1-NMEA_END_OF_SENT_lENGTH-1;
-    if (*(thisSent+idxChecksumStart) != NMEA_SENTENCE_CHECKSUM_DELIM){
-        fprintf(stderr,"NMEA Checksum Delim Missing: \"%.*s\" we found: %c at possition %i\n",size,thisSent,*(thisSent-idxChecksumStart),idxChecksumStart);
+    char* checksum;
+    checksum = strchr(thisSent,NMEA_SENTENCE_CHECKSUM_DELIM);
+    if (checksum==NULL){
+        int relIx = checksum - thisSent;
+        fprintf(stderr,"NMEA Checksum Delim Missing: \"%.*s\" we found: %c at possition %i\n",size,thisSent,*checksum,relIx);
         return(-2);
     }
 
@@ -119,12 +121,10 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
     };
 
     // trimCheckSum
-    *(thisSent + idxChecksumStart) = '\0';
+    *checksum = '\0';
     // loop through the array and track what part of the message we are in
     int i=0;
     char* nextSent;
-    char* checksum;
-    checksum = thisSent+idxChecksumStart;
     //read into an array of char arrays (so we can coppy data easily)
     // increment sent so it moves off sent start delim
     thisSent++;
