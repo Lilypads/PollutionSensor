@@ -212,6 +212,9 @@ int NEO6M::configurePort(int fd){
                 perror("Failed to set Uart port Recieve BaudRate");
                 exit(3);//
         };
+        if (fcntl(fd, F_SETFL,0)<0){
+           perror("fcntl returned");
+        }
         /* control modes */
         tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
         tty.c_cflag &= ~PARENB; // Clear the parity bit
