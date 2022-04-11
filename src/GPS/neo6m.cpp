@@ -71,7 +71,10 @@ void NEO6M::pollUartDev() {
   parsedNmeaSent parsedSent;
 
   fd = open(settings.serialDevice.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
-  configurePort(fd, settings.baudrate);
+  if (fd<0){
+      perror("Failed to open file, open returned");
+  }
+  configurePort(fd);
   tcflush(fd, TCIFLUSH); // BF flush the buffered data, we care only for the
 
   while (isPollingUart) {
@@ -190,7 +193,7 @@ fprintf(stderr,"hdop-> %.2f\n",m.hdop);
 return(0);
 }
 
-int NEO6M::configurePort(int fd, int baud){
+int NEO6M::configurePort(int fd){
 // adapted from:
 // https://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c
 // largely boilerplate
@@ -200,12 +203,12 @@ int NEO6M::configurePort(int fd, int baud){
                 exit(1);//
         }
 
-        if (cfsetospeed(&tty, baud) !=0){
+        if (cfsetospeed(&tty, B9600) !=0){
                 perror("Failed to set Uart port Send BaudRate");
                 exit(2);//
         };
 
-        if (cfsetispeed(&tty, baud) !=0){
+        if (cfsetispeed(&tty, B9600) !=0){
                 perror("Failed to set Uart port Recieve BaudRate");
                 exit(3);//
         };

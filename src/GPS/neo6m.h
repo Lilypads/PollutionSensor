@@ -120,7 +120,7 @@ private:
 #endif
     int fd = -1; //file handle
     void popMeasStruct(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
-    int configurePort(int fd, int baud); // DONE
+    int configurePort(int fd); // DONE
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
     // int atoi(char* thisCharFloat, int len = 0);

@@ -3,7 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
-
+#define DEBUG
 class neo6m: public NEO6M{
     using NEO6M::NEO6M; //inherit constructor
     virtual void hasMeasurementCB(neo6mMeasurment m){
