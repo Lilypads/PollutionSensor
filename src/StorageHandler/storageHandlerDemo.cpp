@@ -17,7 +17,7 @@ int main(){
     sampleGPSdata.long_deg = 12;
     sampleGPSdata.hdop = 13;
     sampleGPSdata.alt_m = 14;
-    sampleGPSdata.utc = 15;
+    strcpy(sampleGPSdata.utc,"11:53PM//");
     sampleGPSdata.tLastUpdate = 16;
     sampleGPSdata.fixQuality = 17;
 
