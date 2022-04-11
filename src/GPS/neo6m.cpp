@@ -177,14 +177,14 @@ float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection
     return deg;
 };
 
-int NEO6M::printCurrentSample(){
-fprintf(stderr,"Lat(D)-> %.5f\n",lastCompleteSample.latt_deg);
-fprintf(stderr,"Lon(D)-> %.5f\n",lastCompleteSample.long_deg);
-fprintf(stderr,"Alt -> %.3f\n",lastCompleteSample.alt_m);
-fprintf(stderr,"UTC-> %.*s\n",(int)strlen(lastCompleteSample.utc),lastCompleteSample.utc);
-fprintf(stderr,"Quality-> %d\n",lastCompleteSample.fixQuality);
-fprintf(stderr,"tLastUpdate-> %d\n",lastCompleteSample.tLastUpdate);
-fprintf(stderr,"hdop-> %.2f\n",lastCompleteSample.hdop);
+int NEO6M::printSample(neo6mMeasurment m){
+fprintf(stderr,"Lat(D)-> %.5f\n",m.latt_deg);
+fprintf(stderr,"Lon(D)-> %.5f\n",m.long_deg);
+fprintf(stderr,"Alt -> %.3f\n",m.alt_m);
+fprintf(stderr,"UTC-> %.*s\n",(int)strlen(m.utc),lastCompleteSample.utc);
+fprintf(stderr,"Quality-> %d\n",m.fixQuality);
+fprintf(stderr,"tLastUpdate-> %d\n",m.tLastUpdate);
+fprintf(stderr,"hdop-> %.2f\n",m.hdop);
 return(0);
 }
 

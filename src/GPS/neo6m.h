@@ -103,7 +103,7 @@ public:
     NEO6M(neo6mSettings theseSettings = neo6mSettings());
     //destructor
 //    ~NEO6M();
-    int printCurrentSample();
+    int printSample(neo6mMeasurment m);
     void startMeasurement();
     void stopMeasurement();
 
