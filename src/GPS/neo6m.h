@@ -9,7 +9,7 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <math.h>
-
+#include <time.h>
 
 #define NMEA_MAX_SENTENCE_SIZE 79+1 //+1 for null terminator
 #define NMEA_MAX_DATA_FIELD_SIZE 12//+1 for null terminator
@@ -60,13 +60,14 @@ dgpsFix = 2,
 };
 
 struct neo6mMeasurment{
-    float latt_deg;
-    float long_deg;
-    float hdop;
-    float alt_m;
-    float utc;
-    int tLastUpdate;
-    int fixQuality;
+    float latt_deg = 0;
+    float long_deg = 0;
+    float hdop = -1;
+    float alt_m = -1;
+    char utc[10]= {};
+    float epoch= -1;
+    int tLastUpdate = -1;
+    int fixQuality = -1;
     // float heading_deg;
     // float speed_mps;
     // float error2d_m;
@@ -85,10 +86,11 @@ struct gpgsaFields {
   gpggaFieldInfo nSat = {7,2};
   gpggaFieldInfo hdop = {8,4};
   gpggaFieldInfo alt = {9,4};//
-  gpggaFieldInfo altUnit = {9,1};
-  gpggaFieldInfo hAboveEllipsoid = {10,4};
-  gpggaFieldInfo tLastUpdate = {11,1};
-  gpggaFieldInfo statId = {12,0};
+  gpggaFieldInfo altUnit = {10,1};
+  gpggaFieldInfo hAboveEllipsoid = {11,4};
+  gpggaFieldInfo hAboveEllipsoidUnit = {12,1};
+  gpggaFieldInfo tLastUpdate = {13,1};
+  gpggaFieldInfo statId = {14,0};
 };
 
 //array of char arrays
@@ -100,8 +102,8 @@ public:
     //constructor
     NEO6M(neo6mSettings theseSettings = neo6mSettings());
     //destructor
-//    ~NEO6M();
-
+    ~NEO6M();
+    int printSample(neo6mMeasurment m);
     void startMeasurement();
     void stopMeasurement();
 
@@ -117,12 +119,10 @@ public:
 private:
 #endif
     int fd = -1; //file handle
-    void hasNmeaSentance(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
-    int configurePort(int fd, int baud); // DONE
+    void popMeasStruct(parsedNmeaSent& parsedSent); // TODO //the polling method will call this once a full sentance has been recieved
+    int configurePort(int fd); // DONE
     int testChecksum(char* sentence); // DONE
     int hexChar2Int(char* checksumChar); // DONE
-    int decChar2Int(char* thisCharFloat);
-    double decChar2Float(char* thisCharFloat);
     void pollUartDev(); // TODO
     int parseNmeaStr(char* sentence, int size, parsedNmeaSent& outputSentance); // TODO void pollUartDev(); // TODO
     static void execPollingThread(NEO6M* thisClassPtr){
@@ -131,7 +131,7 @@ private:
     bool isPollingUart=0;
     std::thread* daqThread = nullptr;
     neo6mSettings settings;
-
+    float calcBearingInDegrees(char* thisCharBearing,char* thisCharDirection);
     };
 
 #endif // NEO6M_H_

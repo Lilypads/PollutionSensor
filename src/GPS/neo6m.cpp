@@ -31,6 +31,9 @@ NEO6M::NEO6M(neo6mSettings theseSettings){
 settings = theseSettings;
 }
 
+NEO6M::~NEO6M(){
+stopMeasurement();
+}
 void NEO6M::startMeasurement(){
 #ifdef DEBUG
     fprintf(stderr,"starting GPS acquisition...\n")
@@ -71,7 +74,10 @@ void NEO6M::pollUartDev() {
   parsedNmeaSent parsedSent;
 
   fd = open(settings.serialDevice.c_str(), O_RDONLY | O_NOCTTY | O_NDELAY);
-  configurePort(fd, settings.baudrate);
+  if (fd<0){
+      perror("Failed to open file, open returned");
+  }
+  configurePort(fd);
   tcflush(fd, TCIFLUSH); // BF flush the buffered data, we care only for the
 
   while (isPollingUart) {
@@ -86,6 +92,7 @@ void NEO6M::pollUartDev() {
     }
     else {//if the parse operation was successfull, we can expect the nmeaSentance Properties to be
     // do nothing
+    popMeasStruct(parsedSent);
     }
 
   } //end of polling
@@ -103,9 +110,11 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
 
     //the first 6 chars are always start char and message type
     //the last
-    int idxChecksumStart = size-1-1-NMEA_END_OF_SENT_lENGTH-1;
-    if (*(thisSent+idxChecksumStart) != NMEA_SENTENCE_CHECKSUM_DELIM){
-        fprintf(stderr,"NMEA Checksum Delim Missing: \"%.*s\" we found: %c at possition %i\n",size,thisSent,*(thisSent-idxChecksumStart),idxChecksumStart);
+    char* checksum;
+    checksum = strchr(thisSent,NMEA_SENTENCE_CHECKSUM_DELIM);
+    if (checksum==NULL){
+        int relIx = checksum - thisSent;
+        fprintf(stderr,"NMEA Checksum Delim Missing: \"%.*s\" we found: %c at possition %i\n",size,thisSent,*checksum,relIx);
         return(-2);
     }
 
@@ -116,12 +125,10 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
     };
 
     // trimCheckSum
-    *(thisSent + idxChecksumStart) = '\0';
+    *checksum = '\0';
     // loop through the array and track what part of the message we are in
     int i=0;
     char* nextSent;
-    char* checksum;
-    checksum = thisSent+idxChecksumStart;
     //read into an array of char arrays (so we can coppy data easily)
     // increment sent so it moves off sent start delim
     thisSent++;
@@ -139,20 +146,59 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
    return(i--);//return the number of bytes written
 };
 
-void NEO6M::hasNmeaSentance(parsedNmeaSent& parsedSent){
-gpgsaFields thisMeasurment;
-    if(strcmp(parsedSent[0].data(),"GPGGA")){
-        //lattitude
-       lastCompleteSample.latt_deg = decChar2Float(parsedSent[thisMeasurment.lat.idx].data());
-
+void NEO6M::popMeasStruct(parsedNmeaSent& parsedSent){
+gpgsaFields m;
+    if(0==strcmp(parsedSent[0].data(),"GPGGA")){
+//lat/long
+       lastCompleteSample.latt_deg = calcBearingInDegrees(parsedSent[m.lat.idx].data(), parsedSent[m.latB.idx].data());
+       lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lonB.idx].data());
+// fix qulity
+       lastCompleteSample.fixQuality=decChar2IntLUT[parsedSent[m.qual.idx][0]];
+       lastCompleteSample.hdop=atof(&parsedSent[m.hdop.idx][0]);
+       lastCompleteSample.tLastUpdate=atoi(&parsedSent[m.tLastUpdate.idx][0]);
+//utc
+       memcpy(&lastCompleteSample.utc,parsedSent[m.t.idx].data(),strlen(parsedSent[m.t.idx].data()));
+//alt
+       if (0==strcmp("M",parsedSent[m.altUnit.idx].data())){
+           lastCompleteSample.alt_m = atof(parsedSent[m.alt.idx].data());
+       }
+       hasMeasurementCB(lastCompleteSample);
     }
+    #ifdef DEBUG
     else {
-
+        fprintf(stderr,"No matching sentance type found for: %.*s\n",(int)strlen(parsedSent[0].data()),parsedSent[0].data());
         }
+    #endif
 };
 
+float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection){
+    // the format for nmea strings is:
+        //dd + mm.mmmm/60 for latitude
+        // ddd + mm.mmmm/60 for longitude
+    // so the bit that is consistent is the minuits so we need to figure out where that starts
+    int digitCount= (thisCharBearing[4]=='.' ? 2 : 3); // two of 3 intiger bits which are in degrees
+    char intPart[4];
+    memcpy(intPart, thisCharBearing, digitCount);
+    float deg = (float)atoi(intPart);
+    deg += (atof(thisCharBearing+digitCount))/60;
+    if ((*thisCharDirection == 'W') || (*thisCharDirection == 'S')){
+        deg =-deg;
+    }
+    return deg;
+};
 
-int NEO6M::configurePort(int fd, int baud){
+int NEO6M::printSample(neo6mMeasurment m){
+fprintf(stderr,"Lat(D)-> %.8f\n",m.latt_deg);
+fprintf(stderr,"Lon(D)-> %.8f\n",m.long_deg);
+fprintf(stderr,"Alt(M) -> %.3f\n",m.alt_m);
+fprintf(stderr,"UTC(HHMMss.ss)-> %.*s\n",(int)sizeof(m.utc),lastCompleteSample.utc);
+fprintf(stderr,"Quality-> %d\n",m.fixQuality);
+fprintf(stderr,"tLastUpdate(s)-> %d\n",m.tLastUpdate);
+fprintf(stderr,"hdop-> %.2f\n",m.hdop);
+return(0);
+}
+
+int NEO6M::configurePort(int fd){
 // adapted from:
 // https://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c
 // largely boilerplate
@@ -162,15 +208,18 @@ int NEO6M::configurePort(int fd, int baud){
                 exit(1);//
         }
 
-        if (cfsetospeed(&tty, baud) !=0){
+        if (cfsetospeed(&tty, B9600) !=0){
                 perror("Failed to set Uart port Send BaudRate");
                 exit(2);//
         };
 
-        if (cfsetispeed(&tty, baud) !=0){
+        if (cfsetispeed(&tty, B9600) !=0){
                 perror("Failed to set Uart port Recieve BaudRate");
                 exit(3);//
         };
+        if (fcntl(fd, F_SETFL,0)<0){
+           perror("fcntl returned");
+        }
         /* control modes */
         tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;     // 8-bit chars
         tty.c_cflag &= ~PARENB; // Clear the parity bit
@@ -268,54 +317,3 @@ int NEO6M::hexChar2Int(char* checksumChar){
     return checksum;
 };
 
-double NEO6M::decChar2Float(char* thisCharFloat){
-    unsigned long int intOut=0;
-    double out =0;
-    int decimalIdx= -1;
-    int thisInt;
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
-    int i=0;
-    while (*(thisCharFloat+i)!='\0'){
-        thisInt = decChar2IntLUT[*(thisCharFloat + i)];
-        if (thisInt<0){
-            if (*(thisCharFloat+i)=='.'){
-            decimalIdx = i;
-            i++;
-            }
-            else {
-                fprintf(stderr,"Non numeric character detected: \"%c\"\n", *(thisCharFloat+i));
-            }
-        }
-        else {
-          order /= 10; // decrease the order by a factor of 10
-          intOut += order * decChar2IntLUT[*(thisCharFloat + i)];
-          i++;
-        }
-    }
-
-    if(decimalIdx>0){ // compensate for the fact that we have a floating point
-        out =(double)intOut / pow(10,NMEA_MAX_DATA_FIELD_SIZE-1-decimalIdx);
-    }
-    else {
-        out =(double)intOut /(double)order;
-    }
-    return out;
-};
-
-int NEO6M::decChar2Int(char* charInt){
-    long long int out=0; //make sure we get no overflows!
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
-    int thisInt = 0;
-    while (*charInt!='\0'){
-        thisInt = decChar2IntLUT[*charInt];
-        if (thisInt==-1){
-            fprintf(stderr,"Invalid Character Detected, this:\"%c\" Can't be an int!\n",*charInt);
-            return(-1);
-        }
-        order/=10;//decrease the order by a factor of 10
-        out += order*thisInt;
-        charInt++;
-    }
-    out/=order;
-    return out;
-};

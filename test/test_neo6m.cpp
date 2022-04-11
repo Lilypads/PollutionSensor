@@ -3,7 +3,7 @@
 #define NEO6M_PUB_METHODS //'publisize' neo6m
 #include <boost/test/unit_test.hpp>
 #include <neo6m.h>
-
+//city center glasgow 55.86116822031725, -4.250153462209106
 char GPVTG[] = "$GPVTG,,T,,M,0.275,N,0.509,K,A*2F/r/n";
 char GPGGA[] = "$GPGGA,140138.00,5551.65584,N,00413.16212,W,1,06,2.19,51.1,M,50.8,M,,*7B/r/n";
 char GPGSA[] = "$GPGSA,A,3,27,16,09,04,26,31,,,,,,,2.83,2.19,1.79*07/r/n";
@@ -46,67 +46,7 @@ BOOST_CHECK_EQUAL(testNeo6m.hexChar2Int(testHexChar_0),0);
 char testHexChar_211[] = "d3";
 BOOST_CHECK_EQUAL(testNeo6m.hexChar2Int(testHexChar_211),211);
 
-// test
 };
-
-BOOST_AUTO_TEST_SUITE(testChar2Int)
-
-BOOST_AUTO_TEST_CASE(TestChar2Int_8) {
-  char testDecChar[] = "8";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar), 8);
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_7970) {
-  char testDecChar_7970[] = "7970";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_7970), 7970);
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_ampersand) {
-  fprintf(stderr,"Debug message is expected:\n");
-  char testDecChar_amper[] = "&";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_amper), -1);
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_Plus) {
-  fprintf(stderr,"Debug message is expected:\n");
-  char testDecChar_plus[] = "+";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_plus), -1);
-  fprintf(stderr,"\n");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-
-BOOST_AUTO_TEST_SUITE(testChar2Float)
-
-BOOST_AUTO_TEST_CASE(init_testChar2Float) {
-fprintf(stderr,"Testing Char2Float (some debug message are expected):\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_8) {
-  char testDecChar[] = "0.8";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar), 0.8));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_7970) {
-  char testDecChar_7970[] = "7970.";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_7970), (float) 7970));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_long) {
-  char testDecChar_long[] = "9140139.22";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_long),  9140139.22));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_long2) {
-  char testDecChar_long[] = "5551.65584";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_long),  5551.65584));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_typicalGps) {
-  char testDecChar_typicalHPS[] = "00413.16265";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_typicalHPS),  413.16265));
-  fprintf(stderr,"\n");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(testChecksumCalc)
 
@@ -120,11 +60,9 @@ BOOST_AUTO_TEST_CASE(checksum_wrong) {
 
 BOOST_AUTO_TEST_SUITE_END()
 
-BOOST_AUTO_TEST_SUITE(testChecksumCalc)
+BOOST_AUTO_TEST_SUITE(testNMEASentanceParsing)
 
 BOOST_AUTO_TEST_CASE(parseSentance) {
-fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGLL),GPGLL);
-testNeo6m.testChecksum(GPGLL);
 fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGLL),GPGLL);
 fprintf(stderr,"\n");
 parsedNmeaSent sentOut;
@@ -137,5 +75,30 @@ while((sentOut[i][0] != '\0')&(i<=NMEA_MAX_DATA_ARRAY_SIZE)){
 }
 }
 
+BOOST_AUTO_TEST_CASE(populateMeasurmentStruct) {
+fprintf(stderr,"Nmea sent: %.*s\n",(int)sizeof(GPGGA),GPGGA);
+fprintf(stderr,"\n");
+parsedNmeaSent sentOut;
+memset(&sentOut,0,sizeof(parsedNmeaSent));
+BOOST_CHECK(testNeo6m.parseNmeaStr(GPGGA, sizeof(GPGGA), sentOut)>=0);
+int i = 0;
+while((sentOut[i][0] != '\0')&(i<=NMEA_MAX_DATA_ARRAY_SIZE)){
+  fprintf(stderr," [%i] -> %.*s\n",i,(int)sentOut[i].size(), sentOut[i].data());
+  i++;
+}
+testNeo6m.popMeasStruct(sentOut);
+fprintf(stderr,"Lat(D)-> %.5f\n",testNeo6m.lastCompleteSample.latt_deg);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.latt_deg-55.86093)<0.0001);
+fprintf(stderr,"Lon(D)-> %.5f\n",testNeo6m.lastCompleteSample.long_deg);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.long_deg+4.21937)<0.0001);
+fprintf(stderr,"Alt -> %.3f\n",testNeo6m.lastCompleteSample.alt_m);
+BOOST_CHECK(abs(testNeo6m.lastCompleteSample.alt_m-51.1)<0.001);
+fprintf(stderr,"UTC-> %.*s\n",(int)strlen(testNeo6m.lastCompleteSample.utc),testNeo6m.lastCompleteSample.utc);
+fprintf(stderr,"Quality-> %d\n",testNeo6m.lastCompleteSample.fixQuality);
+BOOST_CHECK_EQUAL(testNeo6m.lastCompleteSample.fixQuality,1);
+fprintf(stderr,"tLastUpdate-> %d\n",testNeo6m.lastCompleteSample.tLastUpdate);
+BOOST_CHECK_EQUAL(testNeo6m.lastCompleteSample.tLastUpdate,0);
+fprintf(stderr,"hdop-> %.2f\n",testNeo6m.lastCompleteSample.hdop);
+}
 
 BOOST_AUTO_TEST_SUITE_END()
