@@ -46,67 +46,7 @@ BOOST_CHECK_EQUAL(testNeo6m.hexChar2Int(testHexChar_0),0);
 char testHexChar_211[] = "d3";
 BOOST_CHECK_EQUAL(testNeo6m.hexChar2Int(testHexChar_211),211);
 
-// test
 };
-
-BOOST_AUTO_TEST_SUITE(testChar2Int)
-
-BOOST_AUTO_TEST_CASE(TestChar2Int_8) {
-  char testDecChar[] = "8";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar), 8);
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_7970) {
-  char testDecChar_7970[] = "7970";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_7970), 7970);
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_ampersand) {
-  fprintf(stderr,"Debug message is expected:\n");
-  char testDecChar_amper[] = "&";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_amper), -1);
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Int_Plus) {
-  fprintf(stderr,"Debug message is expected:\n");
-  char testDecChar_plus[] = "+";
-  BOOST_CHECK_EQUAL(testNeo6m.decChar2Int(testDecChar_plus), -1);
-  fprintf(stderr,"\n");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
-
-
-BOOST_AUTO_TEST_SUITE(testChar2Float)
-
-BOOST_AUTO_TEST_CASE(init_testChar2Float) {
-fprintf(stderr,"Testing Char2Float (some debug message are expected):\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_8) {
-  char testDecChar[] = "0.8";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar), 0.8));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_7970) {
-  char testDecChar_7970[] = "7970.";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_7970), (float) 7970));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_long) {
-  char testDecChar_long[] = "9140139.22";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_long),  9140139.22));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_long2) {
-  char testDecChar_long[] = "5551.65584";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_long),  5551.65584));
-  fprintf(stderr,"\n");
-}
-BOOST_AUTO_TEST_CASE(TestChar2Float_typicalGps) {
-  char testDecChar_typicalHPS[] = "00413.16265";
-  BOOST_CHECK(nearly_equal(testNeo6m.decChar2Float(testDecChar_typicalHPS),  413.16265));
-  fprintf(stderr,"\n");
-}
-
-BOOST_AUTO_TEST_SUITE_END()
 
 BOOST_AUTO_TEST_SUITE(testChecksumCalc)
 

@@ -149,13 +149,13 @@ gpgsaFields m;
        lastCompleteSample.long_deg = calcBearingInDegrees(parsedSent[m.lon.idx].data(), parsedSent[m.lonB.idx].data());
 // fix qulity
        lastCompleteSample.fixQuality=decChar2IntLUT[parsedSent[m.qual.idx][0]];
-       lastCompleteSample.hdop=decChar2Float(&parsedSent[m.hdop.idx][0]);
-       lastCompleteSample.tLastUpdate=decChar2Int(&parsedSent[m.tLastUpdate.idx][0]);
+       lastCompleteSample.hdop=atof(&parsedSent[m.hdop.idx][0]);
+       lastCompleteSample.tLastUpdate=atoi(&parsedSent[m.tLastUpdate.idx][0]);
 //utc
        memcpy(&lastCompleteSample.utc,parsedSent[m.t.idx].data(),strlen(parsedSent[m.t.idx].data()));
 //alt
        if (0==strcmp("M",parsedSent[m.altUnit.idx].data())){
-           lastCompleteSample.alt_m = decChar2Float(parsedSent[m.alt.idx].data());
+           lastCompleteSample.alt_m = atof(parsedSent[m.alt.idx].data());
        }
     }
     else {
@@ -169,8 +169,10 @@ float NEO6M::calcBearingInDegrees(char* thisCharBearing, char* thisCharDirection
         // ddd + mm.mmmm/60 for longitude
     // so the bit that is consistent is the minuits so we need to figure out where that starts
     int digitCount= (thisCharBearing[4]=='.' ? 2 : 3); // two of 3 intiger bits which are in degrees
-    float deg = (float)decChar2Int(thisCharBearing,digitCount);
-    deg += (decChar2Float(thisCharBearing+digitCount))/60;
+    char intPart[4];
+    memcpy(intPart, thisCharBearing, digitCount);
+    float deg = (float)atoi(intPart);
+    deg += (atof(thisCharBearing+digitCount))/60;
     if ((*thisCharDirection == 'W') || (*thisCharDirection == 'S')){
         deg =-deg;
     }
@@ -304,57 +306,3 @@ int NEO6M::hexChar2Int(char* checksumChar){
     return checksum;
 };
 
-double NEO6M::decChar2Float(char* thisCharFloat){
-    unsigned long int intOut=0;
-    double out =0;
-    int decimalIdx= -1;
-    int thisInt;
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
-    int i=0;
-    while (*(thisCharFloat+i)!='\0'){
-        thisInt = decChar2IntLUT[*(thisCharFloat + i)];
-        if (thisInt<0){
-            if (*(thisCharFloat+i)=='.'){
-            decimalIdx = i;
-            i++;
-            }
-            else {
-                fprintf(stderr,"Non numeric character detected: \"%c\"\n", *(thisCharFloat+i));
-            }
-        }
-        else {
-          order /= 10; // decrease the order by a factor of 10
-          intOut += order * decChar2IntLUT[*(thisCharFloat + i)];
-          i++;
-        }
-    }
-
-    if(decimalIdx>0){ // compensate for the fact that we have a floating point
-        out =(double)intOut / pow(10,NMEA_MAX_DATA_FIELD_SIZE-1-decimalIdx);
-    }
-    else {
-        out =(double)intOut /(double)order;
-    }
-    return out;
-};
-
-int NEO6M::decChar2Int(char* charInt, int len){
-    if (len<1){
-        len = strlen(charInt);
-    }
-    long long int out=0; //make sure we get no overflows!
-    unsigned long order = (unsigned long)pow(10,NMEA_MAX_DATA_FIELD_SIZE-1);
-    int thisInt = 0;
-    for(int i=0; i<len; i++){
-        thisInt = decChar2IntLUT[*charInt];
-        if (thisInt==-1){
-            fprintf(stderr,"Invalid Character Detected, this:\"%c\" Can't be an int!\n",*charInt);
-            return(-1);
-        }
-        order/=10;//decrease the order by a factor of 10
-        out += order*thisInt;
-        charInt++;
-    }
-    out/=order;
-    return out;
-};
