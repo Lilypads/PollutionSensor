@@ -13,6 +13,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 # fix for compiler error relating to pthread
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeModules")
 #add_library(<name> <wheretofind>)
 add_subdirectory(src)
 add_subdirectory(examples)
