@@ -32,4 +32,4 @@ add_test(NAME test_neo6mLib COMMAND test_neo6m)
 # add tests
 #add_test(NAME sps30test COMMAND test_sps30Lib)
 
-add_test(NAME test_gitwrapperLib COMMAND test_gitwrapper)
+add_test(NAME test_gitwrapperLib COMMAND test_gitwrapper WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/test)
