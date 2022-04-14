@@ -69,3 +69,7 @@ src/sps30demo
 /test/Testing/Temporary/*
 /test/test_neo6m
 /src/GPS/neo6mDemo
+/test/test_gitwrapper
+/test/GitWrapperTestDir/remote/
+/test/GitWrapperTestDir/existing/
+/test/GitWrapperTestDir/blank/

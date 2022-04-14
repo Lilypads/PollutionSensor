@@ -8,16 +8,17 @@
 // #include <git2/sys/repository.h>
 
 #define WAIT_TIME 100000
-#define PATH_MAX 200
-#define REMOTE_MAX 100
 
 #ifndef GITWRAPPER_H_
 #define GITWRAPPER_H_
 
+#define FILE_PATH_MAX 200
+#define REMOTE_MAX 200
+
 struct gitwrapperSettings{
-    char path[PATH_MAX] = {};
+    char path[FILE_PATH_MAX] = {};
     char remote[REMOTE_MAX] = {};
-    char sshKeysFileAbs[PATH_MAX] = {};
+    char sshKeysFileAbs[FILE_PATH_MAX] = {};
     char name[30] = "PollutionSensor";
     char email[50] = "PollutionSensor@notAnEmail.com";
     // char journeyFileExtention[4]="pol";
@@ -28,11 +29,11 @@ class GITWRAPPER{
 public:
     GITWRAPPER(gitwrapperSettings settings);
     ~GITWRAPPER();
-    int saveJoureyFile(char* journeyfile);
+    int saveJoureyFiles();
 private:
     gitwrapperSettings settings;
     int goHome();
-    char cwd[PATH_MAX];
+    char cwd[FILE_PATH_MAX];
     void exit_gw(int status);// a wrapper around exit that takes us back to the home directory
         // git_repository *repo = NULL;
     // int initialiseExistingRepo();

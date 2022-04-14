@@ -13,9 +13,9 @@ int execve(const char* file, const char* const (&argv)[N], const char* const (&e
 }
 GITWRAPPER::GITWRAPPER(gitwrapperSettings s){
   // these things MUST be set for anything to work
-  assert(*settings.path!=0);
-  assert(*settings.remote!=0);
-  assert(*settings.sshKeysFileAbs!=0);
+  assert(*s.path!=0);
+  assert(*s.remote!=0);
+  assert(*s.sshKeysFileAbs!=0);
 
   settings = s;
 
@@ -39,7 +39,7 @@ void GITWRAPPER::exit_gw(int status){
 };
 
 int GITWRAPPER::goHome() {
-  if (chdir(settings.path) < 0) {
+  if (chdir(cwd) < 0) {
     perror("failed to cd");
     return -1;
   }
@@ -47,16 +47,18 @@ int GITWRAPPER::goHome() {
 };
 
 // does everything
-int GITWRAPPER::saveJoureyFile(char *journeyfile) {
+int GITWRAPPER::saveJoureyFiles() {
   pid_t p;
   const char *git = "/bin/git";
   const char *touch = "/bin/touch";
-  char sshCmd[PATH_MAX+9];
-  sprintf(sshCmd,"ssh -i %s",settings.sshKeysFileAbs);
+  char sshCmd[FILE_PATH_MAX + 9];
+  sprintf(sshCmd, "ssh -i %s", settings.sshKeysFileAbs);
   if (chdir(settings.path) < 0) {
     perror("failed to cd");
+    return -1;
   }
   usleep(WAIT_TIME);
+
   // init
   p = fork();
   if (p == -1) {
@@ -70,6 +72,7 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
     }
   }
   usleep(WAIT_TIME);
+
   // branch
   p = fork();
   if (p == -1) {
@@ -82,33 +85,8 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
       exit_gw(1);
     }
   }
-  // add
   usleep(WAIT_TIME);
-  p = fork();
-  if (p == -1) {
-    fprintf(stderr, "fork failed\n");
-  }
-  if (p == 0) {
-    fprintf(stderr, "Git add\n");
-    if (execl(git, git, "add", "-A", NULL) < 0) {
-      perror("Failed add to stage git");
-      exit_gw(1);
-    };
-  };
-  usleep(WAIT_TIME);
-  // commit
-  p = fork();
-  if (p == -1) {
-    fprintf(stderr, "fork failed\n");
-  }
-  if (p == 0) {
-    fprintf(stderr, "Git commit\n");
-    if (execl(git, git, "commit", "-m", "\"AutoMesage\"", NULL) < 0) {
-      perror("Failed to commit to git");
-      exit_gw(1);
-    };
-  }
-  usleep(WAIT_TIME);
+
   // remove origin
   p = fork();
   if (p == -1) {
@@ -122,6 +100,7 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
     };
   }
   usleep(WAIT_TIME);
+
   // add origin
   p = fork();
   if (p == -1) {
@@ -129,14 +108,13 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
   }
   if (p == 0) {
     fprintf(stderr, "Git adding origin\n");
-    if (execl(git, git, "remote", "add", "origin",
-              settings.remote,
-              NULL) < 0) {
+    if (execl(git, git, "remote", "add", "origin", settings.remote, NULL) < 0) {
       perror("Git Failed to add origin");
       exit_gw(1);
     }
   }
   usleep(WAIT_TIME);
+
   // configure key to use
   p = fork();
   if (p == -1) {
@@ -144,13 +122,13 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
   }
   if (p == 0) {
     fprintf(stderr, "Git configuring key \n");
-    if (execl(git, git, "config", "core.sshCommand", sshCmd,
-              NULL) < 0) {
+    if (execl(git, git, "config", "core.sshCommand", sshCmd, NULL) < 0) {
       perror("Git Failed to add configure key");
       exit_gw(1);
     }
   }
   usleep(WAIT_TIME);
+
   // pull
   p = fork();
   if (p == -1) {
@@ -164,7 +142,37 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
     }
   }
   // git pull/push takes a bit longer
-  usleep(WAIT_TIME * 10);
+  usleep(WAIT_TIME * 40);
+
+  // add
+  usleep(WAIT_TIME);
+  p = fork();
+  if (p == -1) {
+    fprintf(stderr, "fork failed\n");
+  }
+  if (p == 0) {
+    fprintf(stderr, "Git add\n");
+    if (execl(git, git, "add", "-A", NULL) < 0) {
+      perror("Failed add to stage git");
+      exit_gw(1);
+    }
+  }
+  usleep(WAIT_TIME);
+
+  // commit
+  p = fork();
+  if (p == -1) {
+    fprintf(stderr, "fork failed\n");
+  }
+  if (p == 0) {
+    fprintf(stderr, "Git commit\n");
+    if (execl(git, git, "commit", "-m", "\"AutoMesage\"", NULL) < 0) {
+      perror("Failed to commit to git");
+      exit_gw(1);
+    };
+  }
+  usleep(WAIT_TIME);
+
   // push
   p = fork();
   if (p == -1) {
@@ -172,12 +180,12 @@ int GITWRAPPER::saveJoureyFile(char *journeyfile) {
   }
   if (p == 0) {
     fprintf(stderr, "Git push origin main\n");
-    if (execl(git, git, "pull", "origin", "main", NULL) < 0) {
+    if (execl(git, git, "push", "origin", "main", NULL) < 0) {
       perror("Git Failed to push origin main");
       exit_gw(1);
     }
   }
-  usleep(WAIT_TIME * 10);
+  usleep(WAIT_TIME * 40);
   goHome();
   return 0;
 }
