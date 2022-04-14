@@ -73,3 +73,4 @@ src/sps30demo
 /test/GitWrapperTestDir/remote/
 /test/GitWrapperTestDir/existing/
 /test/GitWrapperTestDir/blank/
+/src/GitWrapper/DemoGitWrapper
