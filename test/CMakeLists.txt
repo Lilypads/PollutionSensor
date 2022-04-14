@@ -1,7 +1,7 @@
 find_package(Boost COMPONENTS system filesystem unit_test_framework REQUIRED)
 
 
-include_directories(${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/GPS ${PROJECT_SOURCE_DIR}/ExampleCMakeLib)
+include_directories(${Boost_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/GPS ${PROJECT_SOURCE_DIR}/src/GitWrapper ${PROJECT_SOURCE_DIR}/ExampleCMakeLib)
 
 
 # NEO6M ################################################################################
@@ -11,6 +11,11 @@ add_executable(test_neo6m test_neo6m.cpp)
 target_link_libraries(test_neo6m neo6m ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
 
 
+# GITWRAPPER ################################################################################
+# testing executable
+add_executable(test_gitwrapper test_gitwrapper.cpp)
+# here we are adding the libraries we want to link the combiled binary test1 to
+target_link_libraries(test_gitwrapper gitwrapper ${Boost_LIBRARIES} ${BOOST_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY} ${Boost_UNIT_TEST_FRAMWORK_LIBRARY})
 
 # SPS30 ################################################################################
 # testing executable
@@ -26,3 +31,5 @@ enable_testing()
 add_test(NAME test_neo6mLib COMMAND test_neo6m)
 # add tests
 #add_test(NAME sps30test COMMAND test_sps30Lib)
+
+add_test(NAME test_gitwrapperLib COMMAND test_gitwrapper WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/test)
