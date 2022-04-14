@@ -166,7 +166,7 @@ int GITWRAPPER::saveJoureyFiles() {
   }
   if (p == 0) {
     fprintf(stderr, "Git commit\n");
-    if (execl(git, git, "commit", "-m", "\"AutoMesage\"", NULL) < 0) {
+    if (execl(git, git, "-c", "user.name='Pollution Sensor'", "-c", "user.email='my@email.org'", "commit", "-m", "\"AutoMesage\"", NULL) < 0) {
       perror("Failed to commit to git");
       exit_gw(1);
     };
