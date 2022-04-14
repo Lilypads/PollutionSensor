@@ -12,11 +12,6 @@
 #define DEBUG
 #endif
 
-// enable no hardware mode
-#ifndef N_NO_HARDWARE
-#define NO_HARDWARE
-#endif
-
 //include guards
 #ifndef TRY1
 #define TRY1
@@ -195,10 +190,7 @@ public:
 	 **/
 	char serialNumber[SN_LEN_W_SRC]="";
 
-		/**
-	 * run method of the thread.
-	 **/
-	void pollDRDYFlag();
+	
 
 private:
 
@@ -206,6 +198,11 @@ private:
 	 * initiate default setting.
 	 **/
 	SPS30settings settings;
+
+	/**
+	 * run method of the thread.
+	 **/
+	void pollDRDYFlag();
 
 	/**
 	 * running flag.
