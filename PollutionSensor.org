@@ -363,7 +363,7 @@ C = \tau/R
 - Currently Just a USB Power Brick
 ** HOLD Rotary Encoder
 * Software
-** Softare Overview
+** Software Overview
 #+begin_src plantuml :file Figures/softwareOverview.png
 !theme plain
 skinparam linetype ortho
@@ -440,6 +440,16 @@ Menu -- display :update display >
 [[file:Figures/softwareOverview.png]]
 
 ** Usage State Machine
+[[file:Figures/DeviceUsageStateMachine.png]]
+
+| Input        | Init    | Active    | Acquiring           | Cleanup |
+|--------------+---------+-----------+---------------------+---------|
+| Fix Acquired | Active  | -         | -                   | -       |
+| Shutdown     | Cleanup | Cleanup   | -                   | -       |
+| Start        | -       | Acquiring | -                   | -       |
+| Stop         | -       | -         | Acquiring or Active | -       |
+| Fix Lost     | -       | Init      | -                   | -       |
+
 ** Oled Display Libraries
 *** candidates
 - https://github.com/bitbank2/ss_oled
