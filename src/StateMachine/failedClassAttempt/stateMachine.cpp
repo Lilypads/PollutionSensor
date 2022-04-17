@@ -51,8 +51,6 @@ void stateMachine::initiate(){
 };
 
 
-    
-};
 
 void stateMachine::shutdown(){
     myStorageHandler.closeFiles();

@@ -51,10 +51,11 @@ SPS30::~SPS30(){
 void SPS30::startMeasurement(){
 int handle = i2cOpen(settings.i2c_bus, settings.address,0);
 
+#ifdef DEBUG
         fprintf(stderr,"I2C Buss: %u\n",settings.i2c_bus);
         fprintf(stderr,"I2C Address: %x\n",settings.address);
         fprintf(stderr,"I2C Handle: %i\n",handle);
-
+#endif
         if (handle < 0) {
 #ifdef DEBUG
                 fprintf(stderr,"Could not open %02x.\n",settings.address);
@@ -274,12 +275,15 @@ data2CrcCheck[0] = retBuff[0];
 data2CrcCheck[1] = retBuff[1];
 uint8_t calculatedCRC = CalcCrc(data2CrcCheck);
 bool passCRC = (uint8_t)retBuff[2]==calculatedCRC ;
+
+#ifdef DEBUG
 if (!passCRC){
 fprintf(stderr,"readDRDTFlag()->Returned Data Failed CRC!\n");
 fprintf(stderr,"  ReturnedCheckSum: %u\n",uint8_t(retBuff[3]));
 fprintf(stderr,"  CalculatedCheckSum: %u\n",calculatedCRC);
 fprintf(stderr,"\n");
 }
+#endif
 
 //#ifdef DEBUG // comment this out after
 //fprintf(stderr,"DRDY Flag: %u\n",(uint8_t)retBuff[1]);
