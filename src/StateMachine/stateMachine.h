@@ -1,4 +1,6 @@
 #include <iostream>
+#include <string>
+#include <stdio.h>
 #include "storageHandler.h"
 #include "libsps30.h"
 #include "neo6m.h"
@@ -27,7 +29,7 @@ class stateMachine {
     void shutdown();
 
     /**
-	 * start data acquisition ***RUN ONLY WHEN ACTIVE***
+	 * start data acquisition
 	 **/
     void startAcquisition();
 
@@ -39,9 +41,12 @@ class stateMachine {
     /**
 	 * new file with certain identification number
 	 **/
-    void startNewTripLog(string identificationNumber);
+    void startNewTripLog(std::string identificationNumber);
 
 private:
+    std::string identificationNumber;
     bool gpsFixedFlag;
+
+    
 
 };
