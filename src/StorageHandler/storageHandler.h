@@ -8,6 +8,7 @@
 //include guards
 #ifndef STORAGEHANDLER
 #define STORAGEHANDLER
+#endif
 
 class storageHandler {
     public:
