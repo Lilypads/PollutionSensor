@@ -20,7 +20,7 @@ int main()
 SPS30Printer mySPS;
 
 SPS30settings s;
-s.autoStartThread = false;
+//s.autoStartThread = false;
 
 mySPS.setSettings(s);
 mySPS.readSerialNumber();

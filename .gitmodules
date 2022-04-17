@@ -2,3 +2,6 @@
 	path = pigpio
 	url = https://github.com/joan2937/pigpio.git
 	ignore = dirty
+[submodule "libgit2"]
+	path = libgit2
+	url = git@github.com:libgit2/libgit2.git

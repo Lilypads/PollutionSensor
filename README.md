@@ -6,7 +6,9 @@ For more details on sensors, wiring, UML diagram, other specifications, please h
 
 ### CMAKE
 
-### Boost (optional: for unit tests)
+### pigpio
+
+### Boost
 
 For Linux
 
@@ -32,6 +34,6 @@ For MacOS using Homebrew
 
 `make`
 
-4. Run the program
+4. Run the main program
 
 `./executableFileName`
