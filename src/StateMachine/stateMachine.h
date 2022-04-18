@@ -1,7 +1,6 @@
 //include guards
 #ifndef STATEMACHINE
 #define STATEMACHINE
-#endif
 
 enum PSstates{
 AcquiringGPSFix = 0,
@@ -51,3 +50,5 @@ class stateMachine {
 
     private:
 };
+
+#endif
