@@ -5,25 +5,12 @@
 #include <mutex>
 #include "menuOptions.h"
 
-struct Button
+void MenuOptions::SetButtonName(int index, std::string newName)
 {
-    std::string name = "";
-    std::function<void(std::mutex&)> function = NULL;
+    buttons[index].name = newName;
 };
 
-struct MenuOptions
+void MenuOptions::SetButtonNavigationTarget(int index, MenuOptions* target)
 {
-    MenuOptions* previousMenu = nullptr;
-    std::array<Button, 6> buttons;
-    std::array<MenuOptions*, 6> menuNavigationTarget = {nullptr, nullptr, nullptr, nullptr, nullptr, nullptr};
-
-    void SetButtonName(int index, std::string newName)
-    {
-        buttons[index].name = newName;
-    };
-
-    void SetButtonNavigationTarget(int index, MenuOptions* target)
-    {
-        menuNavigationTarget[index] = target;
-    };
+    menuNavigationTarget[index] = target;
 };

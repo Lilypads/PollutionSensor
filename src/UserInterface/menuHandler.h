@@ -1,20 +1,25 @@
 #ifndef MENUHANDLER_H_
 #define MENUHANDLER_H_
 
+#include <thread>
+#include <mutex>
+#include "menuData.h"
+#include "inputHandler.h"
+
 class MenuHandler
 {
 
 private:
 
-    Menu menu;
     MenuOptions *activeMenu = &menu.rootMenu;
-    DisplayHandler display;
     int instruction = 0;
 
 public:
 
     bool active = false;
     bool changed = false;
+    DisplayHandler display;
+    Menu menu;
     std::thread inputThread;
     std::thread displayThread;
     InputHandler inputMonitor;

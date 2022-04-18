@@ -3,46 +3,40 @@
 #include <queue>
 #include <unordered_map>
 #include <ncurses.h>
+#include <time.h>
+
+#include <iostream>
+
 #include "inputHandler.h"
 
-class InputHandler
+int InputHandler::GetTopInput(std::mutex& m)
 {
-private:
-    std::unordered_map<int, int> inputMap = { {48, 0}, {49, 1}, {50, 2} };
-    int input = -1;
-
-public:
-    bool listening = true;
-    std::queue<int> inputs;
-
-    int GetTopInput(std::mutex& m)
+    int returnVal = -1;
+    m.lock();
+    if (!inputs.empty())
     {
-        int returnVal = -1;
-        m.lock();
-        if (!inputs.empty())
-        {
-            returnVal = inputs.front();
-            inputs.pop();
-        };
-        m.unlock();
-        return returnVal;
+        returnVal = inputs.front();
+        inputs.pop();
     };
+    m.unlock();
+    return returnVal;
+};
 
-    void Listen(InputHandler& handler, std::mutex& m)
+void InputHandler::Listen(WINDOW* menuwin, InputHandler& handler, std::mutex& m)
+{
+    while (handler.listening)
     {
-        while (handler.listening)
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+        nodelay(menuwin, true);
+        input = wgetch(menuwin); //Need to get the menuwindow from somewhere
+        //if (_kbhit())
+        //    input = (int)_getch();
+        if (inputMap.find(input) != inputMap.end())
         {
-            Sleep(20);
-            input = wgetch(menuwin); //Need to get the menuwindow from somewhere
-            //if (_kbhit())
-            //    input = (int)_getch();
-            if (inputMap.find(input) != inputMap.end())
-            {
-                m.lock();
-                handler.inputs.push(inputMap[input]);
-                m.unlock();
-                input = -1;
-            };
+            m.lock();
+            handler.inputs.push(inputMap[input]);
+            m.unlock();
+            input = -1;
         };
     };
 };

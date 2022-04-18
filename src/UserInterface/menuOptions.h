@@ -1,6 +1,11 @@
 #ifndef MENUOPTIONS_H_
 #define MENUOPTIONS_H_
 
+#include <array>
+#include <string>
+#include <functional>
+#include <ncurses.h>
+
 struct Button
 {
     std::string name = "";
