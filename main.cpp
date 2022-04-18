@@ -69,17 +69,35 @@ public:
 MenuHandler handler;
 bindStartStopMeasurement mybindStartStopMeasurement;
 
-
 int main()
 {
+
     //initialise
-    myStorageHandler.identificationNumber = "1";
+    std::string name = "tripLog_1.csv";
+    FILE *fileCheck = fopen(name.c_str(), "r");
+    int checkNum = 1;
+
+    while(fileCheck)
+    {
+        fclose(fileCheck);
+        checkNum++;
+        name = "tripLog_" + std::to_string(checkNum) + ".csv";
+        fileCheck = fopen(name.c_str(), "r");
+    };
+
+    myStorageHandler.identificationNumber = std::to_string(checkNum);
+
     myStorageHandler.createFiles();
     myGPS.startMeasurement();
 
+    //Initialise user interface
     handler.Init();
+
+    //Set button functions that are external to UI system
     handler.menu.measureMenu.buttons[0].function = std::bind<void(bindStartStopMeasurement::*)(std::mutex&), bindStartStopMeasurement*>(&bindStartStopMeasurement::startMeasurement, &mybindStartStopMeasurement, std::placeholders::_1);
     handler.menu.measureMenu.buttons[1].function = std::bind<void(bindStartStopMeasurement::*)(std::mutex&), bindStartStopMeasurement*>(&bindStartStopMeasurement::stopMeasurement, &mybindStartStopMeasurement, std::placeholders::_1);
+    
+    //Start user interface
     handler.Start();
 
     //clean up
