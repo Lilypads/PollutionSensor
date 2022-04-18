@@ -5,6 +5,10 @@
 #include "neo6m.h"
 #include "libsps30.h"
 
+//include guards
+#ifndef STORAGEHANDLER
+#define STORAGEHANDLER
+
 
 class storageHandler {
     public:
@@ -56,6 +60,8 @@ class storageHandler {
     std::fstream logdata_file;
 
 };
+
+#endif
 
 
     

@@ -7,14 +7,9 @@
 #include <cstring>
 #include <thread>
 
-// enable debug messages and error messages to stderr
-#ifndef NDEBUG
-#define DEBUG
-#endif
-
 //include guards
-#ifndef TRY1
-#define TRY1
+#ifndef LIBSPS30
+#define LIBSPS30
 
 //define constants
 #define DRDY_POLLINGPERIOD_US 50000 //every 0.050s
