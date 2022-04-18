@@ -5,6 +5,10 @@
 #include "neo6m.h"
 #include "libsps30.h"
 
+//include guards
+#ifndef STORAGEHANDLER
+#define STORAGEHANDLER
+#endif
 
 class storageHandler {
     public:

@@ -30,23 +30,6 @@
 - [ ] Hardware UI
 - [ ] GPS Logging
 - [ ] Data Upload
-** Usage
-*** States
-- Off
-- Initialising
-- Acquiring
-#+begin_src plantuml :file Figures/PollotionUsecaseDiagram.png
-!theme cyborg-outline
-[*] --> Initialisation
-state Initialisation {
-        [*] --> AcquireGps
-        [*] --> test
-        }
-#+end_src
-
-#+RESULTS:
-[[file:Figures/PollotionUsecaseDiagram.png]]
-
 ** Capabilities
 ** Hardware Reference
 *** I2C addresses
@@ -125,104 +108,6 @@ git submodule update --init
 
 * Hardware Design
 ** Hardware Overview
-:code:
-#+Name: umlHardwareOverView
-#+begin_src plantuml :file Figures/hardwareOverview.png
-!theme plain
-skinparam linetype ortho
-allow_mixing
-node "Rasberry Pi" {
-        () [sdcardSlot]
-        () [USB3]
-
-    class MalePinHeader {
-        I2C
-        UART
-        GPIO
-        5v
-        3.3v
-        GND
-            }
-
-        sdcardSlot -[hidden]r- USB3
-        USB3 -[hidden]r- MalePinHeader
-            }
-
-node "Pi GPIO Breakout Hat" {
-    Class FemalePinHeader {
-                ..Pins..
-                I2C
-                UART
-                GPIO
-                5v
-                3.3v
-                GND
-                ..PlugType..
-                femalePinHeader(2.54mm)
-             }
-    Class GPSPlug{
-                ..Pins..
-                +UARTRx
-                +UARTTx
-                +3.3V
-                +GND
-                ..PlugType..
-                femalePinHeader(2.54mm)
-        }
-       Class Co2SensorPlug{
-                ..Pins..
-                +I2Csda
-                +I2Cscl
-                +5V
-                +GND
-                +Interrupt?
-                ..PlugType..
-                JST-XH (6Way)
-        }
-        Class OledPlug {
-                ..Pins..
-                +I2Csda
-                +I2Cscl
-                +3.3V
-                +GND
-                ..PlugType..
-                femalePinHeader(2.54mm)
-            }
-        Frame "Buttons" {
-                component ButtonUp
-                component ButtonDown
-                component ButtonEnter
-                ButtonUp -[hidden]r- ButtonDown
-                ButtonDown -[hidden]r- ButtonEnter
-        }
-        Buttons -d- FemalePinHeader : gpio
-        Buttons -d- FemalePinHeader : 3.3V
-        Buttons -d- FemalePinHeader : GND
-        Co2SensorPlug -[bold]l> FemalePinHeader
-        GPSPlug -[bold]l> FemalePinHeader
-        OledPlug -[bold]l> FemalePinHeader
-            }
-FemalePinHeader <-> MalePinHeader
-Frame "ExternalSensors" {
-component GPS
-component OLED
-component Co2Sensor
-        }
-
-GPS <-[#blue,bold]u-> GPSPlug
-OLED <-[#blue,bold]u-> OledPlug
-Co2Sensor <-[#blue,bold]u-> Co2SensorPlug
-
-Frame "OtherExternalHarware" {
-component USBPowerBrick
-component SDCard
-        }
-SDCard <-[#blue,bold]u-> sdcardSlot
-USBPowerBrick <-[#blue,bold]u-> USB3
-#+end_src
-
-:end:
-#+RESULTS: umlHardwareOverView
 [[file:Figures/hardwareOverview.png]]
 
 ** Pi Hat
@@ -363,83 +248,20 @@ C = \tau/R
 - Currently Just a USB Power Brick
 ** HOLD Rotary Encoder
 * Software
-** Softare Overview
-#+begin_src plantuml :file Figures/softwareOverview.png
-!theme plain
-skinparam linetype ortho
-allow_mixing
-skinparam packageStyle frame
-package UserInterface {
-class Menu {
-        ..Public Methods..
-        +inputCode()
-        ..Public Properties..
-        +MenuIdx
-        +ptrMenuItems
-        +menuLength
-        ..Private Methods..
-        -menuIncrement()
-        -menuDecrement()
-        -menuEnter()
-}
-
-class inputHandler {
-        ..Public Methods..
-        ..Public Properties..
-        ..Private Methods..
-            }
-
-class gpioHandler {
-        ..Public Methods..
-        ..Public Properties..
-        ..Private Methods..
-            }
-
-class commandLineInterface {
-        ..Public Methods..
-        ..Public Properties..
-        ..Private Methods..
-            }
-}
-
-package SensorInterfaces {
-class particleSensor{}
-class gps {}
-            }
-package display {
-class oled {}
-            }
-package dataProccesing{
-class proccesData {
-        +figure out later
-        }
-}
-
-package DataStorage <<database>> {
-class settings {
-        ..Public Properties..
-}
-class bufferedData{}
-}
-package DataUpload {
-class dataUploadStateMachine {}
-}
-
-gps -- proccesData: read gps data >
-particleSensor -- proccesData: read particle data >
-proccesData -- bufferedData: store buffered data >
-inputHandler -> Menu :input code >
-gpioHandler -> inputHandler :user input >
-commandLineInterface -> inputHandler :user input >
-commandLineInterface -> Menu :get menu info
-Menu -- settings :save settings >
-Menu -- display :update display >
-#+end_src
-
-#+RESULTS:
+** Software Overview
 [[file:Figures/softwareOverview.png]]
 
 ** Usage State Machine
+[[file:Figures/DeviceUsageStateMachine.png]]
+
+| Input        | Init    | Active    | Acquiring           | Cleanup |
+|--------------+---------+-----------+---------------------+---------|
+| Fix Acquired | Active  | -         | -                   | -       |
+| Shutdown     | Cleanup | Cleanup   | -                   | -       |
+| Start        | -       | Acquiring | -                   | -       |
+| Stop         | -       | -         | Acquiring or Active | -       |
+| Fix Lost     | -       | Init      | -                   | -       |
+
 ** Oled Display Libraries
 *** candidates
 - https://github.com/bitbank2/ss_oled

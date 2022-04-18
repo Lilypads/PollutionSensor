@@ -3,7 +3,7 @@
 
 // constructor
 storageHandler::storageHandler(){
-}
+};
 
 //destructor
 storageHandler::~storageHandler(){

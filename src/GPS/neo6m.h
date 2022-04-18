@@ -11,6 +11,9 @@
 #include <math.h>
 #include <time.h>
 
+#ifndef NEO6M_H_
+#define NEO6M_H_
+
 #define NMEA_MAX_SENTENCE_SIZE 79+1 //+1 for null terminator
 #define NMEA_MAX_DATA_FIELD_SIZE 12//+1 for null terminator
 #define CIRC_BUFF_SIZE NMEA_MAX_SENTENCE_SIZE*2
@@ -45,8 +48,7 @@ extern int hexChar2IntLUT[128];
 extern int decChar2IntLUT[128];
 
 
-#ifndef NEO6M_H_
-#define NEO6M_H_
+
 
 struct neo6mSettings {
     std::string serialDevice = "/dev/serial0";
