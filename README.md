@@ -12,9 +12,6 @@ Please also follow us on twitter to participate in the discussion here >> @Pollu
 * __ExampleCMakeLib__  contains square root library to demonstrate uses of CMake library structure for development purposes
 * __Figures__ contains diagrams related to project documentations
 * __Hardware__ contains hardware specification used in this project
-* __Resource__ contains other resources (wanna delete?)
-* __Examples__ contains examples (wanna put it else where??)
-* __images__ contains images (wanna group it with figures???)
 * __pigpio__ contains GitHub submodule of pigpio library repository to build locally
 * __src__ contains smaller modules of programs in the project
     * __GPS__ contains GPS library and demo script
@@ -61,6 +58,16 @@ For MacOS using Homebrew
 
 `make`
 
-4. Run the main program
+4. Run the main program with sudo to be able to access to gpios
 
-`./executableFileName`
+`sudo ./executableFileName`
+
+Replace executableFileName with the desired executable file name which was compiled by cmake
+
+For example, to run main program
+
+`sudo ./main`
+
+5. To run tests (optional)
+
+`ctest`
