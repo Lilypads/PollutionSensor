@@ -4,16 +4,19 @@
 #include "storageHandler.h"
 #include "libsps30.h"
 #include "neo6m.h"
+#include "stateMachine.h"
 
 std::string identificationNumber;
-bool gpsFixedFlag;
+stateMachine s;
 storageHandler myStorageHandler;
 
 //sps30 inheritance class
     class SPS30Acquiring: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         
+        if (s.currentState == states.AcquiringData){
         myStorageHandler.addMeasurement(thisMeasurement);
+        }
     }
 };
 //gps inheritance class
@@ -21,13 +24,13 @@ storageHandler myStorageHandler;
     using NEO6M::NEO6M; //inherit constructor
     virtual void hasMeasurementCB(neo6mMeasurment m){
         myStorageHandler.bufferMeasurement = m;
-        if(m.fixQuality==1) //fixed
+        if(m.fixQuality==fixQuality.gpsFix||m.fixQuality==fixQuality.dgpsFix)
         {
-            gpsFixedFlag = 1; //isFixed? = true
+            s.fixedAcquired(); 
         }
         else
         {
-            gpsFixedFlag = 0; //isFixed? = false;
+            s.fixedLost(); 
         }
    }
     };
@@ -37,64 +40,38 @@ SPS30Acquiring mySPS30;
 //gps
 neo6m myGPS;
 
-
-void stateMachine_initiate(){
-
-    //storage handler
+int main()
+{
+    //initialise
     myStorageHandler.identificationNumber = "1";
     myStorageHandler.createFiles();
     myGPS.startMeasurement();
-}
 
-void stateMachine_shutdown(){
-    myGPS.stopMeasurement();
-    myStorageHandler.closeFiles();
-
-}
-
-void stateMachine_startAcquisition(){
+    //start logging
     mySPS30.startMeasurement();
-}
 
-void stateMachine_stopAcquisition(){
+    fprintf(stderr,"Type any char to stop acquisition");
+    getchar();
+
+    //stop logging
     mySPS30.stop();
 
-}
-
-void stateMachine_startNewTripLog(std::string identificationNumber){
+    //start new log file session
     myStorageHandler.closeFiles();
-    myStorageHandler.identificationNumber = identificationNumber;
-    myStorageHandler.createFiles();
+    myStorageHandler.identificationNumber = "2";
+    myStorageHandler.createFiles();;
 
-
-}
-
-int main()
-{
-    stateMachine_initiate();
-    //Acquiring GPS fix state
-    while(!gpsFixedFlag)
-    {
-        //infinite loop
-    };
-    //ActiveState
-    stateMachine_startAcquisition();
+    //second logging
+    mySPS30.startMeasurement();
 
     fprintf(stderr,"Type any char to stop acquisition");
     getchar();
 
-    stateMachine_stopAcquisition();
+    mySPS30.stop();
 
-    stateMachine_startNewTripLog("2");
-
-    stateMachine_startAcquisition();
-
-    fprintf(stderr,"Type any char to stop acquisition");
-    getchar();
-
-    stateMachine_stopAcquisition();
-
-    stateMachine_shutdown();
+    //clean up
+    myGPS.stopMeasurement();
+    myStorageHandler.closeFiles();
 
   return 0;
 }
