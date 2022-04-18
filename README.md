@@ -2,6 +2,9 @@
 
 For more details on sensors, wiring, UML diagram, other specifications, please have a look at our wiki here[https://github.com/Lilypads/PollutionSensor/blob/main/PollutionSensor.org]
 
+Our youtube channel contains video demonstrating device functionality here >> https://www.youtube.com/channel/UC7G0Ejtdh_g3ME1dvBaGvhw
+Please also follow us on twitter to participate in the discussion here >> @PollutionSens
+
 ## Pre-Requisite
 
 ### CMAKE
