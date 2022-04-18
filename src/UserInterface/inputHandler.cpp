@@ -33,8 +33,9 @@ public:
         while (handler.listening)
         {
             Sleep(20);
-            if (_kbhit())
-                input = (int)_getch();
+            input = wgetch(menuwin); //Need to get the menuwindow from somewhere
+            //if (_kbhit())
+            //    input = (int)_getch();
             if (inputMap.find(input) != inputMap.end())
             {
                 m.lock();

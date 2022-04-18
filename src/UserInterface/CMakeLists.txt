@@ -7,6 +7,8 @@ displayHandler.cpp
 displayHandler.h
 inputHandler.cpp
 inputHandler.h
+menuOptions.cpp
+menuOptions.h
 menuHandler.cpp
 menuHandler.h
 )
