@@ -17,6 +17,7 @@ Please also follow us on twitter to participate in the discussion here >> @Pollu
     * __GPS__ contains GPS library and demo script
     * __GitWrapper__ contains git key wrapper and demo script
     * __SPS30__ contains SPS30 library and demo script
+    * __StateMachine__ contains state machine library and combined(with SPS30, GPS, StorageHandler) functionality demo script
     * __StorageHandler__ contains storage handler library and demo script
     * __UserInterface__ contains user-interface library and demo script
     * __referenceCPP__ contains other reference scripts used for development
@@ -27,7 +28,7 @@ Please also follow us on twitter to participate in the discussion here >> @Pollu
 
 ### CMAKE
 
-See CMake official installation procedure here https://cmake.org/install/
+See CMake official installation procedure here https://cmake.org/install/ 
 
 ### pigpio
 
@@ -69,6 +70,6 @@ For example, to run main program
 
 `sudo ./main`
 
-5. To run tests (optional)
+5. To run unit tests (optional)
 
 `ctest`
