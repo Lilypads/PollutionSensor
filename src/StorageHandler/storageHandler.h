@@ -8,7 +8,7 @@
 //include guards
 #ifndef STORAGEHANDLER
 #define STORAGEHANDLER
-#endif
+
 
 class storageHandler {
     public:
@@ -60,6 +60,8 @@ class storageHandler {
     std::fstream logdata_file;
 
 };
+
+#endif
 
 
     
