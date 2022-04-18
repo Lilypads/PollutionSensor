@@ -10,27 +10,27 @@ stateMachine::~stateMachine(){
 };
 
 void stateMachine::fixedAcquired(){
-    if(currentState==states.AcquiringGPSFix){
-    currentState = states.Active;
+    if(currentState==AcquiringGPSFix){
+    currentState = Active;
     }
 };
 void stateMachine::fixedLost(){
-    if(currentState==states.Active){
-    currentState = states.AcquiringGPSFix;
+    if(currentState==Active){
+    currentState = AcquiringGPSFix;
     }
 };
 void stateMachine::startAcquisition(){
-    if(currentState==states.Active){
-    currentState = states.AcquiringData;
+    if(currentState==Active){
+    currentState = AcquiringData;
     }
 };
 void stateMachine::stopAcquisition(){
-    if(currentState==states.AcquiringData){
-    currentState = states.Active;
+    if(currentState==AcquiringData){
+    currentState = Active;
     }
 };
 void stateMachine::shutdown(){
-    if(currentState==states.Active||currentState==states.AcquiringGPSFix){
-    currentState = states.CleanUp;
+    if(currentState==Active||currentState==AcquiringGPSFix){
+    currentState = CleanUp;
     }
 };

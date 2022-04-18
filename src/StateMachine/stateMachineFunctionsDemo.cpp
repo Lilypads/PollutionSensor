@@ -14,7 +14,7 @@ storageHandler myStorageHandler;
     class SPS30Acquiring: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         
-        if (s.currentState == states.AcquiringData){
+        if (s.currentState == AcquiringData){
         myStorageHandler.addMeasurement(thisMeasurement);
         }
     }
@@ -24,7 +24,7 @@ storageHandler myStorageHandler;
     using NEO6M::NEO6M; //inherit constructor
     virtual void hasMeasurementCB(neo6mMeasurment m){
         myStorageHandler.bufferMeasurement = m;
-        if(m.fixQuality==fixQuality.gpsFix||m.fixQuality==fixQuality.dgpsFix)
+        if(m.fixQuality==gpsFix||m.fixQuality==dgpsFix)
         {
             s.fixedAcquired(); 
         }

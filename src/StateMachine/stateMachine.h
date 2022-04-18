@@ -3,7 +3,7 @@
 #define STATEMACHINE
 #endif
 
-enum states{
+enum PSstates{
 AcquiringGPSFix = 0,
 Active = 1,
 AcquiringData = 2,
@@ -47,7 +47,7 @@ class stateMachine {
 	 **/
     void shutdown();
 
-    int currentState;
+    PSstates currentState;
 
     private:
 };
