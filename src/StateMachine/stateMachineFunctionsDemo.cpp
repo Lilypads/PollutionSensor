@@ -46,15 +46,16 @@ int main()
     myStorageHandler.identificationNumber = "1";
     myStorageHandler.createFiles();
     myGPS.startMeasurement();
+    mySPS30.startMeasurement();
 
     //start logging
-    mySPS30.startMeasurement();
+    s.startAcquisition();
 
     fprintf(stderr,"Type any char to stop acquisition");
     getchar();
 
     //stop logging
-    mySPS30.stop();
+    s.stopAcquisition();
 
     //start new log file session
     myStorageHandler.closeFiles();
@@ -62,15 +63,17 @@ int main()
     myStorageHandler.createFiles();;
 
     //second logging
-    mySPS30.startMeasurement();
+    s.startAcquisition();
 
     fprintf(stderr,"Type any char to stop acquisition");
     getchar();
 
-    mySPS30.stop();
+    s.stopAcquisition();
 
     //clean up
+    s.shutdown();
     myGPS.stopMeasurement();
+    mySPS30.stop();
     myStorageHandler.closeFiles();
 
   return 0;

@@ -14,9 +14,28 @@ void storageHandler::closeFiles(){
     logdata_file.close();
 };
 
+std::string storageHandler::getTimeAsStr(){
+  char timeStr[16];
+
+  std::string out;
+  time_t rawtime;
+  struct tm * timeinfo;
+
+  time (&rawtime);
+  timeinfo = localtime (&rawtime);
+
+  strftime(timeStr,80,"%Y-%m-%d_%M-%S",timeinfo);
+  puts (timeStr);
+
+  strcpy(timeStr, out.c_str());
+
+return out;
+};
+
 void storageHandler::createFiles(){
 
-    logdata_file.open("./tripLog_" + identificationNumber + ".csv", std::fstream::out);
+
+logdata_file.open("./tripLog_" + getTimeAsStr() + "_" + identificationNumber + ".csv", std::fstream::out);
 
 //write header
 logdata_file    <<"SPS_MassConcentrationPM1.0" << ","

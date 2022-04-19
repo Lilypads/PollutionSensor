@@ -23,15 +23,19 @@ SSD1306::~SSD1306(){
 };
 
 bool SSD1306::begin	(uint8_t vcs = SSD1306_SWITCHCAPVCC ){
-if ((!buffer) && !(buffer = (uint8_t *)malloc(SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8))))
-return false;
-clearDisplay();
 vccstate = vcs;
-initialization();
+int handle = i2cOpen(settings.i2c_bus,settings.address,0);
+if (handle<0){
+#ifdef DEBUG
+                fprintf(stderr,"Could not open %02x.\n",settings.address);
+#endif
+                throw could_not_open_i2c; 
+}
+init();
 command(SSD1306_DISPLAYON);
 }
 
-void SSD1306::initialization(){
+void SSD1306::init(){
         //128x32 pixel specific initialization.
         command(SSD1306_DISPLAYOFF);                   # 0xAE
         command(SSD1306_SETDISPLAYCLOCKDIV);            # 0xD5
@@ -71,7 +75,7 @@ void SSD1306::display(void)	{
       command(SSD1306_WIDTH-1); // end address
       command(SSD1306_PAGEADDR);
       command(0); // start address
-      command(SSD1306_PAGES-1); // end address
+      command(3); // end address
       
 uint16_t count =  SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8);
 uint8_t *ptr = buffer;
@@ -83,8 +87,8 @@ if (handle<0){
                 throw could_not_open_i2c; 
 
 }
-control = 0x40;
-int checkERR = i2cWriteByte(handle,control);
+
+int checkERR = i2cWriteByte(handle,(uint8_t)0x40);
     if(checkERR<0){
       #ifdef DEBUG
                 fprintf(stderr,"Cannot write byte.\n");
@@ -102,6 +106,7 @@ bytesOut++;
 i2cClose(handle);
 }
 
+//
 void SSD1306::command(uint8_t c){
 int handle = i2cOpen(settings.i2c_bus,settings.address,0);
 if (handle<0){
@@ -110,15 +115,10 @@ if (handle<0){
 #endif
                 throw could_not_open_i2c; 
 }
-control = 0x00;
-int checkERR = i2cWriteByte(handle,control);
-    if(checkERR<0){
-      #ifdef DEBUG
-                fprintf(stderr,"Cannot write byte.\n");
-
-      #endif
-    }
-int checkERR = i2cWriteByte(handle,c);
+unsigned char buf[2];
+buf[0] =0x00;
+buf[1] =c;
+int checkERR = i2cWriteDevice(handle,buf,2);
     if(checkERR<0){
       #ifdef DEBUG
                 fprintf(stderr,"Cannot write byte.\n");
@@ -127,7 +127,7 @@ int checkERR = i2cWriteByte(handle,c);
     }
     i2cClose(handle);
 }
-
+//d
 void SSD1306::data(uint8_t c){
 int handle = i2cOpen(settings.i2c_bus,settings.address,0);
 if (handle<0){
@@ -136,30 +136,104 @@ if (handle<0){
 #endif
                 throw could_not_open_i2c; 
 }
-control = 0x40;
-int checkERR = i2cWriteByte(handle,control);
+unsigned char buf[2];
+buf[0]= 0x40;
+buf[1] =c;
+int checkERR = i2cWriteDevice(handle,buf,2);
     if(checkERR<0){
       #ifdef DEBUG
                 fprintf(stderr,"Cannot write byte.\n");
 
       #endif
     }
-
-int checkERR = i2cWriteByte(handle,c);
-if(checkERR<0){
-      #ifdef DEBUG
-                fprintf(stderr,"Cannot write byte.\n");
-
-      #endif
-                
-    }
     i2cClose(handle);
 }
 
 void SSD1306::clearDisplay	(void){
  memset(buffer, 0, SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8));
+ 	cursor_y = 0;
+	cursor_x = 0;
 }
-uint8_t *SSD1306::getBuffer(void) { return buffer; }
+
+
+
+
+//invert display
+void SSD1306::invertDisplay(unsigned int i)
+{
+	if (i) {
+		command(SSD1306_INVERTDISPLAY);
+	} else {
+		command(SSD1306_NORMALDISPLAY);
+	}
+}
+//scroll right
+void SSD1306::startscrollright(unsigned int start, unsigned int stop)
+{
+	command(SSD1306_RIGHT_HORIZONTAL_SCROLL);
+	command(0X00);
+	command(start);
+	command(0X00);
+	command(stop);
+	command(0X00);
+	command(0XFF);
+	command(SSD1306_ACTIVATE_SCROLL);
+}
+
+// startscrollleft
+
+void SSD1306::startscrollleft(unsigned int start, unsigned int stop)
+{
+	command(SSD1306_LEFT_HORIZONTAL_SCROLL);
+	command(0X00);
+	command(start);
+	command(0X00);
+	command(stop);
+	command(0X00);
+	command(0XFF);
+	command(SSD1306_ACTIVATE_SCROLL);
+}
+
+// startscrolldiagright
+
+void SSD1306::startscrolldiagright(unsigned int start, unsigned int stop)
+{
+	command(SSD1306_SET_VERTICAL_SCROLL_AREA);
+	command(0X00);
+	command(SSD1306_HEIGHT);
+	command(SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL);
+	command(0X00);
+	command(start);
+	command(0X00);
+	command(stop);
+	command(0X01);
+	command(SSD1306_ACTIVATE_SCROLL);
+}
+
+// startscrolldiagleft
+
+void SSD1306::startscrolldiagleft(unsigned int start, unsigned int stop)
+{
+	command(SSD1306_SET_VERTICAL_SCROLL_AREA);
+	command(0X00);
+	command(SSD1306_HEIGHT);
+	command(SSD1306_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL);
+	command(0X00);
+	command(start);
+	command(0X00);
+	command(stop);
+	command(0X01);
+	command(SSD1306_ACTIVATE_SCROLL);
+}
+
+//stop scroll
+void SSD1306::stopscroll(void)
+{
+	command(SSD1306_DEACTIVATE_SCROLL);
+}
+
+                
+ 
 
 
 

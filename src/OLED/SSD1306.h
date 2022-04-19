@@ -6,14 +6,28 @@
 #include <assert.h>
 #include <cstring>
 
+#endif
 // enable debug messages and error messages to stderr
 #ifndef NDEBUG
 #define DEBUG
 #endif
+#if defined SSD1306_128_32
+#define SSD1306_WIDTH 128 ///< DEPRECATED: width w/SSD1306_128_32 defined
+#define SSD1306_HEIGHT 32 ///< DEPRECATED: height w/SSD1306_128_32 defined
+#endif
 static const char could_not_open_i2c[] = "Could not open I2C.\n";
-#define DEFAULT_SSD1306_ADDRESS 0x3D
+#define DEFAULT_SSD1306_ADDRESS 0x3C
+#define SSD1306_swap(a, b)                                                     \
+  (((a) ^= (b)), ((b) ^= (a)), ((a) ^= (b)))
 
+#define BLACK SSD1306_BLACK     ///< Draw 'off' pixels
+#define WHITE SSD1306_WHITE     ///< Draw 'on' pixels
+#define INVERSE SSD1306_INVERSE ///< Invert pixels
+#endif
 
+#define SSD1306_BLACK 0   ///< Draw 'off' pixels
+#define SSD1306_WHITE 1   ///< Draw 'on' pixels
+#define SSD1306_INVERSE 2 ///< Invert pixels
 
 #define SSD1306_MEMORYMODE 0x20          ///< See datasheet
 #define SSD1306_COLUMNADDR 0x21          ///< See datasheet
@@ -43,7 +57,6 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define SSD1306_EXTERNALVCC 0x01  ///< External display voltage source
 #define SSD1306_SWITCHCAPVCC 0x02 ///< Gen. display voltage from 3.3V
 
-//not currently used
 #define SSD1306_RIGHT_HORIZONTAL_SCROLL 0x26              ///< Init rt scroll
 #define SSD1306_LEFT_HORIZONTAL_SCROLL 0x27               ///< Init left scroll
 #define SSD1306_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL 0x29 ///< Init diag scroll
@@ -51,14 +64,10 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define SSD1306_DEACTIVATE_SCROLL 0x2E                    ///< Stop scroll
 #define SSD1306_ACTIVATE_SCROLL 0x2F                      ///< Start scroll
 #define SSD1306_SET_VERTICAL_SCROLL_AREA 0xA3             ///< Set scroll range
+ 
 
 
 
-#if defined SSD1306_128_32
-#define SSD1306_WIDTH 128 ///< DEPRECATED: width w/SSD1306_128_32 defined
-#define SSD1306_HEIGHT 32 ///< DEPRECATED: height w/SSD1306_128_32 defined
-
-#endif
 
 struct SSD1306settings {
 
@@ -98,19 +107,28 @@ class SSSD1306 {
 		return settings;
     }
     bool begin	(uint8_t vcs = SSD1306_SWITCHCAPVCC );
-    void initialization();
+    void init();
     void display(void);
     void clearDisplay(void);
     void data(uint8_t c);
-    uint8_t *getBuffer(void);
+    void startscrollright(unsigned int start, unsigned int stop);
+	void startscrollleft(unsigned int start, unsigned int stop);
+	void startscrolldiagright(unsigned int start, unsigned int stop);
+	void startscrolldiagleft(unsigned int start, unsigned int stop);
+	void stopscroll(void);
+	void invertDisplay(unsigned int i);
+	void setCursor(int16_t x, int16_t y) {
+    cursor_x = x;
+    cursor_y = y;
+    }
+	int16_t getCursorX(void) const { return cursor_x; }
+	int16_t getCursorY(void) const { return cursor_y; }
+	uint8_t *buffer = malloc(SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8))
 
+	
 protected:
   void command(uint8_t c);
-
-
   int8_t vccstate; ///< VCC selection, set by begin method.
-  uint8_t *buffer;
-
-
+  
 };
 #endif
