@@ -15,7 +15,7 @@
 #define GPIO_INCREMENT_PIN 19
 #define GPIO_DECREMENT_PIN 6
 #define GPIO_SELECT_PIN 26
-#define DEBOUNCE_TIMEOUT_US 20000 //20ms debounce timeout
+#define DEBOUNCE_TIMEOUT_US 300000 //20ms debounce timeout
 
 std::string identificationNumber;
 stateMachine s;
@@ -133,12 +133,12 @@ int main()
     gpioSetPullUpDown(GPIO_INCREMENT_PIN, PI_PUD_UP);
     gpioSetPullUpDown(GPIO_DECREMENT_PIN, PI_PUD_UP);
     gpioSetPullUpDown(GPIO_SELECT_PIN,    PI_PUD_UP);
+    gpioSetISRFunc(GPIO_INCREMENT_PIN, FALLING_EDGE, 0, gpioIncrementISR);
+    gpioSetISRFunc(GPIO_DECREMENT_PIN, FALLING_EDGE, 0, gpioDecrementISR);
+    gpioSetISRFunc(GPIO_SELECT_PIN,    FALLING_EDGE, 0, gpioSelectISR);
     gpioGlitchFilter(GPIO_INCREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_DECREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_SELECT_PIN   , DEBOUNCE_TIMEOUT_US);
-    gpioSetISRFunc(GPIO_INCREMENT_PIN, RISING_EDGE, 0, gpioIncrementISR);
-    gpioSetISRFunc(GPIO_DECREMENT_PIN, RISING_EDGE, 0, gpioDecrementISR);
-    gpioSetISRFunc(GPIO_SELECT_PIN,    RISING_EDGE, 0, gpioSelectISR);
 
     while(fileCheck)
     {
