@@ -1,4 +1,5 @@
 #include <iostream>
+#include <pigpio.h>
 #include <string>
 #include <stdio.h>
 #include <storageHandler.h>
@@ -10,6 +11,10 @@
 #include <menuOptions.h>
 #include <menuData.h>
 #include <menuHandler.h>
+
+#define GPIO_INCREMENT_PIN 19
+#define GPIO_DECREMENT_PIN 6
+#define GPIO_SELECT_PIN 26
 
 std::string identificationNumber;
 stateMachine s;
@@ -88,6 +93,19 @@ public:
 MenuHandler handler;
 bindStartStopMeasurement mybindStartStopMeasurement;
 
+void gpioIncrementISR(int gpio,int level, uint32_t tick){
+    // fprintf(stderr,"Inclrement detected");
+    handler.menu.CursorUp(0);
+};
+
+void gpioDecrementISR(int gpio,int level, uint32_t tick){
+    // fprintf(stderr,"Inclrement detected");
+    handler.menu.CursorDown(0);
+};
+void gpioSelectISR(int gpio,int level, uint32_t tick){
+    // fprintf(stderr,"Inclrement detected");
+    handler.menu.Select(0);
+};
 int main()
 {
 
@@ -96,6 +114,11 @@ int main()
     std::string name = "tripLog_1.csv";
     FILE *fileCheck = fopen(name.c_str(), "r");
     int checkNum = 1;
+
+    //bind isr
+    gpioSetISRFunc(GPIO_INCREMENT_PIN, RISING_EDGE, 0, gpioIncrementISR);
+    gpioSetISRFunc(GPIO_DECREMENT_PIN, RISING_EDGE, 0, gpioDecrementISR);
+    gpioSetISRFunc(GPIO_SELECT_PIN, RISING_EDGE, 0, gpioSelectISR);
 
     while(fileCheck)
     {
