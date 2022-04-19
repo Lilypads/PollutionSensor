@@ -18,7 +18,7 @@ void DisplayHandler::Init()
     getmaxyx(stdscr, yMax, xMax);
 
     //Define the window for input
-    menuwin = newwin(12, xMax-12, yMax-18, 5);
+    menuwin = newwin(24, xMax-12, yMax-32, 5);
     box(menuwin, 0 ,0);
     refresh();
     wrefresh(menuwin);
@@ -29,8 +29,11 @@ void DisplayHandler::Init()
 
 void DisplayHandler::Update()
 {
+    wclear(menuwin);
+    box(menuwin, 0 ,0);
     //Update data
-        //Not yet
+    if (displayPollution != NULL)
+        mvwprintw(menuwin, 8, 1, std::to_string(displayPollution->MassConcPM2_5).c_str());
     //Update buttons
     for (int i = 0; i <= 5; i++)
     {

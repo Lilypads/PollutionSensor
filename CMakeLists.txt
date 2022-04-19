@@ -22,3 +22,5 @@ add_subdirectory(src)
 add_subdirectory(test)
 add_subdirectory(ExampleCMakeLib)
 add_subdirectory(pigpio)
+
+include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/SPS30 ${PROJECT_SOURCE_DIR}/src/GPS ${PROJECT_SOURCE_DIR}/src/StorageHandler ${PROJECT_SOURCE_DIR}/src/StateMachine ${PROJECT_SOURCE_DIR}/src/UserInterface)

@@ -9,7 +9,7 @@
 struct Button
 {
     std::string name = "";
-    std::function<void(std::mutex&)> function = NULL;
+    std::function<void()> function = NULL;
 };
 
 struct MenuOptions

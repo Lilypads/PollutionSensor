@@ -16,15 +16,15 @@ void Menu::Init()
     rootMenu.menuNavigationTarget[0] = &measureMenu;
     rootMenu.menuNavigationTarget[1] = &debugMenu;
 
-    measureMenu.buttons[0].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::StartReading, this, std::placeholders::_1);
-    measureMenu.buttons[1].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::StopReading, this, std::placeholders::_1);
-    measureMenu.buttons[5].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::Back, this, std::placeholders::_1);
+    //measureMenu.buttons[0].function = std::bind<void(Menu::*)(), Menu*>(&Menu::StartReading, this);
+    //measureMenu.buttons[1].function = std::bind<void(Menu::*)(), Menu*>(&Menu::StopReading, this);
+    measureMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Back, this);
 
-    debugMenu.buttons[5].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::Back, this, std::placeholders::_1);
+    debugMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Back, this);
 
-    rootMenu.buttons[0].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::NextMenu, this, std::placeholders::_1);
-    rootMenu.buttons[1].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::NextMenu, this, std::placeholders::_1);
-    rootMenu.buttons[5].function = std::bind<void(Menu::*)(std::mutex&), Menu*>(&Menu::Exit, this, std::placeholders::_1);
+    rootMenu.buttons[0].function = std::bind<void(Menu::*)(), Menu*>(&Menu::NextMenu, this);
+    rootMenu.buttons[1].function = std::bind<void(Menu::*)(), Menu*>(&Menu::NextMenu, this);
+    rootMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Exit, this);
 
     //Set Button Values
     rootMenu.buttons[0].name = "Measure Menu";
@@ -45,7 +45,7 @@ void Menu::JoinWorker()
         workerThread.join();
 };
 
-void Menu::Exit(std::mutex& m)
+void Menu::Exit()
 {
     running = false;
     JoinWorker();
@@ -56,6 +56,12 @@ void Menu::CursorUp(int index)
     selectedIndex -= 1;
     if (selectedIndex < 0)
         selectedIndex = 5;
+    while(activeMenu->buttons[selectedIndex].function == NULL)
+    {
+        selectedIndex -= 1;
+        if (selectedIndex < 0)
+            selectedIndex = 5;
+    };
 };
 
 void Menu::CursorDown(int index)
@@ -63,16 +69,22 @@ void Menu::CursorDown(int index)
     selectedIndex += 1;
     if (selectedIndex > 5)
         selectedIndex = 0;
+    while(activeMenu->buttons[selectedIndex].function == NULL)
+    {
+        selectedIndex += 1;
+        if (selectedIndex > 5)
+            selectedIndex = 0;
+    };
 };
 
-void Menu::NextMenu(std::mutex& m)
+void Menu::NextMenu()
 {
     MenuOptions* target = activeMenu->menuNavigationTarget[selectedIndex];
     if (target != nullptr)
         ChangeMenu(target);
 };
 
-void Menu::Back(std::mutex& m)
+void Menu::Back()
 {
     ChangeMenu(activeMenu->previousMenu);
 };
@@ -80,8 +92,16 @@ void Menu::Back(std::mutex& m)
 void Menu::ChangeMenu(MenuOptions* newMenu)
 {
     activeMenu = newMenu;
+    selectedIndex = 0;
+    while(activeMenu->buttons[selectedIndex].function == NULL)
+    {
+        selectedIndex += 1;
+        if (selectedIndex > 5)
+            selectedIndex = 0;
+    };
 };
 
+/*
 void Menu::StopReading(std::mutex& m)
 {
     if (read)
@@ -104,6 +124,7 @@ void Menu::StartReading(std::mutex& m)
     };
 };
 
+
 void Menu::GetReading(std::mutex& m)
 {
     while (read)
@@ -117,17 +138,18 @@ void Menu::GetReading(std::mutex& m)
         m.unlock();
     };
 };
+*/
 
-void Menu::Select(int index, std::mutex& m)
+void Menu::Select(int index)
 {
     Button* activeButton = &activeMenu->buttons[index];
-    (activeButton->function)(std::ref(m));
+    (activeButton->function)();
 };
 
-void Menu::ResolveInstructionIndex(int instructionIndex, std::mutex& m)
+void Menu::ResolveInstructionIndex(int instructionIndex)
 {
     if (instructionIndex == 0)
-        Select(selectedIndex, m);
+        Select(selectedIndex);
     else if (instructionIndex == 1)
         CursorUp(selectedIndex);
     else
