@@ -23,9 +23,6 @@ SSD1306::~SSD1306(){
 };
 
 bool SSD1306::begin	(uint8_t vcs = SSD1306_SWITCHCAPVCC ){
-if ((!buffer) && !(buffer = (uint8_t *)malloc(SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8))))
-return false;
-clearDisplay();
 vccstate = vcs;
 int handle = i2cOpen(settings.i2c_bus,settings.address,0);
 if (handle<0){
@@ -157,7 +154,7 @@ void SSD1306::clearDisplay	(void){
  	cursor_y = 0;
 	cursor_x = 0;
 }
-uint8_t *SSD1306::getBuffer(void) { return buffer; }
+
 
 
 
