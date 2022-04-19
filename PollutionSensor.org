@@ -98,6 +98,12 @@ sudo systemctl restart sshd
 sudo systemctl stop gpsd
 sudo systemctl stop gpsd.socket
 #+end_src
+** SSH
+*** Only with a particular key
+#+begin_src shell
+ssh -o "IdentitiesOnly=yes" -i <private key filename> <hostname>
+#+end_src
+
 * git Notes
 ** Sub-modules
 *** Restore a sub-module from deleted
