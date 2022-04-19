@@ -33,6 +33,7 @@ void Menu::Init()
 
     measureMenu.buttons[0].name = "Start Measurement";
     measureMenu.buttons[1].name = "Stop Measurement";
+    measureMenu.buttons[2].name = "Upload Last Measurement to Github";
     measureMenu.buttons[5].name = "Back";
 
     debugMenu.buttons[0].name = "There are currently no debug options";
@@ -155,17 +156,17 @@ void Menu::ResolveInstructionIndex(int instructionIndex)
     else
         CursorDown(selectedIndex);
 };
-
+/*
 void Menu::DisplayUpdate(DisplayHandler& display, bool active)
 {
     display.options = activeMenu;
     display.Update();
-    /*
+    
     if (active == true)
     {
         display.UpdateMenuDisplay(selectedIndex, activeMenu, coordinates, pollutionReading);
         return;
     };
     display.UpdateMenuInactiveDisplay(selectedIndex, activeMenu, coordinates, pollutionReading);
-    */
-};
+    
+};*/

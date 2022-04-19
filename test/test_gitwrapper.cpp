@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_SUITE(testGitCommitToRemote)
 
   // push to remote
   GITWRAPPER gw(s);
-  gw.saveJoureyFiles();
+  gw.saveJourneyFiles();
   // we have to checkout main on the remote to see new file
   gitCheckoutMain(remote);
   // test the new file exists in the remote repo
@@ -241,7 +241,7 @@ BOOST_AUTO_TEST_CASE(testExistingRepo) {
 
     // push to remote
     GITWRAPPER gw(s);
-    gw.saveJoureyFiles();
+    gw.saveJourneyFiles();
     // we have to checkout main on the remote to see new file
     gitCheckoutMain(remote);
     // test the new file exists in the remote repo

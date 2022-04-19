@@ -27,26 +27,8 @@ void MenuHandler::Init()
     display.Update();
 
     //Start input monitor and display thread
-    displayThread = std::thread(&MenuHandler::MonitorMenuState, this, std::ref(*this), std::ref(display), std::ref(m));
+    displayThread = std::thread(&DisplayHandler::MonitorMenuState, display, &menu, std::ref(instruction), std::ref(display), std::ref(m));
     inputThread = std::thread(&InputHandler::Listen, inputMonitor, std::ref(display.menuwin), std::ref(inputMonitor), std::ref(m));
-};
-
-void MenuHandler::MonitorMenuState(MenuHandler& handler, DisplayHandler& display, std::mutex &m)
-{
-    Menu* menu = &handler.menu;
-    while (menu->running)
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        m.lock();
-        if (menu->changed && handler.instruction == -1)
-        {
-            display.options = menu->activeMenu;
-            display.Update();
-            //menu->DisplayUpdate(std::ref(display), handler.active);
-            menu->changed = false;
-        };
-        m.unlock();
-    };
 };
 
 void MenuHandler::ForceDisplayUpdate()
@@ -71,14 +53,16 @@ void MenuHandler::Start()
         {
             timeoutStart = std::chrono::high_resolution_clock::now();
             active = true;
-            ForceDisplayUpdate();
 
             menu.ResolveInstructionIndex(instruction);
 
             display.selected = menu.selectedIndex;
 
             instruction = -1;
-            menu.DisplayUpdate(std::ref(display), active);
+            display.options = menu.activeMenu;
+            ForceDisplayUpdate();
+            //display.Update();
+            //menu.DisplayUpdate(std::ref(display), active);
             continue;
         }
         //Timeout functionality commented out because it actually increases processing requirements

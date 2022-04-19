@@ -46,7 +46,7 @@ struct Menu
 
     void ResolveInstructionIndex(int instructionIndex);
 
-    void DisplayUpdate(DisplayHandler& display, bool active);
+    //void DisplayUpdate(DisplayHandler& display, bool active);
 };
 
 #endif

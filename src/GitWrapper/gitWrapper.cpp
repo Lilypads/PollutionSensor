@@ -47,7 +47,7 @@ int GITWRAPPER::goHome() {
 };
 
 // does everything
-int GITWRAPPER::saveJoureyFiles() {
+void GITWRAPPER::saveJourneyFiles() {
   pid_t p;
   const char *git = "/bin/git";
   const char *touch = "/bin/touch";
@@ -55,7 +55,7 @@ int GITWRAPPER::saveJoureyFiles() {
   sprintf(sshCmd, "ssh -i %s", settings.sshKeysFileAbs);
   if (chdir(settings.path) < 0) {
     perror("failed to cd");
-    return -1;
+    return;
   }
   usleep(WAIT_TIME);
 
@@ -187,5 +187,5 @@ int GITWRAPPER::saveJoureyFiles() {
   }
   usleep(WAIT_TIME * 40);
   goHome();
-  return 0;
+  return;
 }

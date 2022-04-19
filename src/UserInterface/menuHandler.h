@@ -29,7 +29,7 @@ public:
 
     void ForceDisplayUpdate();
 
-    void MonitorMenuState(MenuHandler& handler, DisplayHandler& display, std::mutex &m);
+    void MonitorMenuState(Menu* menu, int instruciton, DisplayHandler& display, std::mutex &m);
 
     void Start();
 

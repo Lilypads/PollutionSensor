@@ -29,7 +29,7 @@ class GITWRAPPER{
 public:
     GITWRAPPER(gitwrapperSettings settings);
     ~GITWRAPPER();
-    int saveJoureyFiles();
+    void saveJourneyFiles();
 private:
     gitwrapperSettings settings;
     int goHome();

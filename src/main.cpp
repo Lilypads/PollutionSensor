@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pigpio.h>
 #include <string>
+#include <time.h>
 #include <stdio.h>
 #include <storageHandler.h>
 #include <libsps30.h>
@@ -11,6 +12,7 @@
 #include <menuOptions.h>
 #include <menuData.h>
 #include <menuHandler.h>
+#include <gitWrapper.h>
 
 #define GPIO_INCREMENT_PIN 19
 #define GPIO_DECREMENT_PIN 6
@@ -24,24 +26,13 @@ storageHandler myStorageHandler;
 SPS30measurement lastSPSMeasurement;
 neo6mMeasurment lastGPSMeasurement;
 
-class DataWriter
-{
-public:
-    MenuHandler* menuHandler;
-
-    void UpdateReading()
-    {
-        menuHandler->ForceDisplayUpdate();
-    };
-};
+MenuHandler handler;
 
 //sps30 inheritance class
     class SPS30Acquiring: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         
-        //DataWriter writer;
-        
-        //writer.UpdateReading();
+        handler.ForceDisplayUpdate();
 
         lastSPSMeasurement = thisMeasurement;
 
@@ -91,7 +82,6 @@ public:
     };
 };
 
-MenuHandler handler;
 bindStartStopMeasurement mybindStartStopMeasurement;
 
 void gpioIncrementISR(int gpio,int level, uint32_t tick){
@@ -116,14 +106,26 @@ void gpioSelectISR(int gpio,int level, uint32_t tick){
     handler.inputMonitor.inputs.push(0);
     handler.m.unlock();
 };
+
 int main()
 {
 
     //initialise
-    DataWriter writer;
+
+    //Time grab function if current implementation fails
+    //time_t secs = time(0);
+    //struct tm* local = localtime(&secs);
+    //std::string timeString = std::to_string(local->tm_hour) + ":" + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
+
     std::string name = "tripLog_1.csv";
     FILE *fileCheck = fopen(name.c_str(), "r");
     int checkNum = 1;
+
+    gitwrapperSettings gitS;
+    strcpy(gitS.path, "/home/benjaminf/Repos/PollutionSensorDataDir");
+    strcpy(gitS.remote, "git@github.com:BodeanTheZealous/PollutionSensorData.git");
+    strcpy(gitS.sshKeysFileAbs, "~/Repos/PollutionSensor/src/GitWrapper/pollSenseKey");
+    GITWRAPPER gw(gitS);
 
     //bind isr
     gpioInitialise();
@@ -155,17 +157,20 @@ int main()
     //Initialise user interface
     handler.Init();
 
-    writer.menuHandler = &handler;
-
     //Set button functions that are external to UI system
     handler.menu.measureMenu.buttons[0].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::startMeasurement, &mybindStartStopMeasurement);
     handler.menu.measureMenu.buttons[1].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::stopMeasurement, &mybindStartStopMeasurement);
-    
+    handler.menu.measureMenu.buttons[2].function = std::bind<void(GITWRAPPER::*)(), GITWRAPPER*>(&GITWRAPPER::saveJourneyFiles, &gw);
+
+    //Point the display at the relevant data containers
     handler.display.displayPollution = &lastSPSMeasurement;
     handler.display.displayGPS = &lastGPSMeasurement;
+    handler.display.stateName = &s.stateName;
+    handler.display.fileName = &name;
 
+    //Start up the GPS and SPS30 sensor
     myGPS.startMeasurement();
-    mySPS30.startMeasurement(); //This causes an error, I'm unsure why or how to fix it
+    mySPS30.startMeasurement();
 
     //Start user interface
     handler.Start();
@@ -175,7 +180,6 @@ int main()
     mySPS30.stop();
     myGPS.stopMeasurement();
     myStorageHandler.closeFiles();
-    
 
     return 0;
 };
