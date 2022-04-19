@@ -74,3 +74,6 @@ src/sps30demo
 /test/GitWrapperTestDir/existing/
 /test/GitWrapperTestDir/blank/
 /src/GitWrapper/DemoGitWrapper
+/src/StateMachine/stateMachineFunctionsDemo
+/src/StorageHandler/storageHandlerDemo
+/src/UserInterface/DemoUserInterface

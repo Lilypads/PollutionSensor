@@ -20,7 +20,7 @@ class FunctionWrapper
 public:
     WINDOW* window = NULL;
 
-    void READ(std::mutex& m)
+    void READ()
     {
         mvwprintw(window, 1, 50, "read :|");
         wrefresh(window);
@@ -33,7 +33,9 @@ int main()
     FunctionWrapper funcWrap;
     //CustomMenu customMenu;
     handler.Init();
-    handler.menu.measureMenu.buttons[0].function = std::bind<void(FunctionWrapper::*)(std::mutex&), FunctionWrapper*>(&FunctionWrapper::READ, &funcWrap, std::placeholders::_1);
+    std::mutex blankMutex;
+    // handler.menu.measureMenu.buttons[0].function = std::bind<void(FunctionWrapper::*)(std::mutex&), FunctionWrapper*>(&FunctionWrapper::READ, &funcWrap, std::placeholders::_1);
+    handler.menu.measureMenu.buttons[0].function = std::bind(&FunctionWrapper::READ,funcWrap);
     funcWrap.window = handler.display.menuwin;
     handler.Start();
     return 0;
