@@ -64,7 +64,7 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 #define SSD1306_DEACTIVATE_SCROLL 0x2E                    ///< Stop scroll
 #define SSD1306_ACTIVATE_SCROLL 0x2F                      ///< Start scroll
 #define SSD1306_SET_VERTICAL_SCROLL_AREA 0xA3             ///< Set scroll range
-
+ 
 
 
 
@@ -72,7 +72,7 @@ static const char could_not_open_i2c[] = "Could not open I2C.\n";
 struct SSD1306settings {
 
 	/**
-	 * I2C bus used 
+	 * I2C bus used (99% always set to one)
 	 **/
 	uint8_t i2c_bus = 1;
 
@@ -111,7 +111,6 @@ class SSSD1306 {
     void display(void);
     void clearDisplay(void);
     void data(uint8_t c);
-    uint8_t *getBuffer(void);
     void startscrollright(unsigned int start, unsigned int stop);
 	void startscrollleft(unsigned int start, unsigned int stop);
 	void startscrolldiagright(unsigned int start, unsigned int stop);
@@ -124,11 +123,12 @@ class SSSD1306 {
     }
 	int16_t getCursorX(void) const { return cursor_x; }
 	int16_t getCursorY(void) const { return cursor_y; }
+	uint8_t *buffer = malloc(SSD1306_WIDTH * ((SSD1306_HEIGHT + 7) / 8))
+
 	
 protected:
   void command(uint8_t c);
   int8_t vccstate; ///< VCC selection, set by begin method.
-  uint8_t *buffer;
+  
 };
 #endif
-
