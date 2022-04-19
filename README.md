@@ -21,8 +21,13 @@ Please also follow us on twitter to participate in the discussion here >> @Pollu
     * __StorageHandler__ contains storage handler library and demo script
     * __UserInterface__ contains user-interface library and demo script
     * __referenceCPP__ contains other reference scripts used for development
+    * *__main.cpp__* main program
 * __sshAuth__ contains public ssh keys for developers to access pi remotely
 * __test__ contains test scripts used in the workflow
+* *__CMakeLists.txt__* cmake compilation instruction
+* *__LICENSE__* GNU license
+* *__PollutionSensor.org__* our wiki page
+* *__README.md__* please read me :)
 
 ## Pre-Requisite
 
@@ -66,7 +71,15 @@ For MacOS using Homebrew
 
 Replace executableFileName with the desired executable file name which was compiled by cmake
 
+__You need to run this in the directory that contains the executable or add a path to it.__
+
 For example, to run main program
+
+* get into the directory
+
+`cd src`
+
+* run main program
 
 `sudo ./main`
 
