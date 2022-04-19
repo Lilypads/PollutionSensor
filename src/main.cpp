@@ -19,6 +19,8 @@
 #define GPIO_SELECT_PIN 26
 #define DEBOUNCE_TIMEOUT_US 300000 //20ms debounce timeout
 
+#define LOGDATA_PATH "/var/lib/polsense/triplogs/"
+
 std::string identificationNumber;
 stateMachine s;
 storageHandler myStorageHandler;
@@ -117,12 +119,10 @@ int main()
     //struct tm* local = localtime(&secs);
     //std::string timeString = std::to_string(local->tm_hour) + ":" + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
 
-    std::string name = "tripLog_1.csv";
-    FILE *fileCheck = fopen(name.c_str(), "r");
     int checkNum = 1;
 
     gitwrapperSettings gitS;
-    strcpy(gitS.path, "/home/benjaminf/Repos/PollutionSensorDataDir");
+    strcpy(gitS.path, LOGDATA_PATH);
     strcpy(gitS.remote, "git@github.com:BodeanTheZealous/PollutionSensorData.git");
     strcpy(gitS.sshKeysFileAbs, "~/Repos/PollutionSensor/src/GitWrapper/pollSenseKey");
     GITWRAPPER gw(gitS);
@@ -142,16 +142,6 @@ int main()
     gpioGlitchFilter(GPIO_DECREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_SELECT_PIN   , DEBOUNCE_TIMEOUT_US);
 
-    while(fileCheck)
-    {
-        fclose(fileCheck);
-        checkNum++;
-        name = "tripLog_" + std::to_string(checkNum) + ".csv";
-        fileCheck = fopen(name.c_str(), "r");
-    };
-
-    myStorageHandler.identificationNumber = std::to_string(checkNum);
-
     myStorageHandler.createFiles();
 
     //Initialise user interface
@@ -166,7 +156,7 @@ int main()
     handler.display.displayPollution = &lastSPSMeasurement;
     handler.display.displayGPS = &lastGPSMeasurement;
     handler.display.stateName = &s.stateName;
-    handler.display.fileName = &name;
+    handler.display.fileName = &myStorageHandler.fileName;
 
     //Start up the GPS and SPS30 sensor
     myGPS.startMeasurement();

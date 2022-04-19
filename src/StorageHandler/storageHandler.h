@@ -43,6 +43,8 @@ class storageHandler {
 	 **/
     std::string getTimeAsStr();
 
+    int GetUniqueFileNumber();
+
     /**
 	 * GPS buffer
 	 **/
@@ -51,7 +53,9 @@ class storageHandler {
     /**
 	 * identification number that goes into the saved file name
 	 **/
+    std::string fileName = "";
     std::string identificationNumber = "0";
+    std::string saveDirectory = "./";
     
     private:
 

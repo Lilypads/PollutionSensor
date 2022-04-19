@@ -15,6 +15,10 @@ void storageHandler::closeFiles(){
 };
 
 std::string storageHandler::getTimeAsStr(){
+    time_t secs = time(0);
+    struct tm* local = localtime(&secs);
+    return std::to_string(local->tm_year) + "-" + std::to_string(local->tm_mon) + "-" + std::to_string(local->tm_mday) + "_" + std::to_string(local->tm_hour) + "-" + std::to_string(local->tm_min);
+    /*
   char timeStr[16];
 
   std::string out;
@@ -30,12 +34,37 @@ std::string storageHandler::getTimeAsStr(){
   strcpy(timeStr, out.c_str());
 
 return out;
+*/
+};
+
+int storageHandler::GetUniqueFileNumber()
+{
+    int checkNum = 1;
+    std::string name = fileName + std::to_string(checkNum) + ".csv";
+    FILE *fileCheck = fopen(name.c_str(), "r");
+
+    while(fileCheck)
+    {
+        fclose(fileCheck);
+        checkNum++;
+        name = fileName + std::to_string(checkNum) + ".csv";
+        fileCheck = fopen(name.c_str(), "r");
+    };
+
+    return checkNum;
 };
 
 void storageHandler::createFiles(){
 
+fileName = "tripLog_" + getTimeAsStr() + "_";
 
-logdata_file.open("./tripLog_" + getTimeAsStr() + "_" + identificationNumber + ".csv", std::fstream::out);
+identificationNumber = std::to_string(GetUniqueFileNumber());
+
+fileName = "tripLog_" + getTimeAsStr() + "_" + identificationNumber + ".csv";
+
+saveDirectory = "/var/lib/polsense/triplogs/";
+
+logdata_file.open(saveDirectory + fileName, std::fstream::out);
 
 //write header
 logdata_file    <<"SPS_MassConcentrationPM1.0" << ","
