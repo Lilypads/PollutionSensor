@@ -117,12 +117,15 @@ int main()
 
     //bind isr
     gpioInitialise();
-    gpioSetMode(GPIO_INCREMENT_PIN,PI_INPUT);
-    gpioSetMode(GPIO_DECREMENT_PIN,PI_INPUT);
-    gpioSetMode(GPIO_SELECT_PIN,PI_INPUT);
+    gpioSetMode(GPIO_INCREMENT_PIN,       PI_INPUT);
+    gpioSetMode(GPIO_DECREMENT_PIN,       PI_INPUT);
+    gpioSetMode(GPIO_SELECT_PIN,          PI_INPUT);
+    gpioSetPullUpDown(GPIO_INCREMENT_PIN, PI_PUD_UP);
+    gpioSetPullUpDown(GPIO_DECREMENT_PIN, PI_PUD_UP);
+    gpioSetPullUpDown(GPIO_SELECT_PIN,    PI_PUD_UP);
     gpioSetISRFunc(GPIO_INCREMENT_PIN, RISING_EDGE, 0, gpioIncrementISR);
     gpioSetISRFunc(GPIO_DECREMENT_PIN, RISING_EDGE, 0, gpioDecrementISR);
-    gpioSetISRFunc(GPIO_SELECT_PIN, RISING_EDGE, 0, gpioSelectISR);
+    gpioSetISRFunc(GPIO_SELECT_PIN,    RISING_EDGE, 0, gpioSelectISR);
 
     while(fileCheck)
     {
