@@ -116,6 +116,10 @@ int main()
     int checkNum = 1;
 
     //bind isr
+    gpioInitialise();
+    gpioSetMode(GPIO_INCREMENT_PIN,PI_INPUT);
+    gpioSetMode(GPIO_DECREMENT_PIN,PI_INPUT);
+    gpioSetMode(GPIO_SELECT_PIN,PI_INPUT);
     gpioSetISRFunc(GPIO_INCREMENT_PIN, RISING_EDGE, 0, gpioIncrementISR);
     gpioSetISRFunc(GPIO_DECREMENT_PIN, RISING_EDGE, 0, gpioDecrementISR);
     gpioSetISRFunc(GPIO_SELECT_PIN, RISING_EDGE, 0, gpioSelectISR);
