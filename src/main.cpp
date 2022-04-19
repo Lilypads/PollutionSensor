@@ -95,16 +95,25 @@ bindStartStopMeasurement mybindStartStopMeasurement;
 
 void gpioIncrementISR(int gpio,int level, uint32_t tick){
     // fprintf(stderr,"Inclrement detected");
-    handler.menu.CursorUp(0);
+    // handler.menu.CursorUp(0);
+    handler.m.lock();
+    handler.inputMonitor.inputs.push(1);
+    handler.m.unlock();
 };
 
 void gpioDecrementISR(int gpio,int level, uint32_t tick){
     // fprintf(stderr,"Inclrement detected");
-    handler.menu.CursorDown(0);
+    // handler.menu.CursorDown(0);
+    handler.m.lock();
+    handler.inputMonitor.inputs.push(2);
+    handler.m.unlock();
 };
 void gpioSelectISR(int gpio,int level, uint32_t tick){
     // fprintf(stderr,"Inclrement detected");
-    handler.menu.Select(0);
+    // handler.menu.Select(0);
+    handler.m.lock();
+    handler.inputMonitor.inputs.push(0);
+    handler.m.unlock();
 };
 int main()
 {
