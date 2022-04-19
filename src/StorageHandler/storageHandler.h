@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "neo6m.h"
 #include "libsps30.h"
+#include <time.h>
 
 //include guards
 #ifndef STORAGEHANDLER
@@ -36,6 +37,11 @@ class storageHandler {
 	 * write to files
 	 **/
     void addMeasurement(SPS30measurement currentMeasurement);
+
+    /**
+	 * populate the time tag
+	 **/
+    std::string getTimeAsStr();
 
     /**
 	 * GPS buffer
