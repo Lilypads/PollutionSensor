@@ -318,7 +318,7 @@ char tmp[60];  //buffer for read data
 
 int out = i2cWriteDevice(handle,pnt,2);
 usleep(50000); //sleep for 1/2 seconds
-int checkERR = i2cReadDevice(handle,tmp,3);
+int checkERR = i2cReadDevice(handle,tmp,sizeof(tmp));
 
 if (checkERR < 0) {
 #ifdef DEBUG
