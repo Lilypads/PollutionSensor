@@ -24,6 +24,3 @@ add_subdirectory(ExampleCMakeLib)
 add_subdirectory(pigpio)
 
 include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/SPS30 ${PROJECT_SOURCE_DIR}/src/GPS ${PROJECT_SOURCE_DIR}/src/StorageHandler ${PROJECT_SOURCE_DIR}/src/StateMachine ${PROJECT_SOURCE_DIR}/src/UserInterface)
-add_executable(main main.cpp)
-target_link_libraries(main libStateMachine libStorageHandler libsps30 neo6m libStateMachine userinterface)
-
