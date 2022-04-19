@@ -16,7 +16,7 @@ private:
 
 public:
 
-    bool active = false;
+    bool active = false;        //There is no point in this given how updates work
     bool changed = false;
     DisplayHandler display;
     Menu menu;
@@ -26,6 +26,8 @@ public:
     std::mutex m;
 
     void Init();
+
+    void ForceDisplayUpdate();
 
     void MonitorMenuState(MenuHandler& handler, DisplayHandler& display, std::mutex &m);
 

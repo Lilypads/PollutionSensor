@@ -40,11 +40,20 @@ void MenuHandler::MonitorMenuState(MenuHandler& handler, DisplayHandler& display
         m.lock();
         if (menu->changed && handler.instruction == -1)
         {
-            menu->DisplayUpdate(std::ref(display), handler.active);
+            display.options = menu->activeMenu;
+            display.Update();
+            //menu->DisplayUpdate(std::ref(display), handler.active);
             menu->changed = false;
         };
         m.unlock();
     };
+};
+
+void MenuHandler::ForceDisplayUpdate()
+{
+    m.lock();
+    menu.changed = true;
+    m.unlock();
 };
 
 void MenuHandler::Start()
@@ -62,11 +71,9 @@ void MenuHandler::Start()
         {
             timeoutStart = std::chrono::high_resolution_clock::now();
             active = true;
-            m.lock();
-            menu.changed = true;
-            m.unlock();
+            ForceDisplayUpdate();
 
-            menu.ResolveInstructionIndex(instruction, std::ref(m));
+            menu.ResolveInstructionIndex(instruction);
 
             display.selected = menu.selectedIndex;
 
@@ -74,13 +81,14 @@ void MenuHandler::Start()
             menu.DisplayUpdate(std::ref(display), active);
             continue;
         }
-        else if (std::chrono::duration_cast<std::chrono::milliseconds>(now - timeoutStart) > timeoutDuration)
+        //Timeout functionality commented out because it actually increases processing requirements
+        /*else if (std::chrono::duration_cast<std::chrono::milliseconds>(now - timeoutStart) > timeoutDuration)
         {
             active = false;
             menu.DisplayUpdate(std::ref(display), active);
         };
-        DisplayHandler disp = std::ref(display);
-        menu.DisplayUpdate(disp, active);
+        //DisplayHandler disp = std::ref(display);
+        //menu.DisplayUpdate(disp, active);*/
     };
 
     Stop();

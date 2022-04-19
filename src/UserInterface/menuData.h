@@ -24,27 +24,27 @@ struct Menu
 
     void JoinWorker();
 
-    void Exit(std::mutex& m);
+    void Exit();
 
     void CursorUp(int index);
 
     void CursorDown(int index);
 
-    void NextMenu(std::mutex& m);
+    void NextMenu();
 
-    void Back(std::mutex& m);
+    void Back();
 
     void ChangeMenu(MenuOptions* newMenu);
 
-    virtual void StopReading(std::mutex& m);
+    //virtual void StopReading(std::mutex& m);
 
-    virtual void StartReading(std::mutex& m);
+    //virtual void StartReading(std::mutex& m);
 
-    virtual void GetReading(std::mutex& m);
+    //virtual void GetReading(std::mutex& m);
 
-    void Select(int index, std::mutex& m);
+    void Select(int index);
 
-    void ResolveInstructionIndex(int instructionIndex, std::mutex& m);
+    void ResolveInstructionIndex(int instructionIndex);
 
     void DisplayUpdate(DisplayHandler& display, bool active);
 };

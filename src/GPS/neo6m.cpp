@@ -88,7 +88,9 @@ void NEO6M::pollUartDev() {
     }
 
     if (parseNmeaStr(buff, nbytes, parsedSent) < 0) {
+      #ifdef DEBUG
       fprintf(stderr,"Failed to parse NMEA Buffer: %.*s\n",nbytes,buff);
+      #endif
     }
     else {//if the parse operation was successfull, we can expect the nmeaSentance Properties to be
     // do nothing
@@ -104,7 +106,9 @@ int NEO6M::parseNmeaStr(char* thisSent, int  size, parsedNmeaSent& outputSent) /
     memset(&outputSent,0,sizeof(parsedNmeaSent));
     //check if the first char is indeed a start char if not then this is an incomplete message and we will return
     if (*thisSent != NMEA_SENTENCE_START_DELIM){
+        #ifdef DEBUG
         fprintf(stderr,"Sentance Incomplete: %.*s\n",size,thisSent);
+        #endif
         return(-1);
     }
 
