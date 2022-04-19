@@ -19,7 +19,7 @@
 #define GPIO_SELECT_PIN 26
 #define DEBOUNCE_TIMEOUT_US 300000 //20ms debounce timeout
 
-#define LOGDATA_PATH "~/polSenseTripLogs"
+#define LOGDATA_PATH "~/polSenseTripLogs/"
 
 std::string identificationNumber;
 stateMachine s;

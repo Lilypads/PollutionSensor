@@ -62,8 +62,6 @@ identificationNumber = std::to_string(GetUniqueFileNumber());
 
 fileName = "tripLog_" + getTimeAsStr() + "_" + identificationNumber + ".csv";
 
-saveDirectory = "/var/lib/polsense/triplogs/";
-
 logdata_file.open(saveDirectory + fileName, std::fstream::out);
 
 //write header
