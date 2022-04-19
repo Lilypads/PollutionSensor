@@ -19,7 +19,7 @@
 #define GPIO_SELECT_PIN 26
 #define DEBOUNCE_TIMEOUT_US 300000 //20ms debounce timeout
 
-#define LOGDATA_PATH "/var/lib/polsense/triplogs/"
+#define LOGDATA_PATH "~/polSenseTripLogs"
 
 std::string identificationNumber;
 stateMachine s;
@@ -142,6 +142,7 @@ int main()
     gpioGlitchFilter(GPIO_DECREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_SELECT_PIN   , DEBOUNCE_TIMEOUT_US);
 
+    myStorageHandler.saveDirectory = LOGDATA_PATH;
     myStorageHandler.createFiles();
 
     //Initialise user interface
