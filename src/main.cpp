@@ -176,6 +176,7 @@ int main()
 
     //clean up
     s.shutdown();
+    mybindStartStopMeasurement.stopMeasurement();
     mySPS30.stop();
     myGPS.stopMeasurement();
 
