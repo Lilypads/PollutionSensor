@@ -8,16 +8,13 @@
 
 class MenuHandler
 {
-
 private:
-
+    //Define the active menu as the root menu by default and instruction to no-instruction code
     MenuOptions *activeMenu = &menu.rootMenu;
-    int instruction = 0;
+    int instruction = -1;
 
 public:
-
-    bool active = false;        //There is no point in this given how updates work
-    bool changed = false;
+    //Define a handler as containing a display, menu, input thread, display thread, a way to get input through the input monitor, and a mutex for thread safety
     DisplayHandler display;
     Menu menu;
     std::thread inputThread;

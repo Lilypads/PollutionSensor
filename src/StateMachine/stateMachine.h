@@ -50,6 +50,7 @@ class stateMachine {
 
     PSstates currentState;
 
+	//A string to represent the current state so that it can be displayed to the user
 	std::string stateName = "";
 
     private:

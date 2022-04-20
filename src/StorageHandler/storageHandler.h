@@ -53,8 +53,12 @@ class storageHandler {
     /**
 	 * identification number that goes into the saved file name
 	 **/
-    std::string fileName = "";
     std::string identificationNumber = "0";
+
+    //Name of the file to open
+    std::string fileName = "";
+
+    //Directory to save the files to
     std::string saveDirectory = "./";
     
     private:

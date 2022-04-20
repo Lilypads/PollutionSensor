@@ -11,8 +11,9 @@
 
 struct DisplayHandler
 {
-    std::unordered_map<int, std::string> stateMap = {{0, "Acquiring GPS Fix"}, 
-    {1, "Active"}, {2, "Acquiring Data"}, {3, "Cleanup"}};
+    //Define a pointer to the options in the menu currently open as well as the currently selected item,
+    //the window to draw to, a pointer for pollution measurement data and a pointer for GPS measurement data
+    //along with pointers to state and file name containers
     MenuOptions* options;
     int selected = 0;
     WINDOW* menuwin = NULL;
@@ -22,6 +23,10 @@ struct DisplayHandler
     std::string* fileName = nullptr;
 
     void Init();
+
+    void UpdateSelectedIndex(int newIndex);
+
+    void UpdateCurrentMenu(MenuOptions* newOptions);
 
     void DisplayString(int y, int x, const char* string);
 

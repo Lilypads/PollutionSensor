@@ -8,6 +8,8 @@
 #include <ncurses.h>
 #include <iostream>
 
+//Define an input handler as containing a map for input codes from a keyboard to input codes for the program
+//This allows multiple different types of input to easily be used if the program were to be expanded
 class InputHandler
 {
 private:
@@ -15,11 +17,14 @@ private:
     int input = -1;
 
 public:
+
     bool listening = true;
+
     std::queue<int> inputs;
 
     int GetTopInput(std::mutex& m);
 
+    //Define a listening function to listen to inputs from a specific window
     void Listen(WINDOW* menuwin, InputHandler& handler, std::mutex& m);
 };
 

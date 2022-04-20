@@ -75,12 +75,21 @@ public:
 
     void startMeasurement()
     {
+        //Create a file to write to
+        myStorageHandler.createFiles();
+
+        //Start writing to the file
          s.startAcquisition();
     };
 
     void stopMeasurement()
     {
+
+        //Stop writing to a file
          s.stopAcquisition();
+
+         //Close the file
+         myStorageHandler.closeFiles();
     };
 };
 
@@ -113,14 +122,9 @@ int main()
 {
 
     //initialise
-
-    //Time grab function if current implementation fails
-    //time_t secs = time(0);
-    //struct tm* local = localtime(&secs);
-    //std::string timeString = std::to_string(local->tm_hour) + ":" + std::to_string(local->tm_min) + ":" + std::to_string(local->tm_sec);
-
     int checkNum = 1;
 
+    //Set up github wrapper
     gitwrapperSettings gitS;
     strcpy(gitS.path, LOGDATA_PATH);
     strcpy(gitS.remote, "git@github.com:BodeanTheZealous/PollutionSensorData.git");
@@ -142,17 +146,14 @@ int main()
     gpioGlitchFilter(GPIO_DECREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_SELECT_PIN   , DEBOUNCE_TIMEOUT_US);
 
-    myStorageHandler.createFiles();
-
     //Initialise user interface
     handler.Init();
 
     //Set button functions that are external to UI system
     handler.menu.measureMenu.buttons[0].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::startMeasurement, &mybindStartStopMeasurement);
     handler.menu.measureMenu.buttons[1].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::stopMeasurement, &mybindStartStopMeasurement);
-    handler.menu.measureMenu.buttons[2].function = std::bind<void(GITWRAPPER::*)(), GITWRAPPER*>(&GITWRAPPER::saveJourneyFiles, &gw);
-
-    //Point the display at the relevant data containers
+    
+    //Point the display at the relevant external data containers
     handler.display.displayPollution = &lastSPSMeasurement;
     handler.display.displayGPS = &lastGPSMeasurement;
     handler.display.stateName = &s.stateName;
@@ -169,7 +170,6 @@ int main()
     s.shutdown();
     mySPS30.stop();
     myGPS.stopMeasurement();
-    myStorageHandler.closeFiles();
 
     return 0;
 };
