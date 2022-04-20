@@ -7,22 +7,24 @@
 
 struct Menu
 {
+    //Define the menu as having a root, measure, and debug menu
     MenuOptions rootMenu;
     MenuOptions measureMenu;
     MenuOptions debugMenu;
+
+    //Set the default menu to the root
     MenuOptions* activeMenu = &rootMenu;
-    std::thread workerThread;
+
+    //Set the default selection to 0
     int selectedIndex = 0;
+
+    //Set the menu to be running by default
     bool running = true;
-    bool read = false;
+
+    //Set the menu to be unchanged by default
     bool changed = false;
 
-    double pollutionReading = 0;
-    std::string coordinates = "";
-
     void Init();
-
-    void JoinWorker();
 
     void Exit();
 
@@ -36,17 +38,10 @@ struct Menu
 
     void ChangeMenu(MenuOptions* newMenu);
 
-    //virtual void StopReading(std::mutex& m);
-
-    //virtual void StartReading(std::mutex& m);
-
-    //virtual void GetReading(std::mutex& m);
-
     void Select(int index);
 
     void ResolveInstructionIndex(int instructionIndex);
 
-    void DisplayUpdate(DisplayHandler& display, bool active);
 };
 
 #endif

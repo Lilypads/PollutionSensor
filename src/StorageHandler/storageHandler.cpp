@@ -15,27 +15,59 @@ void storageHandler::closeFiles(){
 };
 
 std::string storageHandler::getTimeAsStr(){
-  char timeStr[16];
+    //Set the current time
+    time_t secs = time(0);
 
-  std::string out;
-  time_t rawtime;
-  struct tm * timeinfo;
+    //Convert the current time into a struct containing years, months, days, hours etc
+    struct tm* local = localtime(&secs);
 
-  time (&rawtime);
-  timeinfo = localtime (&rawtime);
+    //Convert the struct into a string to be returned
+    return std::to_string(local->tm_year) + "-" + std::to_string(local->tm_mon) + "-" + std::to_string(local->tm_mday) + "_" + std::to_string(local->tm_hour) + "-" + std::to_string(local->tm_min);
 
-  strftime(timeStr,80,"%Y-%m-%d_%M-%S",timeinfo);
-  puts (timeStr);
+};
 
-  strcpy(timeStr, out.c_str());
+int storageHandler::GetUniqueFileNumber()
+{
+    //Set the ID to the defualt 1
+    int checkNum = 1;
 
-return out;
+    //Set the name of the first file to check
+    std::string name = fileName + std::to_string(checkNum) + ".csv";
+
+    //Try to open the first file
+    FILE *fileCheck = fopen(name.c_str(), "r");
+
+    //If the file could be opened
+    while(fileCheck)
+    {
+        //Close the file, because we now know it exists and that's all we needed
+        fclose(fileCheck);
+
+        //Increment the ID
+        checkNum++;
+
+        //Set the name of the next file to check
+        name = fileName + std::to_string(checkNum) + ".csv";
+
+        //Try to open the next file
+        fileCheck = fopen(name.c_str(), "r");
+    };
+
+    return checkNum;    //Return the first ID that did not already have a file associated with it
 };
 
 void storageHandler::createFiles(){
 
+//Set the base for the filename
+fileName = "tripLog_" + getTimeAsStr() + "_";
 
-logdata_file.open("./tripLog_" + getTimeAsStr() + "_" + identificationNumber + ".csv", std::fstream::out);
+//Get the unique file ID
+identificationNumber = std::to_string(GetUniqueFileNumber());
+
+//Complete the filename
+fileName = fileName + identificationNumber + ".csv";
+
+logdata_file.open(saveDirectory + fileName, std::fstream::out);
 
 //write header
 logdata_file    <<"SPS_MassConcentrationPM1.0" << ","

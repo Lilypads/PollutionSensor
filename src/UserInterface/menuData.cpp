@@ -16,8 +16,7 @@ void Menu::Init()
     rootMenu.menuNavigationTarget[0] = &measureMenu;
     rootMenu.menuNavigationTarget[1] = &debugMenu;
 
-    //measureMenu.buttons[0].function = std::bind<void(Menu::*)(), Menu*>(&Menu::StartReading, this);
-    //measureMenu.buttons[1].function = std::bind<void(Menu::*)(), Menu*>(&Menu::StopReading, this);
+    //Set internal funcitons for all buttons that have one
     measureMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Back, this);
 
     debugMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Back, this);
@@ -26,7 +25,7 @@ void Menu::Init()
     rootMenu.buttons[1].function = std::bind<void(Menu::*)(), Menu*>(&Menu::NextMenu, this);
     rootMenu.buttons[5].function = std::bind<void(Menu::*)(), Menu*>(&Menu::Exit, this);
 
-    //Set Button Values
+    //Set Button Names and/or Messages
     rootMenu.buttons[0].name = "Measure Menu";
     rootMenu.buttons[1].name = "Debug Menu";
     rootMenu.buttons[5].name = "Exit";
@@ -39,23 +38,19 @@ void Menu::Init()
     debugMenu.buttons[5].name = "Back";
 };
 
-void Menu::JoinWorker()
-{
-    if (workerThread.joinable())
-        workerThread.join();
-};
-
 void Menu::Exit()
 {
+    //Stop running
     running = false;
-    JoinWorker();
 };
 
 void Menu::CursorUp(int index)
 {
+    //Move the cursor up and make sure it's within bounds
     selectedIndex -= 1;
     if (selectedIndex < 0)
         selectedIndex = 5;
+    //Continue moving the cursor up and keeping it within bounds until a button with a function is found
     while(activeMenu->buttons[selectedIndex].function == NULL)
     {
         selectedIndex -= 1;
@@ -66,9 +61,11 @@ void Menu::CursorUp(int index)
 
 void Menu::CursorDown(int index)
 {
+    //Move the cursor down and make sure it's within bounds
     selectedIndex += 1;
     if (selectedIndex > 5)
         selectedIndex = 0;
+    //Continue moving the cursor down and keeping it within bounds until a button with a function is found
     while(activeMenu->buttons[selectedIndex].function == NULL)
     {
         selectedIndex += 1;
@@ -79,6 +76,7 @@ void Menu::CursorDown(int index)
 
 void Menu::NextMenu()
 {
+    //Go to the set of menu options that the selected button slot points to, if it points to another set of options
     MenuOptions* target = activeMenu->menuNavigationTarget[selectedIndex];
     if (target != nullptr)
         ChangeMenu(target);
@@ -86,13 +84,17 @@ void Menu::NextMenu()
 
 void Menu::Back()
 {
+    //Go to the previous menu
     ChangeMenu(activeMenu->previousMenu);
 };
 
 void Menu::ChangeMenu(MenuOptions* newMenu)
 {
+    //Go to the given set of menu options and reset the selected item to index 0
     activeMenu = newMenu;
     selectedIndex = 0;
+
+    //Make sure the selected item has a function and if it doesn't then move the selected index until it lands on a button with a function
     while(activeMenu->buttons[selectedIndex].function == NULL)
     {
         selectedIndex += 1;
@@ -101,71 +103,20 @@ void Menu::ChangeMenu(MenuOptions* newMenu)
     };
 };
 
-/*
-void Menu::StopReading(std::mutex& m)
-{
-    if (read)
-    {
-        read = false;
-        m.lock();
-        pollutionReading = -1;
-        coordinates = "Done Reading";
-        m.unlock();
-        JoinWorker();
-    };
-};
-
-void Menu::StartReading(std::mutex& m)
-{
-    if (!read)
-    {
-        read = true;
-        workerThread = std::thread(&Menu::GetReading, this, std::ref(m));
-    };
-};
-
-
-void Menu::GetReading(std::mutex& m)
-{
-    while (read)
-    {
-        //Dummy read function to simluate data coming in irregularly
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        m.lock();
-        pollutionReading += 1;
-        coordinates += ".";
-        changed = true;
-        m.unlock();
-    };
-};
-*/
-
 void Menu::Select(int index)
 {
+    //Perform the function the button points to
     Button* activeButton = &activeMenu->buttons[index];
     (activeButton->function)();
 };
 
 void Menu::ResolveInstructionIndex(int instructionIndex)
 {
+    //Maps the input codes to one of three actions
     if (instructionIndex == 0)
         Select(selectedIndex);
     else if (instructionIndex == 1)
         CursorUp(selectedIndex);
     else
         CursorDown(selectedIndex);
-};
-
-void Menu::DisplayUpdate(DisplayHandler& display, bool active)
-{
-    display.options = activeMenu;
-    display.Update();
-    /*
-    if (active == true)
-    {
-        display.UpdateMenuDisplay(selectedIndex, activeMenu, coordinates, pollutionReading);
-        return;
-    };
-    display.UpdateMenuInactiveDisplay(selectedIndex, activeMenu, coordinates, pollutionReading);
-    */
 };

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <pigpio.h>
 #include <string>
+#include <time.h>
 #include <stdio.h>
 #include <storageHandler.h>
 #include <libsps30.h>
@@ -11,11 +12,14 @@
 #include <menuOptions.h>
 #include <menuData.h>
 #include <menuHandler.h>
+#include <gitWrapper.h>
 
 #define GPIO_INCREMENT_PIN 19
 #define GPIO_DECREMENT_PIN 6
 #define GPIO_SELECT_PIN 26
 #define DEBOUNCE_TIMEOUT_US 300000 //20ms debounce timeout
+
+#define LOGDATA_PATH "~/polSenseTripLogs/"
 
 std::string identificationNumber;
 stateMachine s;
@@ -24,24 +28,13 @@ storageHandler myStorageHandler;
 SPS30measurement lastSPSMeasurement;
 neo6mMeasurment lastGPSMeasurement;
 
-class DataWriter
-{
-public:
-    MenuHandler* menuHandler;
-
-    void UpdateReading()
-    {
-        menuHandler->ForceDisplayUpdate();
-    };
-};
+MenuHandler handler;
 
 //sps30 inheritance class
     class SPS30Acquiring: public SPS30 {
     virtual void hasMeasurmentCB(SPS30measurement thisMeasurement){
         
-        //DataWriter writer;
-        
-        //writer.UpdateReading();
+        handler.ForceDisplayUpdate();
 
         lastSPSMeasurement = thisMeasurement;
 
@@ -82,16 +75,24 @@ public:
 
     void startMeasurement()
     {
+        //Create a file to write to
+        myStorageHandler.createFiles();
+
+        //Start writing to the file
          s.startAcquisition();
     };
 
     void stopMeasurement()
     {
+
+        //Stop writing to a file
          s.stopAcquisition();
+
+         //Close the file
+         myStorageHandler.closeFiles();
     };
 };
 
-MenuHandler handler;
 bindStartStopMeasurement mybindStartStopMeasurement;
 
 void gpioIncrementISR(int gpio,int level, uint32_t tick){
@@ -116,14 +117,19 @@ void gpioSelectISR(int gpio,int level, uint32_t tick){
     handler.inputMonitor.inputs.push(0);
     handler.m.unlock();
 };
+
 int main()
 {
 
     //initialise
-    DataWriter writer;
-    std::string name = "tripLog_1.csv";
-    FILE *fileCheck = fopen(name.c_str(), "r");
     int checkNum = 1;
+
+    //Set up github wrapper
+    gitwrapperSettings gitS;
+    strcpy(gitS.path, LOGDATA_PATH);
+    strcpy(gitS.remote, "git@github.com:BodeanTheZealous/PollutionSensorData.git");
+    strcpy(gitS.sshKeysFileAbs, "~/Repos/PollutionSensor/src/GitWrapper/pollSenseKey");
+    GITWRAPPER gw(gitS);
 
     //bind isr
     gpioInitialise();
@@ -140,32 +146,25 @@ int main()
     gpioGlitchFilter(GPIO_DECREMENT_PIN, DEBOUNCE_TIMEOUT_US);
     gpioGlitchFilter(GPIO_SELECT_PIN   , DEBOUNCE_TIMEOUT_US);
 
-    while(fileCheck)
-    {
-        fclose(fileCheck);
-        checkNum++;
-        name = "tripLog_" + std::to_string(checkNum) + ".csv";
-        fileCheck = fopen(name.c_str(), "r");
-    };
-
-    myStorageHandler.identificationNumber = std::to_string(checkNum);
-
-    myStorageHandler.createFiles();
+    //Set the path for the storage handler to save to
+    myStorageHandler.saveDirectory = LOGDATA_PATH;
 
     //Initialise user interface
     handler.Init();
-
-    writer.menuHandler = &handler;
 
     //Set button functions that are external to UI system
     handler.menu.measureMenu.buttons[0].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::startMeasurement, &mybindStartStopMeasurement);
     handler.menu.measureMenu.buttons[1].function = std::bind<void(bindStartStopMeasurement::*)(), bindStartStopMeasurement*>(&bindStartStopMeasurement::stopMeasurement, &mybindStartStopMeasurement);
     
+    //Point the display at the relevant external data containers
     handler.display.displayPollution = &lastSPSMeasurement;
     handler.display.displayGPS = &lastGPSMeasurement;
+    handler.display.stateName = &s.stateName;
+    handler.display.fileName = &myStorageHandler.fileName;
 
+    //Start up the GPS and SPS30 sensor
     myGPS.startMeasurement();
-    mySPS30.startMeasurement(); //This causes an error, I'm unsure why or how to fix it
+    mySPS30.startMeasurement();
 
     //Start user interface
     handler.Start();
@@ -174,8 +173,6 @@ int main()
     s.shutdown();
     mySPS30.stop();
     myGPS.stopMeasurement();
-    myStorageHandler.closeFiles();
-    
 
     return 0;
 };

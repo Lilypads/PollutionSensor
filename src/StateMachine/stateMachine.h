@@ -2,6 +2,8 @@
 #ifndef STATEMACHINE
 #define STATEMACHINE
 
+#include <string>
+
 enum PSstates{
 AcquiringGPSFix = 0,
 Active = 1,
@@ -47,6 +49,9 @@ class stateMachine {
     void shutdown();
 
     PSstates currentState;
+
+	//A string to represent the current state so that it can be displayed to the user
+	std::string stateName = "";
 
     private:
 };

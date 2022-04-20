@@ -24,4 +24,4 @@ include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_SOURCE_DIR}/src/SPS30 ${
 
 # compile target: DemoUserInterface
 add_executable(DemoUserInterface DemoUserInterface.cpp)
-target_link_libraries(DemoUserInterface userinterface)
+target_link_libraries(DemoUserInterface userinterface libsps30 neo6m)
