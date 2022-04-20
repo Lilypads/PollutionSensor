@@ -75,21 +75,26 @@ public:
 
     void startMeasurement()
     {
-        //Create a file to write to
-        myStorageHandler.createFiles();
+        if (s.currentState != AcquiringData)
+        {
+            //Create a file to write to
+            myStorageHandler.createFiles();
 
-        //Start writing to the file
-         s.startAcquisition();
+            //Start writing to the file
+            s.startAcquisition();
+        }
     };
 
     void stopMeasurement()
     {
+        if (s.currentState == AcquiringData)
+        {
+            //Stop writing to a file
+            s.stopAcquisition();
 
-        //Stop writing to a file
-         s.stopAcquisition();
-
-         //Close the file
-         myStorageHandler.closeFiles();
+            //Close the file
+            myStorageHandler.closeFiles();
+        }
     };
 };
 
@@ -171,6 +176,7 @@ int main()
 
     //clean up
     s.shutdown();
+    mybindStartStopMeasurement.stopMeasurement();
     mySPS30.stop();
     myGPS.stopMeasurement();
 
